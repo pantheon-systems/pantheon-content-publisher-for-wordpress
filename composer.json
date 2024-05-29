@@ -1,0 +1,27 @@
+{
+  "name": "crowdfavorite/tips",
+  "type": "wordpress-plugin",
+  "description": "TIPS is plugin scaffolding",
+  "keywords": [
+    "wordpress",
+    "plugin"
+  ],
+  "support": {
+    "email": "alexn@crowdfavorite.com"
+  },
+  "authors": [
+    {
+      "name": "Al Esc",
+      "email": "alexn@crowdfavorite.com",
+      "homepage": "https://crowfavorite.com"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "Tips\\": "app/"
+    }
+  },
+  "require": {
+    "php": ">=7.0.0"
+  }
+}
