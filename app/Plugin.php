@@ -6,7 +6,7 @@
  * @package crowdfavorite\tips
  */
 
-namespace Tips;
+namespace PCC;
 
 /**
  * The main class
@@ -20,26 +20,9 @@ class Plugin
 	 * @access private
 	 * @static
 	 *
-	 * @var Main
+	 * @var Plugin
 	 */
-	private static $instance;
-
-	/**
-	 * Get instance of the class.
-	 *
-	 * @access public
-	 * @static
-	 *
-	 * @return Main
-	 */
-	public static function getInstance()
-	{
-		if (!self::$instance) {
-			self::$instance = new self();
-		}
-
-		return self::$instance;
-	}
+	private static Plugin $instance;
 
 	/**
 	 * The main class construct.
@@ -52,7 +35,7 @@ class Plugin
 	/**
 	 * Initialize the plugin.
 	 */
-	private function init()
+	private function init(): void
 	{
 		add_action(
 			'admin_enqueue_scripts',
@@ -61,25 +44,42 @@ class Plugin
 	}
 
 	/**
+	 * Get instance of the class.
+	 *
+	 * @access public
+	 * @static
+	 *
+	 * @return Plugin
+	 */
+	public static function getInstance(): Plugin
+	{
+		if (!self::$instance) {
+			self::$instance = new self();
+		}
+
+		return self::$instance;
+	}
+
+	/**
 	 * `wp_enqueue_scripts` hook.
 	 *
 	 * @return void
 	 */
-	public function enqueueAssets()
+	public function enqueueAssets(): void
 	{
 		wp_enqueue_script(
-			TIPS_HANDLE,
-			TIPS_PLUGIN_DIR_URL . 'dist/app.js',
+			PCC_HANDLE,
+			PCC_PLUGIN_DIR_URL . 'dist/app.js',
 			[],
-			filemtime(TIPS_PLUGIN_DIR . 'dist/app.js'),
+			filemtime(PCC_PLUGIN_DIR . 'dist/app.js'),
 			true
 		);
 
 		wp_enqueue_style(
-			TIPS_HANDLE,
-			TIPS_PLUGIN_DIR_URL . 'dist/app.css',
+			PCC_HANDLE,
+			PCC_PLUGIN_DIR_URL . 'dist/app.css',
 			[],
-			filemtime(TIPS_PLUGIN_DIR . 'dist/app.css')
+			filemtime(PCC_PLUGIN_DIR . 'dist/app.css')
 		);
 	}
 }

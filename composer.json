@@ -1,27 +1,27 @@
 {
-  "name": "crowdfavorite/tips",
+  "name": "pantheon/pcc-for-wordpress",
   "type": "wordpress-plugin",
-  "description": "TIPS is plugin scaffolding",
+  "description": "Publish WordPress content from Google Docs with Pantheon Content Cloud.",
   "keywords": [
-    "wordpress",
-    "plugin"
+	"wordpress",
+	"plugin"
   ],
   "support": {
-    "email": "alexn@crowdfavorite.com"
+	"email": "contact@pantheon.io"
   },
   "authors": [
-    {
-      "name": "Al Esc",
-      "email": "alexn@crowdfavorite.com",
-      "homepage": "https://crowfavorite.com"
-    }
+	{
+	  "name": "Pantheon",
+	  "email": "contact@pantheon.io",
+	  "homepage": "https://pantheon.io"
+	}
   ],
   "autoload": {
-    "psr-4": {
-      "Tips\\": "app/"
-    }
+	"psr-4": {
+	  "PCC\\": "app/"
+	}
   },
   "require": {
-    "php": ">=7.0.0"
+	"php": ">=8.3"
   }
 }
