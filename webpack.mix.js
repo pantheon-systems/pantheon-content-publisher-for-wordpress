@@ -1,3 +1,3 @@
 const mix = require('laravel-mix');
 
-mix.js('assets/js/app.js', 'dist').sass('assets/scss/app.scss', 'dist');
+mix.options({manifest: false}).js('assets/js/app.js', 'dist').sass('assets/scss/app.scss', 'dist');
