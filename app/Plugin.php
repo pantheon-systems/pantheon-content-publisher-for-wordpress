@@ -1,9 +1,9 @@
 <?php
 
 /**
- * The plugin first class.
+ * The plugin singleton class.
  *
- * @package crowdfavorite\tips
+ * @package pantheon\pcc-for-wordpress
  */
 
 namespace PCC;
@@ -61,7 +61,7 @@ class Plugin
 	}
 
 	/**
-	 * `wp_enqueue_scripts` hook.
+	 * `admin_enqueue_scripts` hook.
 	 *
 	 * @return void
 	 */
