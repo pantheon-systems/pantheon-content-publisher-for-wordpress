@@ -39,6 +39,7 @@ class Plugin
 	private function init(): void
 	{
 		new Settings();
+		new RestController();
 	}
 
 	/**
