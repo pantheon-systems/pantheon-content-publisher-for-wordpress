@@ -3,17 +3,20 @@
   "version": "0.0.1",
   "description": "Publish WordPress content from Google Docs with Pantheon Content Cloud.",
   "scripts": {
-	"dev": "NODE_ENV=development node_modules/webpack/bin/webpack.js --progress --config=node_modules/laravel-mix/setup/webpack.config.js",
-	"watch": "NODE_ENV=development node_modules/webpack/bin/webpack.js --watch --progress --config=node_modules/laravel-mix/setup/webpack.config.js",
-	"hot": "NODE_ENV=development webpack-dev-server --hot --config=node_modules/laravel-mix/setup/webpack.config.js",
-	"prod": "NODE_ENV=production node_modules/webpack/bin/webpack.js --progress --config=node_modules/laravel-mix/setup/webpack.config.js"
+    "dev": "NODE_ENV=development node_modules/webpack/bin/webpack.js --progress --config=node_modules/laravel-mix/setup/webpack.config.js",
+    "watch": "NODE_ENV=development node_modules/webpack/bin/webpack.js --watch --progress --config=node_modules/laravel-mix/setup/webpack.config.js",
+    "hot": "NODE_ENV=development webpack-dev-server --hot --config=node_modules/laravel-mix/setup/webpack.config.js",
+    "prod": "NODE_ENV=production node_modules/webpack/bin/webpack.js --progress --config=node_modules/laravel-mix/setup/webpack.config.js"
   },
   "author": "Pantheon",
   "private": "true",
   "devDependencies": {
-	"laravel-mix": "^6.0.49",
-	"resolve-url-loader": "^5.0.0",
-	"sass": "^1.77.2",
-	"sass-loader": "^12.6.0"
+    "laravel-mix": "^6.0.49",
+    "resolve-url-loader": "^5.0.0",
+    "sass": "^1.77.2",
+    "sass-loader": "^12.6.0"
+  },
+  "dependencies": {
+    "@pantheon-systems/pcc-cli": "^3.6.0-beta.3"
   }
 }
