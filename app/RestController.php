@@ -1,29 +1,40 @@
 <?php
+/*
+ * REST controller class exposing endpoints for OAuth2 authorization and credentials saving.
+ */
 
 namespace PCC;
-
-if ( ! defined( 'ABSPATH' ) ) {
-	exit;
-}
 
 use WP_Error;
 use WP_REST_Request;
 use WP_REST_Response;
 
+use function esc_html__;
+use function serialize;
+
+use const PCC_CREDENTIALS_OPTION_KEY;
+use const PCC_HANDLE;
+
+/**
+ * REST controller class.
+ */
 class RestController
 {
 
+	/**
+	 * Class constructor, hooking into the REST API initialization.
+	 */
 	public function __construct()
-	{
-		$this->init();
-	}
-
-	public function init()
 	{
 		add_action('rest_api_init', [$this, 'registerRoutes']);
 	}
 
-	public function registerRoutes()
+	/**
+	 * Register REST API routes.
+	 *
+	 * @return void
+	 */
+	public function registerRoutes(): void
 	{
 		$endpoints = [
 			[
@@ -46,42 +57,71 @@ class RestController
 			]);
 		}
 	}
-	public function handleOauthRedirect(WP_REST_Request $request)
+
+	/**
+	 * Handle OAuth2 redirect.
+	 *
+	 * @param WP_REST_Request $request
+	 *
+	 * @return WP_REST_Response
+	 */
+	public function handleOauthRedirect(WP_REST_Request $request): WP_REST_Response
 	{
 		$code = $request->get_param('code');
 		if (!$code) {
-			return new WP_Error('no_code', 'No authorization code provided', ['status' => 400]);
+			return new WP_REST_Response([
+				'message' => esc_html__('No authorization code provided', PCC_HANDLE),
+			], 400);
 		}
 
-		// Replace with your logic to get the token and persist details
 		$credentials = $this->getToken($code);
 		if (is_wp_error($credentials)) {
-			return $credentials;
+			return new WP_REST_Response([
+				'message' => esc_html__('Missing authorization token', PCC_HANDLE),
+			], 400);
 		}
 
 		$jwtPayload = $this->parseJwt($credentials['id_token']);
 		$this->persistAuthDetails($credentials);
 
-		return new WP_REST_Response(array(
+		return new WP_REST_Response([
 			'email' => $jwtPayload['email'],
-		), 200);
+		], 200);
 	}
 
-	private function getToken($code) {
+	/**
+	 * @param $code
+	 *
+	 * @return void
+	 */
+	private function getToken($code)
+	{
 		// Implement the function to get the token using the authorization code
 		// Example:
 		// $response = wp_remote_post('https://example.com/oauth/token', array(...));
 		// return json_decode(wp_remote_retrieve_body($response), true);
 	}
 
-	private function parseJwt($jwt) {
+	/**
+	 * @param $jwt
+	 *
+	 * @return void
+	 */
+	private function parseJwt($jwt)
+	{
 		// Implement the function to parse the JWT
 		// Example:
 		// list($header, $payload, $signature) = explode('.', $jwt);
 		// return json_decode(base64_decode($payload), true);
 	}
 
-	private function persistAuthDetails($credentials) {
+	/**
+	 * @param $credentials
+	 *
+	 * @return void
+	 */
+	private function persistAuthDetails($credentials)
+	{
 		// Implement the function to persist authentication details
 		// Example:
 		// update_option('oauth_credentials', $credentials);
@@ -101,6 +141,7 @@ class RestController
 	 * Save Credentials into database
 	 *
 	 * @param WP_REST_Request $request
+	 *
 	 * @return WP_REST_Response|WP_Error
 	 */
 	public function saveCredentials(WP_REST_Request $request)
@@ -124,23 +165,14 @@ class RestController
 			);
 		}
 
-		// If validation passes, insert data into the database
-		$inserted = update_option(PCC_CREDENTIALS_OPTION_KEY, serialize($data['data']));
-
-		if (!$inserted) {
-			return new WP_Error(
-				'database_error',
-				__('Failed to save Credentials!', PCC_HANDLE),
-				['status' => 500]
+		return update_option(PCC_CREDENTIALS_OPTION_KEY, serialize($data['data'])) ?
+			new WP_REST_Response(
+				esc_html__('Credentials saved!', PCC_HANDLE),
+				200
+			) :
+			new WP_REST_Response(
+				esc_html__('Failed to save Credentials!', PCC_HANDLE),
+				500
 			);
-		}
-
-		// If database insertion is successful, send a success response
-		$response = [
-			'message' => __('Credentials saved!', PCC_HANDLE),
-			'data' => $data['data'],
-		];
-
-		return new WP_REST_Response($response, 200);
 	}
 }
