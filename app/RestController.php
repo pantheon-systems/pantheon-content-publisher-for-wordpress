@@ -46,11 +46,8 @@ class RestController
 			]);
 		}
 	}
-	public function handleOauthRedirect(WP_REST_Request $request) {
-		if (!current_user_can('manage_options')) {
-			return new WP_Error('unauthorized', 'You are not authorized to perform this action.', ['status' => 401]);
-		}
-
+	public function handleOauthRedirect(WP_REST_Request $request)
+	{
 		$code = $request->get_param('code');
 		if (!$code) {
 			return new WP_Error('no_code', 'No authorization code provided', ['status' => 400]);
@@ -108,10 +105,11 @@ class RestController
 	 */
 	public function saveCredentials(WP_REST_Request $request)
 	{
-
+		if (!current_user_can('manage_options')) {
+			return new WP_Error('unauthorized', 'You are not authorized to perform this action.', ['status' => 401]);
+		}
 
 		$data = $request->get_json_params();
-
 		// Validate input field
 		if (empty($data['data'])) {
 			$errors['data'] = __('Data payload is required.', PCC_HANDLE);
