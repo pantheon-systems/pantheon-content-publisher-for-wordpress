@@ -8,6 +8,8 @@
 
 namespace PCC;
 
+use PCC\RestController\RestController;
+
 /**
  * The main class
  */
@@ -39,6 +41,7 @@ class Plugin
 	private function init(): void
 	{
 		new Settings();
+		new RestController();
 	}
 
 	/**
