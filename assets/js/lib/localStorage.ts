@@ -1,13 +1,10 @@
-import {readFileSync, writeFileSync} from "fs";
-import path from "path";
-import {ensureFile, remove} from "fs-extra";
 import {Credentials} from "google-auth-library";
-import {Config} from "../types/config"; //@todo: import TS types
+import {Config} from "./types/config";
 import AddOnApiHelper from "./addonApiHelper";
 
 //@todo: refactor auth and config data as DB values injected in the JS asset.
-export const AUTH_FILE_PATH = path.join(PCC_ROOT_DIR, "auth.json");
-export const CONFIG_FILE_PATH = path.join(PCC_ROOT_DIR, "config.json");
+export const AUTH_FILE_PATH = "auth.json";
+export const CONFIG_FILE_PATH = "config.json";
 
 //@todo: refactor to use DB values
 export const getLocalAuthDetails = async (
@@ -15,9 +12,7 @@ export const getLocalAuthDetails = async (
 ): Promise<Credentials | null> => {
   let credentials: Credentials;
   try {
-    credentials = JSON.parse(
-      readFileSync(AUTH_FILE_PATH).toString(),
-    ) as Credentials;
+    credentials = JSON.parse(AUTH_FILE_PATH) as Credentials;
   } catch (_err) {
     return null;
   }
@@ -54,7 +49,7 @@ export const getLocalAuthDetails = async (
 
 export const getLocalConfigDetails = async (): Promise<Config | null> => {
   try {
-    return JSON.parse(readFileSync(CONFIG_FILE_PATH).toString());
+    return JSON.parse(CONFIG_FILE_PATH);
   } catch (_err) {
     return null;
   }
@@ -63,26 +58,16 @@ export const getLocalConfigDetails = async (): Promise<Config | null> => {
 export const persistAuthDetails = async (
   payload: Credentials,
 ): Promise<void> => {
-  await persistDetailsToFile(payload, AUTH_FILE_PATH);
+  await persistDetailsToDatabase(payload, AUTH_FILE_PATH);
 };
 
 export const persistConfigDetails = async (payload: Config): Promise<void> => {
-  await persistDetailsToFile(payload, CONFIG_FILE_PATH);
+  await persistDetailsToDatabase(payload, CONFIG_FILE_PATH);
 };
 
-export const deleteConfigDetails = async () => remove(CONFIG_FILE_PATH);
+export const deleteConfigDetails = async () => console.log(CONFIG_FILE_PATH); //@todo: refactor to delete from DB
 
 //@todo: refactor to persist in DB
-const persistDetailsToFile = async (payload: unknown, filePath: string) => {
-  await new Promise<void>((resolve, reject) =>
-    ensureFile(filePath, (err: unknown) => {
-      if (err) {
-        reject(err);
-      } else {
-        resolve();
-      }
-    }),
-  );
-
-  writeFileSync(filePath, JSON.stringify(payload, null, 2));
+const persistDetailsToDatabase = async (payload: unknown, filePath: string) => {
+  //writeFileSync(filePath, JSON.stringify(payload, null, 2)); @todo: send payload to endpoint
 };

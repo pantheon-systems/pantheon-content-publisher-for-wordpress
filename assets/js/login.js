@@ -7,15 +7,15 @@ import {OAuth2Client} from "google-auth-library";
 import nunjucks from "nunjucks";
 import open from "open";
 import destroyer from "server-destroy";
-import AddOnApiHelper from "lib/addonApiHelper";
-import {getApiConfig} from "lib/apiConfig";
-import {getLocalAuthDetails, persistAuthDetails,} from "lib/localStorage";
+import AddOnApiHelper from "./lib/addonApiHelper";
+import {getApiConfig} from "./lib/apiConfig";
+import {getLocalAuthDetails, persistAuthDetails,} from "./lib/localStorage";
 
 nunjucks.configure({autoescape: true});
 
 const OAUTH_SCOPES = ["https://www.googleapis.com/auth/userinfo.email"];
 
-export function login(extraScopes) {
+export default function login(extraScopes) {
   return new Promise(// eslint-disable-next-line no-async-promise-executor -- Handling promise rejection in the executor
     async (resolve, reject) => {
       try {

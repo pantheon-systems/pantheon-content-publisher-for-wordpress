@@ -3,10 +3,10 @@ import axios, {AxiosError, HttpStatusCode} from "axios";
 import {Credentials} from "google-auth-library";
 import ora from "ora";
 import login from "../login"; //@todo: refactor out these commands
-import {HTTPNotFound, UserNotLoggedIn} from "../cli/exceptions"; //@todo: refactor out these exceptions
 import {getApiConfig} from "./apiConfig";
 import {getLocalAuthDetails} from "./localStorage";
-import {toKebabCase} from "./utils"; //@todo: import utils
+import {toKebabCase} from "./utils";
+import {ApiKey, Article, Site, WebhookDeliveryLog} from "./types";
 
 class AddOnApiHelper {
   static async getToken(code: string): Promise<Credentials> {
@@ -57,7 +57,7 @@ class AddOnApiHelper {
       await login(requiredScopes || []);
       prevOra.start();
       authDetails = await getLocalAuthDetails(requiredScopes);
-      if (!authDetails) throw new UserNotLoggedIn();
+      if (!authDetails) console.log('hurr');
     }
 
     return withAuthToken
@@ -174,7 +174,7 @@ class AddOnApiHelper {
     );
 
     if (!idToken || !oauthToken) {
-      throw new UserNotLoggedIn();
+      console.log('foo');
     }
 
     const resp = await axios.post<{
@@ -221,7 +221,7 @@ class AddOnApiHelper {
     );
 
     if (!idToken || !oauthToken) {
-      throw new UserNotLoggedIn();
+      console.log('fuu');
     }
 
     const resp = await axios.post<{
@@ -296,7 +296,7 @@ class AddOnApiHelper {
         }).response.status ===
         HttpStatusCode.NotFound
       )
-        throw new HTTPNotFound();
+        console.log('foo');
     }
   }
 
