@@ -5,7 +5,6 @@
 
 namespace PCC;
 
-use WP_Error;
 use WP_REST_Request;
 use WP_REST_Response;
 
@@ -142,26 +141,20 @@ class RestController
 	 *
 	 * @param WP_REST_Request $request
 	 *
-	 * @return WP_REST_Response|WP_Error
+	 * @return WP_REST_Response
 	 */
-	public function saveCredentials(WP_REST_Request $request)
+	public function saveCredentials(WP_REST_Request $request): WP_REST_Response
 	{
 		if (!current_user_can('manage_options')) {
-			return new WP_Error('unauthorized', 'You are not authorized to perform this action.', ['status' => 401]);
+			return new WP_REST_Response(esc_html__('You are not authorized to perform this action.', PCC_HANDLE), 401);
 		}
 
 		$data = $request->get_json_params();
 		// Validate input field
 		if (empty($data['data'])) {
-			$errors['data'] = __('Data payload is required.', PCC_HANDLE);
-		}
-
-		// If there are validation errors, return a response with errors
-		if (!empty($errors)) {
-			return new WP_Error(
-				'invalid_data',
-				__('Validation failed.', PCC_HANDLE),
-				['status' => 400, 'errors' => $errors]
+			return new WP_REST_Response(
+				esc_html__('Validation failed.', PCC_HANDLE),
+				400
 			);
 		}
 
