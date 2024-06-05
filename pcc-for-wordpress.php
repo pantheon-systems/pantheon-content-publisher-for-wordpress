@@ -20,12 +20,11 @@ if (!defined('ABSPATH')) {
 //die(var_dump(Plugin::class));
 // Constant Definitions.
 define('PCC_PLUGIN_FILE', __FILE__);
-define('PCC_PLUGIN_NAME', 'pcc-for-wordpress');
+define('PCC_HANDLE', 'pcc-for-wordpress');
 define('PCC_PLUGIN_DIR', plugin_dir_path(PCC_PLUGIN_FILE));
 define('PCC_BASENAME', plugin_basename(PCC_PLUGIN_FILE));
 define('PCC_PLUGIN_DIR_URL', plugin_dir_url(PCC_PLUGIN_FILE));
 define('PCC_CREDENTIALS_OPTION_KEY', 'pcc_credentials');
-define('PCC_HANDLE', 'pcc');
 // Rest API
 define('PCC_API_NAMESPACE', 'pcc/v1');
 

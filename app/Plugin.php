@@ -8,8 +8,6 @@
 
 namespace PCC;
 
-use PCC\RestController\RestController;
-
 /**
  * The main class
  */

@@ -2,12 +2,22 @@
 
 namespace PCC\RestController;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 use WP_Error;
 use WP_REST_Request;
 use WP_REST_Response;
 
 class RestController
 {
+
+	public function __construct()
+	{
+		$this->init();
+	}
+
 	public function init()
 	{
 		add_action('rest_api_init', [$this, 'registerRoutes']);
@@ -17,7 +27,7 @@ class RestController
 	{
 		$endpoints = [
 			[
-				'route' => 'oauth/redirect',
+				'route' => '/oauth/redirect',
 				'method' => 'GET',
 				'callback' => [$this, 'handleOauthRedirect'],
 			],
@@ -37,6 +47,10 @@ class RestController
 		}
 	}
 	public function handleOauthRedirect(WP_REST_Request $request) {
+		if (!current_user_can('manage_options')) {
+			return new WP_Error('unauthorized', 'You are not authorized to perform this action.', ['status' => 401]);
+		}
+
 		$code = $request->get_param('code');
 		if (!$code) {
 			return new WP_Error('no_code', 'No authorization code provided', ['status' => 400]);
@@ -94,18 +108,20 @@ class RestController
 	 */
 	public function saveCredentials(WP_REST_Request $request)
 	{
+
+
 		$data = $request->get_json_params();
 
 		// Validate input field
 		if (empty($data['data'])) {
-			$errors['data'] = __('Data payload is required.', PCC_PLUGIN_NAME);
+			$errors['data'] = __('Data payload is required.', PCC_HANDLE);
 		}
 
 		// If there are validation errors, return a response with errors
 		if (!empty($errors)) {
 			return new WP_Error(
 				'invalid_data',
-				__('Validation failed.', PCC_PLUGIN_NAME),
+				__('Validation failed.', PCC_HANDLE),
 				['status' => 400, 'errors' => $errors]
 			);
 		}
@@ -116,14 +132,14 @@ class RestController
 		if (!$inserted) {
 			return new WP_Error(
 				'database_error',
-				__('Failed to save Credentials!', PCC_PLUGIN_NAME),
+				__('Failed to save Credentials!', PCC_HANDLE),
 				['status' => 500]
 			);
 		}
 
 		// If database insertion is successful, send a success response
 		$response = [
-			'message' => __('Credentials saved!', PCC_PLUGIN_NAME),
+			'message' => __('Credentials saved!', PCC_HANDLE),
 			'data' => $data['data'],
 		];
 
