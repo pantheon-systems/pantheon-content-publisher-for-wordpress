@@ -167,11 +167,11 @@ class RestController
 
 		return update_option(PCC_CREDENTIALS_OPTION_KEY, serialize($data['data'])) ?
 			new WP_REST_Response(
-				esc_html__('Credentials saved!', PCC_HANDLE),
+				esc_html__('Credentials saved.', PCC_HANDLE),
 				200
 			) :
 			new WP_REST_Response(
-				esc_html__('Failed to save Credentials!', PCC_HANDLE),
+				esc_html__('Failed to save Credentials.', PCC_HANDLE),
 				500
 			);
 	}
