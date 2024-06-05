@@ -1,6 +1,6 @@
 <?php
 
-namespace PCC\RestController;
+namespace PCC;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
