@@ -17,7 +17,7 @@ namespace PCC;
 if (!defined('ABSPATH')) {
 	exit;
 }
-
+//die(var_dump(Plugin::class));
 // Constant Definitions.
 define('PCC_PLUGIN_FILE', __FILE__);
 define('PCC_PLUGIN_DIR', plugin_dir_path(PCC_PLUGIN_FILE));

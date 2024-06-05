@@ -20,13 +20,10 @@ class Plugin
 	 * @access private
 	 * @static
 	 *
-	 * @var Plugin
+	 * @var ?Plugin
 	 */
-	private static Plugin $instance;
+	private static ?Plugin $instance = null;
 
-	/**
-	 * The main class construct.
-	 */
 	public function __construct()
 	{
 		$this->init();
@@ -34,13 +31,14 @@ class Plugin
 
 	/**
 	 * Initialize the plugin.
+	 *
+	 * @access private
+	 *
+	 * @return void
 	 */
 	private function init(): void
 	{
-		add_action(
-			'admin_enqueue_scripts',
-			[$this, 'enqueueAssets']
-		);
+		new Settings();
 	}
 
 	/**
@@ -60,26 +58,4 @@ class Plugin
 		return self::$instance;
 	}
 
-	/**
-	 * `admin_enqueue_scripts` hook.
-	 *
-	 * @return void
-	 */
-	public function enqueueAssets(): void
-	{
-		wp_enqueue_script(
-			PCC_HANDLE,
-			PCC_PLUGIN_DIR_URL . 'dist/app.js',
-			[],
-			filemtime(PCC_PLUGIN_DIR . 'dist/app.js'),
-			true
-		);
-
-		wp_enqueue_style(
-			PCC_HANDLE,
-			PCC_PLUGIN_DIR_URL . 'dist/app.css',
-			[],
-			filemtime(PCC_PLUGIN_DIR . 'dist/app.css')
-		);
-	}
 }
