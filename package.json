@@ -17,6 +17,8 @@
     "sass-loader": "^12.6.0"
   },
   "dependencies": {
-    "@pantheon-systems/pcc-cli": "^3.6.0"
+    "@pantheon-systems/pcc-sdk-core": "^3.6.0",
+    "google-auth-library": "^9.10.0",
+    "nunjucks": "^3.2.4"
   }
 }

@@ -1,4 +1,4 @@
-export function toKebabCase(s: string) {
+export function toKebabCase(s) {
   return s
     .trim()
     .replace(/[^\w\s]/gi, "-")

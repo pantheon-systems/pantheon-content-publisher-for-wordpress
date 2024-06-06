@@ -1,15 +1,8 @@
-import {readFileSync} from "fs";
-import http from "http";
-import {dirname, join} from "path";
-import url, {fileURLToPath} from "url";
 import {parseJwt} from "@pantheon-systems/pcc-sdk-core";
 import {OAuth2Client} from "google-auth-library";
 import nunjucks from "nunjucks";
-import open from "open";
-import destroyer from "server-destroy";
-import AddOnApiHelper from "./lib/addonApiHelper";
 import {getApiConfig} from "./lib/apiConfig";
-import {getLocalAuthDetails, persistAuthDetails,} from "./lib/localStorage";
+import {getLocalAuthDetails,} from "./lib/localStorage";
 
 nunjucks.configure({autoescape: true});
 
@@ -45,36 +38,36 @@ export default function login(extraScopes) {
         });
 
         //@todo: refactor to use a WP endpoint to handle the redirect
-        const server = http.createServer(async (req, res) => {
-          try {
-            if (!req.url) {
-              throw new Error("No URL path provided");
-            }
-
-            if (req.url.indexOf("/oauth-redirect") > -1) {
-              const qs = new url.URL(req.url, "http://localhost:3030").searchParams;
-              const code = qs.get("code");
-              const currDir = dirname(fileURLToPath(import.meta.url));
-              const content = readFileSync(join(currDir, "../templates/loginSuccess.html"),);
-              const credentials = await AddOnApiHelper.getToken(code);
-              const jwtPayload = parseJwt(credentials.id_token);
-              await persistAuthDetails(credentials);
-              res.end(nunjucks.renderString(content.toString(), {
-                email: jwtPayload.email,
-              }),);
-              server.destroy();
-              resolve();
-            }
-          } catch (e) {
-            reject(e);
-          }
-        });
-
-        destroyer(server);
-
-        server.listen(3030, () => {
-          open(authorizeUrl, {wait: true}).then((cp) => cp.kill());
-        });
+        //const server = http.createServer(async (req, res) => {
+        //  try {
+        //    if (!req.url) {
+        //      throw new Error("No URL path provided");
+        //    }
+        //
+        //    if (req.url.indexOf("/oauth-redirect") > -1) {
+        //      const qs = new url.URL(req.url, "http://localhost:3030").searchParams;
+        //      const code = qs.get("code");
+        //      const currDir = dirname(fileURLToPath(import.meta.url));
+        //      const content = readFileSync(join(currDir, "../templates/loginSuccess.html"),);
+        //      const credentials = await AddOnApiHelper.getToken(code);
+        //      const jwtPayload = parseJwt(credentials.id_token);
+        //      await persistAuthDetails(credentials);
+        //      res.end(nunjucks.renderString(content.toString(), {
+        //        email: jwtPayload.email,
+        //      }),);
+        //      server.destroy();
+        //      resolve();
+        //    }
+        //  } catch (e) {
+        //    reject(e);
+        //  }
+        //});
+        //
+        //destroyer(server);
+        //
+        //server.listen(3030, () => {
+        //  open(authorizeUrl, {wait: true}).then((cp) => cp.kill());
+        //});
       } catch (e) {
         reject(e);
       }
