@@ -1,10 +1,7 @@
 import {parseJwt} from "@pantheon-systems/pcc-sdk-core";
 import {OAuth2Client} from "google-auth-library";
-import nunjucks from "nunjucks";
 import {getApiConfig} from "./lib/apiConfig";
 import {getLocalAuthDetails,} from "./lib/localStorage";
-
-nunjucks.configure({autoescape: true});
 
 const OAUTH_SCOPES = ["https://www.googleapis.com/auth/userinfo.email"];
 
