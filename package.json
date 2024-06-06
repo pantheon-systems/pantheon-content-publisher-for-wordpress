@@ -17,6 +17,6 @@
     "sass-loader": "^12.6.0"
   },
   "dependencies": {
-    "@pantheon-systems/pcc-cli": "^3.6.0-beta.3"
+    "@pantheon-systems/pcc-cli": "^3.6.0"
   }
 }
