@@ -9,7 +9,7 @@ export const CONFIG_FILE_PATH = "config.json";
 export const getLocalAuthDetails = async (requiredScopes,) => {
   let credentials;
   try {
-    credentials = JSON.parse(AUTH_FILE_PATH);
+    credentials = window.PCCAdmin.credentials;
   } catch (_err) {
     return null;
   }

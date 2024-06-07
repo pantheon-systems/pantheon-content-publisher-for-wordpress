@@ -24,7 +24,7 @@ export const getCodeFromURL = () => {
 	const urlParams = new URLSearchParams(window.location.search);
 	let code = urlParams.get('code');
 	if (code) {
-		return true;
+		return code;
 	}
 	return false;
 };

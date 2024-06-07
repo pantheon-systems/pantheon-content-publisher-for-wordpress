@@ -1,12 +1,13 @@
 import {OAuth2Client} from "google-auth-library";
 import {getApiConfig} from "./lib/apiConfig";
+import {getLocalAuthDetails} from "./lib/localStorage";
 const OAUTH_SCOPES = ["https://www.googleapis.com/auth/userinfo.email"];
 
 export default function login(extraScopes) {
   return new Promise(// eslint-disable-next-line no-async-promise-executor -- Handling promise rejection in the executor
     async (resolve, reject) => {
       try {
-        // const authData = await getLocalAuthDetails(extraScopes);
+        const authData = await getLocalAuthDetails(extraScopes);
         // if (authData) {
         //   const scopes = authData.scope?.split(" ");
 		//
