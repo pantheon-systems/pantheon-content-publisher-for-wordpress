@@ -70,19 +70,8 @@ class Settings
 		$credentials = $this->getCredentials();
 		?>
 		<div id="pcc-app">
-			<?php if($code): ?>
-				<img src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/0.16.1/images/loader-large.gif" alt="spinner"
-				class="src">
-			<?php endif; ?>
-
-			<?php if(!$credentials): ?>
-				<button id="pcc-app-authenticate">Authenticate</button>
-			<?php endif; ?>
-
-			<?php if($credentials): ?>
-				<button id="pcc-app-list-file">List files</button>
-			<?php endif; ?>
-
+			<button id="pcc-app-authenticate">Authenticate</button>
+			<button id="pcc-app-disconnect">Disconnect</button>
 		</div>
 		<?php
 	}
@@ -116,7 +105,7 @@ class Settings
 				'rest_url' => get_rest_url(get_current_blog_id(),PCC_API_NAMESPACE),
 				'nonce' => wp_create_nonce('wp_rest'),
 				'plugin_main_page' => menu_page_url(PCC_HANDLE, false),
-			] + $this->getCredentials()
+			] + ['credentials' => $this->getCredentials()]
 		);
 	}
 

@@ -53,13 +53,8 @@ export const getLocalConfigDetails = async () => {
  * @returns {Promise<*>}
  */
 export const deleteConfigDetails = async (payload) => {
-	const resp = await axios.delete(`${window.PCCAdmin.restURL}/oauth/credentials`,
-		{},
-		{
-			headers: {
-				'X-WP-Nonce': window.PCCAdmin.nonce
-			}
-		}
+	const resp = await axios.delete(`${window.PCCAdmin.rest_url}/oauth/credentials`,
+        {headers: {'X-WP-Nonce': window.PCCAdmin.nonce}}
 	);
 
 	return resp
@@ -73,7 +68,7 @@ export const deleteConfigDetails = async (payload) => {
  * @returns {Promise<any>}
  */
 export const persistDetailsToDatabase = async (payload) => {
-	const resp = await axios.post(`${window.PCCAdmin.restURL}/oauth/credentials`,
+	const resp = await axios.post(`${window.PCCAdmin.rest_url}/oauth/credentials`,
 		payload,
 		{
 			headers: {

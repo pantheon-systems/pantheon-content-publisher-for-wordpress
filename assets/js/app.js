@@ -1,3 +1,5 @@
+import {deleteConfigDetails} from "./lib/localStorage";
+
 require('./login');
 
 import login from './login';
@@ -6,6 +8,11 @@ import {fetchTokenAndSaveCredentials, getCodeFromURL, redirectToMainPage} from "
 if (document.getElementById('pcc-app-authenticate') != undefined) {
 	document.getElementById('pcc-app-authenticate').addEventListener('click', function () {
 		login([]);
+	});
+}
+if (document.getElementById('pcc-app-disconnect') != undefined) {
+	document.getElementById('pcc-app-disconnect').addEventListener('click', function () {
+		deleteConfigDetails()
 	});
 }
 
