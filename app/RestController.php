@@ -149,16 +149,16 @@ class RestController
 			return new WP_REST_Response(esc_html__('You are not authorized to perform this action.', PCC_HANDLE), 401);
 		}
 
-		$data = $request->get_json_params();
+		$data = $request->get_params();
 		// Validate input field
-		if (empty($data['data'])) {
+		if (empty($data)) {
 			return new WP_REST_Response(
 				esc_html__('Validation failed.', PCC_HANDLE),
 				400
 			);
 		}
 
-		return update_option(PCC_CREDENTIALS_OPTION_KEY, serialize($data['data'])) ?
+		return update_option(PCC_CREDENTIALS_OPTION_KEY, serialize($data)) ?
 			new WP_REST_Response(
 				esc_html__('Credentials saved.', PCC_HANDLE),
 				200

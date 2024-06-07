@@ -4,6 +4,7 @@ const TargetEnvironment = {
   production: "production",
   staging: "staging",
   test: "test",
+  development: "development",
 };
 
 const apiConfigMap = {
@@ -24,6 +25,12 @@ const apiConfigMap = {
     googleClientId: "test-google-com",
     googleRedirectUri: "http://localhost:3030/oauth-redirect",
     playgroundUrl: "https://test-playground.site",
+  },
+  [TargetEnvironment.development]: {
+	  addOnApiEndpoint: "https://us-central1-pantheon-content-cloud-staging.cloudfunctions.net/addOnApi",
+	  googleClientId: "142470191541-8o14j77pvagisc66s48kl4ub91f9c7b8.apps.googleusercontent.com",
+	  googleRedirectUri: "http://localhost:3030/oauth-redirect",
+	  playgroundUrl: "https://playgroundUrl",
   },
 };
 

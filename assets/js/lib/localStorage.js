@@ -1,4 +1,5 @@
 import AddOnApiHelper from "./addonApiHelper";
+import axios from "axios";
 
 //@todo: refactor auth and config data as DB values injected in the JS asset.
 export const AUTH_FILE_PATH = "auth.json";
@@ -45,17 +46,41 @@ export const getLocalConfigDetails = async () => {
   }
 };
 
-export const persistAuthDetails = async (payload,) => {
-  await persistDetailsToDatabase(payload, AUTH_FILE_PATH);
+/**
+ * Delete the API configuration details
+ *
+ * @param payload
+ * @returns {Promise<*>}
+ */
+export const deleteConfigDetails = async (payload) => {
+	const resp = await axios.delete(`${window.PCCAdmin.restURL}/oauth/credentials`,
+		{},
+		{
+			headers: {
+				'X-WP-Nonce': window.PCCAdmin.nonce
+			}
+		}
+	);
+
+	return resp
 };
 
-export const persistConfigDetails = async (payload) => {
-  await persistDetailsToDatabase(payload, CONFIG_FILE_PATH);
-};
 
-export const deleteConfigDetails = async () => console.log(CONFIG_FILE_PATH); //@todo: refactor to delete from DB
+/**
+ * Persist details to the database
+ *
+ * @param payload
+ * @returns {Promise<any>}
+ */
+export const persistDetailsToDatabase = async (payload) => {
+	const resp = await axios.post(`${window.PCCAdmin.restURL}/oauth/credentials`,
+		payload,
+		{
+			headers: {
+				'X-WP-Nonce': window.PCCAdmin.nonce
+			}
+		}
+	);
 
-//@todo: refactor to persist in DB
-const persistDetailsToDatabase = async (payload, filePath) => {
-  //writeFileSync(filePath, JSON.stringify(payload, null, 2)); @todo: send payload to endpoint
+	return resp;
 };
