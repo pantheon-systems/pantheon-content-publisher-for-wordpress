@@ -66,8 +66,6 @@ class Settings
 	 */
 	public function renderSettingsPage(): void
 	{
-		$code = isset($_GET['code']) ? sanitize_text_field($_GET['code']) : null;
-		$credentials = $this->getCredentials();
 		?>
 		<div id="pcc-app">
 			<button id="pcc-app-authenticate">Authenticate</button>

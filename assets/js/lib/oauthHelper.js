@@ -36,8 +36,14 @@ export const getCodeFromURL = () => {
  * @returns {Promise<void>}
  */
 export const fetchTokenAndSaveCredentials = async (code) => {
-	let credentials = await AddOnApiHelper.getToken(code);
-	await persistDetailsToDatabase(credentials);
+	try {
+		let credentials = await AddOnApiHelper.getToken(code);
+		await persistDetailsToDatabase(credentials);
+		return true;
+	} catch (e) {
+		console.log('Error while fetching token and saving credentials to database', e);
+	}
+	return false;
 };
 
 /**

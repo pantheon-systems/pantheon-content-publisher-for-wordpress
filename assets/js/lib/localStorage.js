@@ -7,12 +7,11 @@ export const CONFIG_FILE_PATH = "config.json";
 
 //@todo: refactor to use DB values
 export const getLocalAuthDetails = async (requiredScopes,) => {
-  let credentials;
-  try {
-    credentials = window.PCCAdmin.credentials;
-  } catch (_err) {
-    return null;
-  }
+  let credentials = window.PCCAdmin.credentials;
+	if (undefined === credentials.length || !credentials.access_token) {
+		return null;
+	}
+
 
   // Return null if required scope is not present
   const grantedScopes = new Set(credentials.scope?.split(" ") || []);
@@ -30,8 +29,8 @@ export const getLocalAuthDetails = async (requiredScopes,) => {
   }
 
   try {
-    const newCred = await AddOnApiHelper.refreshToken(credentials.refresh_token,);
-    await persistAuthDetails(newCred);
+    const newCred = await AddOnApiHelper.refreshToken(credentials.access_token,);
+    await persistDetailsToDatabase(newCred);
     return newCred;
   } catch (_err) {
     return null;

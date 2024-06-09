@@ -8,6 +8,7 @@ export default function login(extraScopes) {
     async (resolve, reject) => {
       try {
         const authData = await getLocalAuthDetails(extraScopes);
+		// @TODO to be discussed / reviewed with the team
         // if (authData) {
         //   const scopes = authData.scope?.split(" ");
 		//
@@ -32,7 +33,7 @@ export default function login(extraScopes) {
           ],
         });
 		window.location.href = authorizeUrl;
-		  return resolve();
+		return resolve();
         //@todo: refactor to use a WP endpoint to handle the redirect
         //const server = http.createServer(async (req, res) => {
         //  try {
