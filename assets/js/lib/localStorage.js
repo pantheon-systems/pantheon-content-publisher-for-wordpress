@@ -1,4 +1,5 @@
 import AddOnApiHelper from "./addonApiHelper";
+import axios from "axios";
 
 //@todo: refactor auth and config data as DB values injected in the JS asset.
 export const AUTH_FILE_PATH = "auth.json";
@@ -6,12 +7,11 @@ export const CONFIG_FILE_PATH = "config.json";
 
 //@todo: refactor to use DB values
 export const getLocalAuthDetails = async (requiredScopes,) => {
-  let credentials;
-  try {
-    credentials = JSON.parse(AUTH_FILE_PATH);
-  } catch (_err) {
-    return null;
-  }
+  let credentials = window.PCCAdmin.credentials;
+	if (undefined === credentials.length || !credentials.access_token) {
+		return null;
+	}
+
 
   // Return null if required scope is not present
   const grantedScopes = new Set(credentials.scope?.split(" ") || []);
@@ -29,8 +29,8 @@ export const getLocalAuthDetails = async (requiredScopes,) => {
   }
 
   try {
-    const newCred = await AddOnApiHelper.refreshToken(credentials.refresh_token,);
-    await persistAuthDetails(newCred);
+    const newCred = await AddOnApiHelper.refreshToken(credentials.access_token,);
+    await persistDetailsToDatabase(newCred);
     return newCred;
   } catch (_err) {
     return null;
@@ -45,17 +45,36 @@ export const getLocalConfigDetails = async () => {
   }
 };
 
-export const persistAuthDetails = async (payload,) => {
-  await persistDetailsToDatabase(payload, AUTH_FILE_PATH);
+/**
+ * Delete the API configuration details
+ *
+ * @param payload
+ * @returns {Promise<*>}
+ */
+export const deleteConfigDetails = async (payload) => {
+	const resp = await axios.delete(`${window.PCCAdmin.rest_url}/oauth/credentials`,
+        {headers: {'X-WP-Nonce': window.PCCAdmin.nonce}}
+	);
+
+	return resp
 };
 
-export const persistConfigDetails = async (payload) => {
-  await persistDetailsToDatabase(payload, CONFIG_FILE_PATH);
-};
 
-export const deleteConfigDetails = async () => console.log(CONFIG_FILE_PATH); //@todo: refactor to delete from DB
+/**
+ * Persist details to the database
+ *
+ * @param payload
+ * @returns {Promise<any>}
+ */
+export const persistDetailsToDatabase = async (payload) => {
+	const resp = await axios.post(`${window.PCCAdmin.rest_url}/oauth/credentials`,
+		payload,
+		{
+			headers: {
+				'X-WP-Nonce': window.PCCAdmin.nonce
+			}
+		}
+	);
 
-//@todo: refactor to persist in DB
-const persistDetailsToDatabase = async (payload, filePath) => {
-  //writeFileSync(filePath, JSON.stringify(payload, null, 2)); @todo: send payload to endpoint
+	return resp;
 };

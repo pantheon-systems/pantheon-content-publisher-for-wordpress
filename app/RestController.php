@@ -46,6 +46,11 @@ class RestController
 				'method' => 'POST',
 				'callback' => [$this, 'saveCredentials'],
 			],
+			[
+				'route' => '/oauth/credentials',
+				'method' => 'DELETE',
+				'callback' => [$this, 'deleteSavedCredentials'],
+			],
 		];
 
 		foreach ($endpoints as $endpoint) {
@@ -149,16 +154,16 @@ class RestController
 			return new WP_REST_Response(esc_html__('You are not authorized to perform this action.', PCC_HANDLE), 401);
 		}
 
-		$data = $request->get_json_params();
+		$data = $request->get_params();
 		// Validate input field
-		if (empty($data['data'])) {
+		if (empty($data)) {
 			return new WP_REST_Response(
 				esc_html__('Validation failed.', PCC_HANDLE),
 				400
 			);
 		}
 
-		return update_option(PCC_CREDENTIALS_OPTION_KEY, serialize($data['data'])) ?
+		return update_option(PCC_CREDENTIALS_OPTION_KEY, serialize($data)) ?
 			new WP_REST_Response(
 				esc_html__('Credentials saved.', PCC_HANDLE),
 				200
@@ -168,4 +173,26 @@ class RestController
 				500
 			);
 	}
+
+    /**
+     * Delete saved credentials from the database.
+     *
+     * @return WP_REST_Response
+     */
+    public function deleteSavedCredentials()
+    {
+        if (!current_user_can('manage_options')) {
+            return new WP_REST_Response(esc_html__('You are not authorized to perform this action.', PCC_HANDLE), 401);
+        }
+
+        return delete_option(PCC_CREDENTIALS_OPTION_KEY) ?
+            new WP_REST_Response(
+                esc_html__('Credentials deleted.', PCC_HANDLE),
+                200
+            ) :
+            new WP_REST_Response(
+                esc_html__('Failed to delete Credentials.', PCC_HANDLE),
+                500
+            );
+    }
 }

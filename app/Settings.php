@@ -68,7 +68,8 @@ class Settings
 	{
 		?>
 		<div id="pcc-app">
-			<button>Foo</button>
+			<button id="pcc-app-authenticate">Authenticate</button>
+			<button id="pcc-app-disconnect">Disconnect</button>
 		</div>
 		<?php
 	}
@@ -94,6 +95,28 @@ class Settings
 			[],
 			filemtime(PCC_PLUGIN_DIR . 'dist/app.css')
 		);
+
+		wp_localize_script(
+			PCC_HANDLE,
+			'PCCAdmin',
+			[
+				'rest_url' => get_rest_url(get_current_blog_id(),PCC_API_NAMESPACE),
+				'nonce' => wp_create_nonce('wp_rest'),
+				'plugin_main_page' => menu_page_url(PCC_HANDLE, false),
+			] + ['credentials' => $this->getCredentials()]
+		);
+	}
+
+	/**
+	 * Get credentials from the database.
+	 *
+	 * @return array|mixed
+	 */
+	private function getCredentials()
+	{
+		$pccCredentials = get_option(PCC_CREDENTIALS_OPTION_KEY);
+
+		return $pccCredentials ? unserialize($pccCredentials) : [];
 	}
 
 }
