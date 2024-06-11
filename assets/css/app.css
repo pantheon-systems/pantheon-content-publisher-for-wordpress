@@ -1,0 +1,178 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100&display=swap');
+
+/** Start General Styles */
+
+.pcc-content .primary-button {
+    @apply bg-primary inline-block mt-10 text-19.2 font-semibold rounded-[0.3rem] px-8 py-4 text-white ;
+    transition: all 0.3s ease;
+}
+
+.pcc-content .primary-button:hover,.primary-button:active,.primary-button:focus {
+    @apply bg-secondary text-white outline-0 border-0;
+    box-shadow: 0 0 0 0 white;
+}
+
+.pcc-content .secondary-button{
+    @apply h-[3.6rem] flex items-center inline-block text-primary font-semibold border border-solid border-primary text-base rounded-[0.3rem] py-[1rem] px-[1.3rem] hover:text-secondary hover:border-secondary
+}
+
+.pcc-content .secondary-button:hover,.secondary-button:active,.secondary-button:focus{
+    @apply text-secondary border-secondary  outline-0;
+    box-shadow: 0 0 0 0 white;
+}
+
+.pcc-content .page-content {
+    @apply pr-[2rem]
+}
+
+.pcc-content .page-grid {
+    @apply grid grid-cols-12 items-center
+}
+
+.page-styles {
+    @apply bg-white container rounded-[0.6rem] py-[2.5rem]
+}
+
+.pcc-content .page-header {
+    @apply text-7xl font-bold capitalize
+}
+
+.pcc-content .page-description {
+    @apply text-base mt-4
+}
+
+.pcc-content .inputs-container {
+    @apply flex flex-col gap-2
+}
+
+.pcc-content .input-wrapper {
+    @apply flex items-center gap-[0.9rem]
+}
+
+.pcc-content .radio-input[type=radio] {
+    @apply w-[1.9rem] h-[1.9rem]
+}
+
+.pcc-content .radio-input[type=radio]:checked::before {
+    @apply bg-white
+}
+
+.pcc-content .radio-input[type=radio]:focus {
+    border-color: #0e65e9;
+    border-width: 4px;
+    box-shadow: 0 0 0 0 #0e65e9;
+}
+.pcc-content .input-text-field[type=text]{
+    @apply w-full py-[0.8rem] px-[1rem] text-base;
+    border-color: #CFCFD3;
+}
+.pcc-content .input-text-field[type=text]:focus{
+    border-color: #CFCFD3;
+    box-shadow: 0 0 0 0 white;
+    outline: none;
+}
+
+.pcc-content .divider-border {
+    @apply border border-solid border-light-grey mb-8
+}
+/** End General Styles */
+
+/** Start Header Styles */
+
+.pcc-content .header {
+    @apply ms-[-2rem] bg-white px-8 py-4 flex items-center gap-4 mb-[2rem]
+}
+
+.pcc-content .header-title {
+    @apply text-base font-bold
+}
+
+/** End Header Styles */
+
+/** Start Footer Styles */
+
+.pcc-content .footer .documentation-link {
+    @apply inline-block text-xs text-primary font-semibold
+}
+
+.pcc-content .footer .documentation-link:hover {
+    @apply text-secondary
+}
+
+.pcc-content .footer .documentation-link svg {
+    @apply w-[2rem] h-[2rem] inline-block ms-[-0.5rem]
+}
+
+.pcc-content .footer .documentation-link svg path {
+    fill: #3017A1;
+}
+
+/** End Footer Styles */
+
+/** Start Welcome Page */
+.pcc-content .welcome-page {
+    @apply page-styles flex flex-col justify-between
+}
+/** End Welcome Page */
+
+/** Start Auth Page */
+.pcc-content .auth-page {
+    @apply page-styles pb-4
+}
+
+.pcc-content .auth-page .primary-button {
+    @apply mb-4
+}
+
+.pcc-content .auth-page .collection-link {
+    @apply text-primary hover:text-secondary text-sm inline mt-6 mb-8 flex items-center gap-[0.1rem]
+}
+
+.pcc-content .auth-page .collection-link svg {
+    @apply w-[2.5rem] pt-[0.6rem]
+}
+
+.pcc-content .auth-page .collection-link svg path {
+    fill: #3017A1;
+}
+
+/** End Auth Page */
+
+/** Start Create Collection Page */
+.pcc-content .create-collection-page {
+    @apply page-styles flex flex-col justify-between
+}
+
+.pcc-content .create-collection-page .primary-button {
+    @apply mb-10
+}
+
+/** End Create collection Page */
+/** Start Connected Collection Page */
+
+.pcc-content .connected-collection-page {
+    @apply page-styles flex flex-col justify-between
+}
+
+.pcc-content .connected-collection-page .primary-button {
+    @apply mb-20
+}
+
+/** End Connected collection Page */
+
+/** Start disconnect confirm Page */
+
+
+.pcc-content .disconnect-confirm-page {
+    @apply page-styles flex flex-col justify-between
+}
+
+.pcc-content .disconnect-confirm-page .secondary-button ,.disconnect-confirm-page .primary-button {
+    @apply flex items-center px-8 py-[1.45rem] text-19.2 mt-0  h-[4.8rem]
+}
+
+/** End disconnect confirm Page */

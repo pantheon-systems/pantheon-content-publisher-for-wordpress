@@ -13,7 +13,6 @@ namespace PCC;
  */
 class Plugin
 {
-
 	/**
 	 * Class instance.
 	 *
@@ -58,5 +57,4 @@ class Plugin
 
 		return self::$instance;
 	}
-
 }
