@@ -13,10 +13,11 @@ if (document.getElementById('pcc-app-authenticate') != undefined) {
 		login([]);
 	});
 }
-if (document.getElementById('pcc-app-disconnect') != undefined) {
-	document.getElementById('pcc-app-disconnect').addEventListener('click', async function () {
+if (document.getElementById('pcc-disconnect') != undefined) {
+	document.getElementById('pcc-disconnect').addEventListener('click', async function () {
 		try {
 			await deleteConfigDetails();
+			window.location.href = window.PCCAdmin.plugin_main_page;
 		} catch (e) {
 			console.log('Error while disconnecting', e);
 		}

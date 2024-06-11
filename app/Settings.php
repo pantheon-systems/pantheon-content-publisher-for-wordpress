@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Configure Admin Dashboard Settings UI, logic and assets.
  *
@@ -22,6 +23,15 @@ use const PCC_PLUGIN_DIR_URL;
  */
 class Settings
 {
+	private $pages = [
+		'disconnect-collection' => PCC_PLUGIN_DIR . 'admin/templates/partials/disconnect-collection.php',
+		'confirm-disconnect' => PCC_PLUGIN_DIR . 'admin/templates/partials/confirm-disconnect.php',
+		'authenticate' => PCC_PLUGIN_DIR . 'admin/templates/partials/authenticate.php',
+		'connected-collection'  => PCC_PLUGIN_DIR . 'admin/templates/partials/disconnect-collection.php',
+		'create-collection' => PCC_PLUGIN_DIR . 'admin/templates/partials/create-collection.php',
+		'setup' => PCC_PLUGIN_DIR . 'admin/templates/partials/setup.php',
+	];
+
 	public function __construct()
 	{
 		$this->addHooks();
@@ -66,12 +76,17 @@ class Settings
 	 */
 	public function renderSettingsPage(): void
 	{
-		?>
-		<div id="pcc-app">
-			<button id="pcc-app-authenticate">Authenticate</button>
-			<button id="pcc-app-disconnect">Disconnect</button>
-		</div>
-		<?php
+		$view = isset($_GET['view']) ? $_GET['view'] : null;
+		if ($view) {
+			require $this->pages[$view];
+			return;
+		}
+
+		if ($this->getCredentials()) {
+			require $this->pages['create-collection'];
+		} else {
+			require $this->pages['setup'];
+		}
 	}
 
 	/**
@@ -100,7 +115,7 @@ class Settings
 			PCC_HANDLE,
 			'PCCAdmin',
 			[
-				'rest_url' => get_rest_url(get_current_blog_id(),PCC_API_NAMESPACE),
+				'rest_url' => get_rest_url(get_current_blog_id(), PCC_API_NAMESPACE),
 				'nonce' => wp_create_nonce('wp_rest'),
 				'plugin_main_page' => menu_page_url(PCC_HANDLE, false),
 			] + ['credentials' => $this->getCredentials()]
@@ -118,5 +133,4 @@ class Settings
 
 		return $pccCredentials ? unserialize($pccCredentials) : [];
 	}
-
 }

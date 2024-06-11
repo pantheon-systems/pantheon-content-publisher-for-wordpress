@@ -1,4 +1,5 @@
 <?php
+
 /*
  * REST controller class exposing endpoints for OAuth2 authorization and credentials saving.
  */
@@ -19,7 +20,6 @@ use const PCC_HANDLE;
  */
 class RestController
 {
-
 	/**
 	 * Class constructor, hooking into the REST API initialization.
 	 */
@@ -50,6 +50,11 @@ class RestController
 				'route' => '/oauth/credentials',
 				'method' => 'DELETE',
 				'callback' => [$this, 'deleteSavedCredentials'],
+			],
+			[
+				'route' => '/collection',
+				'method' => 'POST',
+				'callback' => [$this, 'createCollection'],
 			],
 		];
 
@@ -141,6 +146,15 @@ class RestController
 		return true;
 	}
 
+	public function createCollection(WP_REST_Request $request): WP_REST_Response
+	{
+		// Implement the function to create a collection
+		// Example:
+		// $response = wp_remote_post('https://example.com/api/collections', array(...));
+		// return json_decode(wp_remote_retrieve_body($response), true);
+		return new WP_REST_Response(esc_html__('You are not authorized to perform this action.', PCC_HANDLE));
+	}
+
 	/**
 	 * Save Credentials into database
 	 *
@@ -174,25 +188,25 @@ class RestController
 			);
 	}
 
-    /**
-     * Delete saved credentials from the database.
-     *
-     * @return WP_REST_Response
-     */
-    public function deleteSavedCredentials()
-    {
-        if (!current_user_can('manage_options')) {
-            return new WP_REST_Response(esc_html__('You are not authorized to perform this action.', PCC_HANDLE), 401);
-        }
+	/**
+	 * Delete saved credentials from the database.
+	 *
+	 * @return WP_REST_Response
+	 */
+	public function deleteSavedCredentials()
+	{
+		if (!current_user_can('manage_options')) {
+			return new WP_REST_Response(esc_html__('You are not authorized to perform this action.', PCC_HANDLE), 401);
+		}
 
-        return delete_option(PCC_CREDENTIALS_OPTION_KEY) ?
-            new WP_REST_Response(
-                esc_html__('Credentials deleted.', PCC_HANDLE),
-                200
-            ) :
-            new WP_REST_Response(
-                esc_html__('Failed to delete Credentials.', PCC_HANDLE),
-                500
-            );
-    }
+		return delete_option(PCC_CREDENTIALS_OPTION_KEY) ?
+			new WP_REST_Response(
+				esc_html__('Credentials deleted.', PCC_HANDLE),
+				200
+			) :
+			new WP_REST_Response(
+				esc_html__('Failed to delete Credentials.', PCC_HANDLE),
+				500
+			);
+	}
 }
