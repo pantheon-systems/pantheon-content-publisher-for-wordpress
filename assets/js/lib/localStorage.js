@@ -8,10 +8,9 @@ export const CONFIG_FILE_PATH = "config.json";
 //@todo: refactor to use DB values
 export const getLocalAuthDetails = async (requiredScopes,) => {
   let credentials = window.PCCAdmin.credentials;
-	if (undefined === credentials.length || !credentials.access_token) {
+	if (undefined === credentials || !credentials.access_token) {
 		return null;
 	}
-
 
   // Return null if required scope is not present
   const grantedScopes = new Set(credentials.scope?.split(" ") || []);
@@ -52,7 +51,7 @@ export const getLocalConfigDetails = async () => {
  * @returns {Promise<*>}
  */
 export const deleteConfigDetails = async (payload) => {
-	const resp = await axios.delete(`${window.PCCAdmin.rest_url}/oauth/credentials`,
+	const resp = await axios.delete(`${window.PCCAdmin.rest_url}/disconnect`,
         {headers: {'X-WP-Nonce': window.PCCAdmin.nonce}}
 	);
 

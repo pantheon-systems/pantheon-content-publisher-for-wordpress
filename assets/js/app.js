@@ -4,6 +4,7 @@ require('./login');
 
 import login from './login';
 import {fetchTokenAndSaveCredentials, getCodeFromURL, redirectToMainPage} from "./lib/oauthHelper";
+import createSite from "./createSite";
 
 console.info('window.PCCAdmin.credentials', window.PCCAdmin.credentials);
 
@@ -13,11 +14,18 @@ if (document.getElementById('pcc-app-authenticate') != undefined) {
 		login([]);
 	});
 }
+
+if (document.getElementById('pcc-create-site') != undefined) {
+	document.getElementById('pcc-create-site').addEventListener('click', async function () {
+		await createSite();
+		redirectToMainPage();
+	});
+}
 if (document.getElementById('pcc-disconnect') != undefined) {
 	document.getElementById('pcc-disconnect').addEventListener('click', async function () {
 		try {
 			await deleteConfigDetails();
-			window.location.href = window.PCCAdmin.plugin_main_page;
+			redirectToMainPage();
 		} catch (e) {
 			console.log('Error while disconnecting', e);
 		}

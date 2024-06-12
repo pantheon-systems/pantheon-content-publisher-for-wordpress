@@ -50,5 +50,5 @@ export const fetchTokenAndSaveCredentials = async (code) => {
  * Redirect to main page
  */
 export const redirectToMainPage = () => {
-	window.location.href = window.location.origin + '/wp-admin/admin.php?page=pcc'
+	window.location.href = window.PCCAdmin.plugin_main_page
 }
