@@ -15,12 +15,12 @@
 					   stroke="#3017A1" stroke-width="2" fill="none"/>
 			 </g>
 			</svg>
-				<span>Collections</span>
+				<span><?php esc_html_e('Collections', PCC_HANDLE) ?></span>
 			</a>
-			<h1 class="page-header">Set-up Pantheon Content Publisher for Google Docs</h1>
-			<p class="page-description">A publishing tool that connects Google Docs to your WordPress website in real
-				time.</p>
-			<a class="primary-button" href="">Authenticate</a>
+			<h1 class="page-header"><?php esc_html_e('Set-up Pantheon Content Publisher for Google Docs', PCC_HANDLE) ?></h1>
+			<p class="page-description"><?php esc_html_e('A publishing tool that connects Google Docs to your WordPress website in real
+				time.', PCC_HANDLE) ?></p>
+			<a class="primary-button" href=""><?php esc_html_e('Authenticate', PCC_HANDLE) ?></a>
 		</div>
 	</div>
 </div>

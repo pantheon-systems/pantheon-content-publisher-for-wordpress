@@ -66,16 +66,9 @@
     border-width: 4px;
     box-shadow: 0 0 0 0 #0e65e9;
 }
-.pcc-content .input-text-field[type=text]{
-    @apply w-full py-[0.8rem] px-[1rem] text-base;
-    border-color: #CFCFD3;
+.pcc-content .text-with-border{
+    @apply w-full border border-light py-[0.8rem] px-[1rem] text-base text-light rounded-[0.3rem];
 }
-.pcc-content .input-text-field[type=text]:focus{
-    border-color: #CFCFD3;
-    box-shadow: 0 0 0 0 white;
-    outline: none;
-}
-
 .pcc-content .divider-border {
     @apply border border-solid border-light-grey mb-8
 }
@@ -176,3 +169,12 @@
 }
 
 /** End disconnect confirm Page */
+
+/** Start continue setup Page */
+
+
+.pcc-content .continue-setup {
+    @apply bg-white container border-l-8 border-primary py-[2.5rem]
+}
+
+/** End continue setup Page */
