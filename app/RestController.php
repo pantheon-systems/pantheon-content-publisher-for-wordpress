@@ -56,6 +56,11 @@ class RestController
 				'method' => 'POST',
 				'callback' => [$this, 'createCollection'],
 			],
+			[
+				'route' => '/disconnect',
+				'method' => 'DELETE',
+				'callback' => [$this, 'disconnect'],
+			],
 		];
 
 		foreach ($endpoints as $endpoint) {
@@ -148,11 +153,16 @@ class RestController
 
 	public function createCollection(WP_REST_Request $request): WP_REST_Response
 	{
-		// Implement the function to create a collection
-		// Example:
-		// $response = wp_remote_post('https://example.com/api/collections', array(...));
-		// return json_decode(wp_remote_retrieve_body($response), true);
-		return new WP_REST_Response(esc_html__('You are not authorized to perform this action.', PCC_HANDLE));
+		$siteId = sanitize_text_field($request->get_param('site_id') ?: '');
+		if (!$siteId) {
+			return new WP_REST_Response([
+				'message' => esc_html__('Missing site id', PCC_HANDLE),
+			], 400);
+		}
+
+		update_option(PCC_SITE_ID_OPTION_KEY, $siteId);
+
+		return new WP_REST_Response(esc_html__('Saved!', PCC_HANDLE));
 	}
 
 	/**
@@ -208,5 +218,25 @@ class RestController
 				esc_html__('Failed to delete Credentials.', PCC_HANDLE),
 				500
 			);
+	}
+
+	/**
+	 * Delete saved data from the database.
+	 *
+	 * @return WP_REST_Response
+	 */
+	public function disconnect()
+	{
+		if (!current_user_can('manage_options')) {
+			return new WP_REST_Response(esc_html__('You are not authorized to perform this action.', PCC_HANDLE), 401);
+		}
+
+		delete_option(PCC_CREDENTIALS_OPTION_KEY);
+		delete_option(PCC_SITE_ID_OPTION_KEY);
+
+		return new WP_REST_Response(
+			esc_html__('Saved Data deleted.', PCC_HANDLE),
+			200
+		);
 	}
 }
