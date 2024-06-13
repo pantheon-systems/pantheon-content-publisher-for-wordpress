@@ -7,7 +7,11 @@ $queryString = $_SERVER['QUERY_STRING'];
 $headers = getallheaders();
 
 // Build the target URL
-$targetUrl = 'https://cleanwp.test/wp-admin/admin.php?page=pcc';
+$targetUrl = getenv('ROUTER_URL');
+if (!$targetUrl) {
+	echo 'The ROUTER_URL environment variable is not set.';
+	exit();
+}
 if (!empty($queryString)) {
 	$targetUrl .= '&' . $queryString;
 }
