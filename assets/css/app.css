@@ -25,6 +25,16 @@
     box-shadow: 0 0 0 0 white;
 }
 
+.pcc-content .danger-button {
+    @apply bg-light-red inline-block mt-10 text-19.2 font-semibold rounded-[0.3rem] px-8 py-4 text-white ;
+    transition: all 0.3s ease;
+}
+
+.pcc-content .danger-button:hover,.danger-button:active,.danger-button:focus {
+    @apply bg-secondary text-white outline-0 border-0;
+    box-shadow: 0 0 0 0 white;
+}
+
 .pcc-content .page-content {
     @apply pr-[2rem]
 }
@@ -164,8 +174,8 @@
     @apply page-styles flex flex-col justify-between
 }
 
-.pcc-content .disconnect-confirm-page .secondary-button ,.disconnect-confirm-page .primary-button {
-    @apply flex items-center px-8 py-[1.45rem] text-19.2 mt-0  h-[4.8rem]
+.pcc-content .disconnect-confirm-page .secondary-button ,.pcc-content .disconnect-confirm-page .danger-button {
+    @apply flex items-center justify-center px-8 py-[1.45rem] text-19.2 mt-0  h-[4.8rem]
 }
 
 /** End disconnect confirm Page */
@@ -174,7 +184,10 @@
 
 
 .pcc-content .continue-setup {
-    @apply bg-white container border-l-8 border-primary py-[2.5rem]
+    @apply bg-white w-full border-primary py-[2.5rem] ps-8
+}
+.pcc-content.pcc-notice {
+    @apply border-l-primary
 }
 
 /** End continue setup Page */
