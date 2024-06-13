@@ -28,7 +28,6 @@
     "wp-coding-standards/wpcs": "^3.1"
   },
   "scripts": {
-    "test": "php start-server.php",
     "auth": "@php -r '$argv = $_SERVER[\"argv\"]; $output = []; exec(\"valet links\", $output); $url = $argv[1] ?? false; foreach ($output as $line) { if (str_contains($line, dirname(__DIR__, 3))) { preg_match(\"/\\| (http.*) \\|/\", $line, $matches); if (isset($matches[1]) && !$url) { $url = explode(\" \", $matches[1])[0]; } break; } } if (!$url) { echo \"Could not find the URL for the current site directory. Please provide the URL as an argument.\n\"; exit(1); }if (!isset(parse_url($url)[\"scheme\"])) { $url = \"http://{$url}\";} putenv(\"ROUTER_URL=$url/wp-admin/admin.php?page=pcc\"); echo \"\n\n\n\nForwarding localhost:3030 requests to $url/wp-admin/admin.php?page=pcc.\n\n\"; $command = \"php -S localhost:3030 local-auth.php\"; passthru($command);'",
     "php:lint:autofix": "vendor/bin/phpcbf --ignore=*/vendor/ --standard=./phpcs.xml ",
     "php:lint:report": "vendor/bin/phpcs --ignore=*/vendor/ --standard=./phpcs.xml; phpcs --ignore=*/vendor/ --standard=./phpcs.xml --extensions=php --report=source"
