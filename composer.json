@@ -3,33 +3,34 @@
   "type": "wordpress-plugin",
   "description": "Publish WordPress content from Google Docs with Pantheon Content Cloud.",
   "keywords": [
-	"wordpress",
-	"plugin"
+    "wordpress",
+    "plugin"
   ],
   "support": {
-	"email": "contact@pantheon.io"
+    "email": "contact@pantheon.io"
   },
   "authors": [
-	{
-	  "name": "Pantheon",
-	  "email": "contact@pantheon.io",
-	  "homepage": "https://pantheon.io"
-	}
+    {
+      "name": "Pantheon",
+      "email": "contact@pantheon.io",
+      "homepage": "https://pantheon.io"
+    }
   ],
   "autoload": {
-	"psr-4": {
-	  "PCC\\": "app/"
-	}
+    "psr-4": {
+      "PCC\\": "app/"
+    }
   },
   "require": {
-	"php": ">=8.3"
+    "php": ">=8.3"
   },
   "require-dev": {
     "wp-coding-standards/wpcs": "^3.1"
   },
   "scripts": {
-	  "php:lint:autofix": "vendor/bin/phpcbf --ignore=*/vendor/ --standard=./phpcs.xml ",
-	  "php:lint:report": "vendor/bin/phpcs --ignore=*/vendor/ --standard=./phpcs.xml; phpcs --ignore=*/vendor/ --standard=./phpcs.xml --extensions=php --report=source"
+    "auth:endpoint": "php -S localhost:3030 auth-router.php",
+    "php:lint:autofix": "vendor/bin/phpcbf --ignore=*/vendor/ --standard=./phpcs.xml ",
+    "php:lint:report": "vendor/bin/phpcs --ignore=*/vendor/ --standard=./phpcs.xml; phpcs --ignore=*/vendor/ --standard=./phpcs.xml --extensions=php --report=source"
   },
   "config": {
     "allow-plugins": {
