@@ -12,7 +12,8 @@
 							class="primary-button"><?php esc_html_e('Sign in with Google', PCC_HANDLE) ?></button>
 				</div>
 				<div class="col-span-5 justify-self-end">
-					<img src="<?php echo PCC_PLUGIN_DIR_URL . 'assets/images/welcome-icon.png' ?>" alt="Pantheon Logo">
+					<img src="<?php echo esc_url(PCC_PLUGIN_DIR_URL . 'assets/images/welcome-icon.png') ?>"
+						 alt="Pantheon Logo">
 				</div>
 			</div>
 			<?php
