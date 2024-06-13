@@ -23,5 +23,17 @@
   },
   "require": {
 	"php": ">=8.3"
+  },
+  "require-dev": {
+    "wp-coding-standards/wpcs": "^3.1"
+  },
+  "scripts": {
+	  "php:lint:autofix": "vendor/bin/phpcbf --ignore=*/vendor/ --standard=./phpcs.xml ",
+	  "php:lint:report": "vendor/bin/phpcs --ignore=*/vendor/ --standard=./phpcs.xml; phpcs --ignore=*/vendor/ --standard=./phpcs.xml --extensions=php --report=source"
+  },
+  "config": {
+    "allow-plugins": {
+      "dealerdirect/phpcodesniffer-composer-installer": true
+    }
   }
 }
