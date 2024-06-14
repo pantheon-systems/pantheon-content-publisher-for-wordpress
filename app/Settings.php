@@ -24,7 +24,6 @@ use const PCC_PLUGIN_DIR_URL;
 class Settings
 {
 	private $pages = [
-		'authenticate' => PCC_PLUGIN_DIR . 'admin/templates/partials/authenticate.php',
 		'connected-collection'  => PCC_PLUGIN_DIR . 'admin/templates/partials/connected-collection.php',
 		'create-collection' => PCC_PLUGIN_DIR . 'admin/templates/partials/create-collection.php',
 		'disconnect-confirmation'  => PCC_PLUGIN_DIR . 'admin/templates/partials/disconnect-confirmation.php',
@@ -76,6 +75,7 @@ class Settings
 	 */
 	public function renderSettingsPage(): void
 	{
+        // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		$view = isset($_GET['view']) ? $_GET['view'] : null;
 		if ($view && isset($this->pages[$view])) {
 			require $this->pages[$view];
