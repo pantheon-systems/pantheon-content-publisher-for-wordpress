@@ -6,8 +6,8 @@
 		<div class="welcome-page">
 			<div class="page-grid">
 				<div class="col-span-7">
-					<h1 class="page-header"><?php esc_html_e('Set-up Pantheon Content Publisher for Google Docs', PCC_HANDLE) ?></h1>
-					<p class="page-description"><?php esc_html_e('A publishing tool that connects Google Docs to your WordPress website in real time.', PCC_HANDLE) ?></p>
+					<h1 class="page-header"><?php esc_html_e('Connect Google Workspace to your WordPress site', PCC_HANDLE) ?></h1>
+					<p class="page-description"><?php esc_html_e('Effortlessly publish content from Google Docs to your WordPress site using the Pantheon Content Publisher.', PCC_HANDLE) ?></p>
 					<button id="pcc-app-authenticate"
 							class="primary-button"><?php esc_html_e('Sign in with Google', PCC_HANDLE) ?></button>
 				</div>

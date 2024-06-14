@@ -8,7 +8,7 @@
 				<div class="col-span-7">
 					<h1 class="page-header"><?php esc_html_e('Are you sure you want to disconnect the content collection?', PCC_HANDLE) ?></h1>
 					<p class="page-description"><?php esc_html_e('All Google Docs in the collection will be disconnected from your site, and you wont be able to update site content in Google Docs anymore. The content will remain on the site, manageable using the WordPress admin interface.', PCC_HANDLE) ?></p>
-					<div class="flex gap-6 mt-[3rem]">
+					<div class="flex gap-4 mt-[1.875rem]">
 						<a class="secondary-button" href="<?php echo esc_url(add_query_arg(['page' => PCC_HANDLE, 'view' => 'connected-collection'], admin_url())) ?>"><?php esc_html_e('Stay connected', PCC_HANDLE) ?></a>
 						<a class="danger-button" id="pcc-disconnect" href="#"><?php esc_html_e('Disconnect', PCC_HANDLE) ?></a>
 					</div>

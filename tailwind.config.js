@@ -5,27 +5,18 @@ module.exports = {
 	content: ["./admin/**/*.{php,html,js}"],
 	theme: {
 		fontSize: {
-			'xs': ['1.2rem', '1.8rem'],
-			'sm': ['1.4rem', '2.1rem'],
-			'base': ['1.6rem', '2.4rem'],
-			'lg': ['1.8rem', '2.88rem'],
-			'19.2': ['1.92rem', '2.88rem'],
-			'xl': ['2rem', '3rem'],
-			'2xl': ['2.4rem', '3.6rem'],
-			'3xl': ['2.4rem', '3.84rem'],
-			'6xl': ['3.2rem','5.12rem'],
-			'7xl': ['3.2rem', '4.8rem'],
-			'8xl': ['4.8rem', '4.8rem'],
-			'9xl': ['6.4rem', '9.6rem'],
-			'1.2': ['1.2rem', '1.68rem'],
-			'1.3':['1.3rem','1.95rem'],
-			'1.4':['1.4rem','1.95rem'],
-			'1.5':['1.5rem', '2.25rem'],
-			'1.6':['1.6rem', '2.25rem'],
-			'1.8':['1.8rem','2.7rem'],
-			'2': ['2rem', '3.2rem'],
-			'2.4':['2.4rem','2.926rem'],
-			'2.8':['2.8rem','4.2rem'],
+			'xs': ['0.75rem', '1.125rem'], // 12px, 18px
+			'sm': ['0.875rem', '1.3125rem'], // 14px, 21px
+			'base': ['1rem', '1.5rem'], // 16px, 24px
+			'lg': ['1.125rem', '1.8rem'], // 18px, 28.8px
+			'19.2': ['1.2rem', '1.8rem'], // 19.2px, 28.8px
+			'xl': ['1.25rem', '1.875rem'], // 20px, 30px
+			'2xl': ['1.5rem', '2.25rem'], // 24px, 36px
+			'3xl': ['1.5rem', '2.4rem'], // 24px, 38.4px
+			'6xl': ['2rem', '3.2rem'], // 32px, 51.2px
+			'7xl': ['2rem', '3rem'], // 32px, 48px
+			'8xl': ['3rem', '3rem'], // 48px, 48px
+			'9xl': ['4rem', '6rem'], // 64px, 96px
 		},
 		colors: {
 			'primary':'#3017A1',
@@ -48,7 +39,7 @@ module.exports = {
 			},
 			container: {
 				center:true,
-				padding: '4rem',
+				padding: '2.5rem',
 				screens: {
 					sm: '100%',
 					md: '100%',
@@ -61,15 +52,6 @@ module.exports = {
 			},
 		},
 	},
-	plugins: [
-		plugin(function ({ addBase }) {
-			addBase({
-				'html': { fontSize: '62.5%' }, // Sets base font size to 10px (62.5% of 16px)
-				'body': {
-					'@apply font-poppins': {fontSize: '62.5%'}, // Applies Poppins font family
-				},
-			});
-		}),
-	],
+	plugins: [],
 }
 

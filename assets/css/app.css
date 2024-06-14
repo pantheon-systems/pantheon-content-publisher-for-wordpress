@@ -6,163 +6,166 @@
 
 /** Start General Styles */
 
-.pcc-content .primary-button {
-    @apply bg-primary inline-block mt-10 text-19.2 font-semibold rounded-[0.3rem] px-8 py-4 text-white ;
+.pcc-content{
+    @apply font-poppins
+}
+.primary-button {
+    @apply bg-primary inline-block mt-6 text-19.2 font-semibold rounded-[0.1875rem] px-[1.25rem] py-[0.625rem] text-white ; /*done*/
     transition: all 0.3s ease;
 }
 
-.pcc-content .primary-button:hover,.primary-button:active,.primary-button:focus {
-    @apply bg-secondary text-white outline-0 border-0;
+.primary-button:hover,.primary-button:active,.primary-button:focus {
+    @apply bg-secondary text-white outline-0 border-0; /*done*/
     box-shadow: 0 0 0 0 white;
 }
 
-.pcc-content .secondary-button{
-    @apply h-[3.6rem] flex items-center inline-block text-primary font-semibold border border-solid border-primary text-base rounded-[0.3rem] py-[1rem] px-[1.3rem] hover:text-secondary hover:border-secondary
+.secondary-button{
+    @apply h-[2.25rem] flex items-center inline-block text-primary font-semibold border border-solid border-primary text-base rounded-[0.1875rem] py-[0.625rem] px-[0.8125rem] transition-all /*done*/
 }
 
-.pcc-content .secondary-button:hover,.secondary-button:active,.secondary-button:focus{
-    @apply text-secondary border-secondary  outline-0;
+.secondary-button:hover,.secondary-button:active,.secondary-button:focus{
+    @apply duration-500 text-secondary bg-secondary  border-secondary  outline-0 bg-opacity-10; /*done*/
     box-shadow: 0 0 0 0 white;
 }
 
-.pcc-content .danger-button {
-    @apply bg-light-red inline-block mt-10 text-19.2 font-semibold rounded-[0.3rem] px-8 py-4 text-white ;
+.danger-button {
+    @apply bg-light-red inline-block mt-6 text-19.2 font-semibold rounded-[0.1875rem] px-[1.25rem] py-[0.625rem] text-white ; /*done*/
     transition: all 0.3s ease;
 }
 
-.pcc-content .danger-button:hover,.danger-button:active,.danger-button:focus {
-    @apply bg-secondary text-white outline-0 border-0;
+.danger-button:hover,.danger-button:active,.danger-button:focus {
+    @apply bg-secondary text-white outline-0 border-0; /*done*/
     box-shadow: 0 0 0 0 white;
 }
 
-.pcc-content .page-content {
-    @apply pr-[2rem]
+.page-content {
+    @apply pr-[1.25rem] /*done*/
 }
 
-.pcc-content .page-grid {
-    @apply grid grid-cols-12 items-center
+.page-grid {
+    @apply grid grid-cols-12 items-center /*done*/
 }
 
 .page-styles {
-    @apply bg-white container rounded-[0.6rem] py-[2.5rem]
+    @apply bg-white container rounded-[0.0.375rem] py-[1rem] /*done*/
 }
 
-.pcc-content .page-header {
-    @apply text-7xl font-bold capitalize
+.page-header {
+    @apply text-7xl font-bold capitalize /*done*/
 }
 
-.pcc-content .page-description {
-    @apply text-base mt-4
+.page-description {
+    @apply text-base mt-2.5 /*done*/
 }
 
-.pcc-content .inputs-container {
-    @apply flex flex-col gap-2
+.inputs-container {
+    @apply flex flex-col gap-[0.3125rem] /*done*/
 }
 
-.pcc-content .input-wrapper {
-    @apply flex items-center gap-[0.9rem]
+.input-wrapper {
+    @apply flex items-center gap-[0.5625rem] /*done*/
 }
 
-.pcc-content .radio-input[type=radio] {
-    @apply w-[1.9rem] h-[1.9rem]
+.radio-input[type=radio] {
+    @apply w-[1.25rem] h-[1.25rem] /*done*/
 }
 
-.pcc-content .radio-input[type=radio]:checked::before {
-    @apply bg-white
+.radio-input[type=radio]:checked::before {
+    @apply bg-white /*done*/
 }
 
-.pcc-content .radio-input[type=radio]:focus {
+.radio-input[type=radio]:focus {
     border-color: #0e65e9;
-    border-width: 4px;
-    box-shadow: 0 0 0 0 #0e65e9;
+    border-width: 0.25rem;
+    box-shadow: 0 0 0 0 #0e65e9; /*done*/
 }
-.pcc-content .text-with-border{
-    @apply w-full border border-light py-[0.8rem] px-[1rem] text-base text-light rounded-[0.3rem];
+.text-with-border{
+    @apply w-full border border-light py-[0.5rem] px-[0.625rem] text-base text-grey rounded-[0.3rem]; /*done*/
 }
-.pcc-content .divider-border {
-    @apply border border-solid border-light-grey mb-8
+.divider-border {
+    @apply border border-solid border-light-grey mb-[1.25rem] /*done*/
 }
 /** End General Styles */
 
 /** Start Header Styles */
 
-.pcc-content .header {
-    @apply ms-[-2rem] bg-white px-8 py-4 flex items-center gap-4 mb-[2rem]
+.header {
+    @apply ms-[-1.25rem] bg-white px-[1.25rem] py-[0.625rem] flex items-center gap-[0.625rem] mb-[1.25rem] /*done*/ /*done*/
 }
 
-.pcc-content .header-title {
-    @apply text-base font-bold
+.header-title {
+    @apply text-base font-bold /*done*/
 }
 
 /** End Header Styles */
 
 /** Start Footer Styles */
 
-.pcc-content .footer .documentation-link {
-    @apply inline-block text-xs text-primary font-semibold
+.footer .documentation-link {
+    @apply inline-block text-xs text-primary font-semibold /*done*/
 }
 
-.pcc-content .footer .documentation-link:hover {
-    @apply text-secondary
+.footer .documentation-link:hover {
+    @apply text-secondary /*done*/
 }
 
-.pcc-content .footer .documentation-link svg {
-    @apply w-[2rem] h-[2rem] inline-block ms-[-0.5rem]
+.footer .documentation-link svg {
+    @apply w-[1.25rem] h-[1.25rem] inline-block ms-[-0.3125rem] /*done*/
 }
 
-.pcc-content .footer .documentation-link svg path {
+.footer .documentation-link svg path {
     fill: #3017A1;
 }
 
 /** End Footer Styles */
 
 /** Start Welcome Page */
-.pcc-content .welcome-page {
-    @apply page-styles flex flex-col justify-between
+.welcome-page {
+    @apply page-styles flex flex-col justify-between /*done*/
 }
 /** End Welcome Page */
 
 /** Start Auth Page */
-.pcc-content .auth-page {
-    @apply page-styles pb-4
+.auth-page {
+    @apply page-styles pb-2.5 /*done*/
 }
 
-.pcc-content .auth-page .primary-button {
-    @apply mb-4
+.auth-page .primary-button {
+    @apply mb-2.5 /*done*/
 }
 
-.pcc-content .auth-page .collection-link {
-    @apply text-primary hover:text-secondary text-sm inline mt-6 mb-8 flex items-center gap-[0.1rem]
+.auth-page .collection-link {
+    @apply text-primary hover:text-secondary text-sm inline mt-4 mb-[1.25rem] flex items-center gap-[1px] /*done*/ /*done*/
 }
 
-.pcc-content .auth-page .collection-link svg {
-    @apply w-[2.5rem] pt-[0.6rem]
+.auth-page .collection-link svg {
+    @apply w-[1.5rem] pt-[0.375rem] /*done*/
 }
 
-.pcc-content .auth-page .collection-link svg path {
+.auth-page .collection-link svg path {
     fill: #3017A1;
 }
 
 /** End Auth Page */
 
 /** Start Create Collection Page */
-.pcc-content .create-collection-page {
-    @apply page-styles flex flex-col justify-between
+.create-collection-page {
+    @apply page-styles flex flex-col justify-between /*done*/
 }
 
-.pcc-content .create-collection-page .primary-button {
-    @apply mb-10
+.create-collection-page .primary-button {
+    @apply mb-6 /*done*/
 }
 
 /** End Create collection Page */
 /** Start Connected Collection Page */
 
-.pcc-content .connected-collection-page {
-    @apply page-styles flex flex-col justify-between
+.connected-collection-page {
+    @apply page-styles flex flex-col justify-between /*done*/
 }
 
-.pcc-content .connected-collection-page .primary-button {
-    @apply mb-20
+.connected-collection-page .primary-button {
+    @apply mb-12 /*done*/
 }
 
 /** End Connected collection Page */
@@ -170,12 +173,12 @@
 /** Start disconnect confirm Page */
 
 
-.pcc-content .disconnect-confirm-page {
-    @apply page-styles flex flex-col justify-between
+.disconnect-confirm-page {
+    @apply page-styles flex flex-col justify-between /*done*/
 }
 
-.pcc-content .disconnect-confirm-page .secondary-button ,.pcc-content .disconnect-confirm-page .danger-button {
-    @apply flex items-center justify-center px-8 py-[1.45rem] text-19.2 mt-0  h-[4.8rem]
+.disconnect-confirm-page .secondary-button ,.disconnect-confirm-page .danger-button {
+    @apply flex items-center justify-center px-[1.25rem] py-[0.9rem] text-19.2 mt-0  h-[3rem] /*done*/
 }
 
 /** End disconnect confirm Page */
@@ -183,11 +186,20 @@
 /** Start continue setup Page */
 
 
-.pcc-content .continue-setup {
-    @apply bg-white w-full border-primary py-[2.5rem] ps-8
+.continue-setup {
+    @apply bg-white w-full border-primary py-[1.5rem] ps-[1.25rem] /*done*/
 }
-.pcc-content.pcc-notice {
-    @apply border-l-primary
+.continue-setup header {
+    @apply pt-0 /*done*/
+}
+.notice-dismiss {
+    @apply p-4 /*done*/
+}
+.continue-setup .page-description {
+    @apply mb-0 mt-[0.3125rem] /*done*/ /*done*/
+}
+.pcc-notice {
+    @apply border-l-primary /*done*/
 }
 
 /** End continue setup Page */

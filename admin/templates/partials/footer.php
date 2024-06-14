@@ -1,6 +1,6 @@
-<div class="footer py-4">
+<div class="footer pb-2.5">
 	<div class="divider-border"></div>
-	<div class="">
+	<div class="pt-[0.4rem]">
 		<span class="text-base"><?php esc_html_e('For detailed instructions on publishing content from Google Docs,', PCC_HANDLE) ?></span>
 		<a href="#" class="documentation-link" target="_blank">
 			<span><?php esc_html_e('please refer to our documentation', PCC_HANDLE) ?></span>
