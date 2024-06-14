@@ -47,7 +47,7 @@
 }
 
 .page-styles {
-    @apply bg-white container rounded-[0.0.375rem] py-[1rem] /*done*/
+    @apply bg-white container rounded-[0.375rem] py-[1rem] /*done*/
 }
 
 .page-header {
@@ -66,19 +66,20 @@
     @apply flex items-center gap-[0.5625rem] /*done*/
 }
 
-.radio-input[type=radio] {
-    @apply w-[1.25rem] h-[1.25rem] /*done*/
+.input-wrapper input[type=radio]  {
+    @apply w-[1.25rem] h-[1.25rem] relative /*done*/
 }
 
-.radio-input[type=radio]:checked::before {
-    @apply bg-white /*done*/
+.input-wrapper input[type=radio]:checked::before {
+    @apply bg-white rounded-full w-[1.25rem] h-[1.25rem] border-[0.25rem] border-checked absolute top-[-22%] left-[-22%];/*done*/
+    content: "";
 }
 
-.radio-input[type=radio]:focus {
-    border-color: #0e65e9;
-    border-width: 0.25rem;
+.input-wrapper input[type=radio]:focus {
+    @apply w-[1.25rem] h-[1.25rem] border-checked;
     box-shadow: 0 0 0 0 #0e65e9; /*done*/
 }
+
 .text-with-border{
     @apply w-full border border-light py-[0.5rem] px-[0.625rem] text-base text-grey rounded-[0.3rem]; /*done*/
 }

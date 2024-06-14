@@ -21,6 +21,7 @@ module.exports = {
 		colors: {
 			'primary':'#3017A1',
 			'secondary':'#664bd6',
+			'checked':'#0e65e9',
 			'black':'#000000',
 			'light-red':'#CA3521',
 			'grey':'#6D6D78',
