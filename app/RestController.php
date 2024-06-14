@@ -160,7 +160,15 @@ class RestController
 			], 400);
 		}
 
+		$postType = sanitize_text_field($request->get_param('post_type') ?: '');
+		if (!$postType) {
+			return new WP_REST_Response([
+				'message' => esc_html__('Missing integration post type', PCC_HANDLE),
+			], 400);
+		}
+
 		update_option(PCC_SITE_ID_OPTION_KEY, $siteId);
+		update_option(PCC_INTEGRATION_POST_TYPE_OPTION_KEY, $postType);
 
 		return new WP_REST_Response(esc_html__('Saved!', PCC_HANDLE));
 	}
@@ -233,6 +241,7 @@ class RestController
 
 		delete_option(PCC_CREDENTIALS_OPTION_KEY);
 		delete_option(PCC_SITE_ID_OPTION_KEY);
+		delete_option(PCC_INTEGRATION_POST_TYPE_OPTION_KEY);
 
 		return new WP_REST_Response(
 			esc_html__('Saved Data deleted.', PCC_HANDLE),
