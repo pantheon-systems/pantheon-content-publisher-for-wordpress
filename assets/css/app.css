@@ -1,0 +1,206 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100&display=swap');
+
+/** Start General Styles */
+
+.pcc-content{
+    @apply font-poppins
+}
+.primary-button {
+    @apply bg-primary inline-block mt-6 text-19.2 font-semibold rounded-[0.1875rem] px-[1.25rem] py-[0.625rem] text-white ; /*done*/
+    transition: all 0.3s ease;
+}
+
+.primary-button:hover,.primary-button:active,.primary-button:focus {
+    @apply bg-secondary text-white outline-0 border-0; /*done*/
+    box-shadow: 0 0 0 0 white;
+}
+
+.secondary-button{
+    @apply h-[2.25rem] flex items-center inline-block text-primary font-semibold border border-solid border-primary text-base rounded-[0.1875rem] py-[0.625rem] px-[0.8125rem] transition-all /*done*/
+}
+
+.secondary-button:hover,.secondary-button:active,.secondary-button:focus{
+    @apply duration-500 text-secondary bg-secondary  border-secondary  outline-0 bg-opacity-10; /*done*/
+    box-shadow: 0 0 0 0 white;
+}
+
+.danger-button {
+    @apply bg-light-red inline-block mt-6 text-19.2 font-semibold rounded-[0.1875rem] px-[1.25rem] py-[0.625rem] text-white ; /*done*/
+    transition: all 0.3s ease;
+}
+
+.danger-button:hover,.danger-button:active,.danger-button:focus {
+    @apply bg-secondary text-white outline-0 border-0; /*done*/
+    box-shadow: 0 0 0 0 white;
+}
+
+.page-content {
+    @apply pr-[1.25rem] /*done*/
+}
+
+.page-grid {
+    @apply grid grid-cols-12 items-center /*done*/
+}
+
+.page-styles {
+    @apply bg-white container rounded-[0.375rem] py-[1rem] /*done*/
+}
+
+.page-header {
+    @apply text-7xl font-bold capitalize /*done*/
+}
+
+.page-description {
+    @apply text-base mt-2.5 /*done*/
+}
+
+.inputs-container {
+    @apply flex flex-col gap-[0.3125rem] /*done*/
+}
+
+.input-wrapper {
+    @apply flex items-center gap-[0.5625rem] /*done*/
+}
+
+.input-wrapper input[type=radio]  {
+    @apply w-[1.25rem] h-[1.25rem] relative /*done*/
+}
+
+.input-wrapper input[type=radio]:checked::before {
+    @apply bg-white rounded-full w-[1.25rem] h-[1.25rem] border-[0.25rem] border-checked absolute top-[-22%] left-[-22%];/*done*/
+    content: "";
+}
+
+.input-wrapper input[type=radio]:focus {
+    @apply w-[1.25rem] h-[1.25rem] border-checked;
+    box-shadow: 0 0 0 0 #0e65e9; /*done*/
+}
+
+.text-with-border{
+    @apply w-full border border-light py-[0.5rem] px-[0.625rem] text-base text-grey rounded-[0.3rem]; /*done*/
+}
+.divider-border {
+    @apply border border-solid border-light-grey mb-[1.25rem] /*done*/
+}
+/** End General Styles */
+
+/** Start Header Styles */
+
+.header {
+    @apply ms-[-1.25rem] bg-white px-[1.25rem] py-[0.625rem] flex items-center gap-[0.625rem] mb-[1.25rem] /*done*/ /*done*/
+}
+
+.header-title {
+    @apply text-base font-bold /*done*/
+}
+
+/** End Header Styles */
+
+/** Start Footer Styles */
+
+.footer .documentation-link {
+    @apply inline-block text-xs text-primary font-semibold /*done*/
+}
+
+.footer .documentation-link:hover {
+    @apply text-secondary /*done*/
+}
+
+.footer .documentation-link svg {
+    @apply w-[1.25rem] h-[1.25rem] inline-block ms-[-0.3125rem] /*done*/
+}
+
+.footer .documentation-link svg path {
+    fill: #3017A1;
+}
+
+/** End Footer Styles */
+
+/** Start Welcome Page */
+.welcome-page {
+    @apply page-styles flex flex-col justify-between /*done*/
+}
+/** End Welcome Page */
+
+/** Start Auth Page */
+.auth-page {
+    @apply page-styles pb-2.5 /*done*/
+}
+
+.auth-page .primary-button {
+    @apply mb-2.5 /*done*/
+}
+
+.auth-page .collection-link {
+    @apply text-primary hover:text-secondary text-sm inline mt-4 mb-[1.25rem] flex items-center gap-[1px] /*done*/ /*done*/
+}
+
+.auth-page .collection-link svg {
+    @apply w-[1.5rem] pt-[0.375rem] /*done*/
+}
+
+.auth-page .collection-link svg path {
+    fill: #3017A1;
+}
+
+/** End Auth Page */
+
+/** Start Create Collection Page */
+.create-collection-page {
+    @apply page-styles flex flex-col justify-between /*done*/
+}
+
+.create-collection-page .primary-button {
+    @apply mb-6 /*done*/
+}
+
+/** End Create collection Page */
+/** Start Connected Collection Page */
+
+.connected-collection-page {
+    @apply page-styles flex flex-col justify-between /*done*/
+}
+
+.connected-collection-page .primary-button {
+    @apply mb-12 /*done*/
+}
+
+/** End Connected collection Page */
+
+/** Start disconnect confirm Page */
+
+
+.disconnect-confirm-page {
+    @apply page-styles flex flex-col justify-between /*done*/
+}
+
+.disconnect-confirm-page .secondary-button ,.disconnect-confirm-page .danger-button {
+    @apply flex items-center justify-center px-[1.25rem] py-[0.9rem] text-19.2 mt-0  h-[3rem] /*done*/
+}
+
+/** End disconnect confirm Page */
+
+/** Start continue setup Page */
+
+
+.continue-setup {
+    @apply bg-white w-full border-primary py-[1.5rem] ps-[1.25rem] /*done*/
+}
+.continue-setup header {
+    @apply pt-0 /*done*/
+}
+.notice-dismiss {
+    @apply p-4 /*done*/
+}
+.continue-setup .page-description {
+    @apply mb-0 mt-[0.3125rem] /*done*/ /*done*/
+}
+.pcc-notice {
+    @apply border-l-primary /*done*/
+}
+
+/** End continue setup Page */

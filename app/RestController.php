@@ -1,4 +1,5 @@
 <?php
+
 /*
  * REST controller class exposing endpoints for OAuth2 authorization and credentials saving.
  */
@@ -19,7 +20,6 @@ use const PCC_HANDLE;
  */
 class RestController
 {
-
 	/**
 	 * Class constructor, hooking into the REST API initialization.
 	 */
@@ -50,6 +50,16 @@ class RestController
 				'route' => '/oauth/credentials',
 				'method' => 'DELETE',
 				'callback' => [$this, 'deleteSavedCredentials'],
+			],
+			[
+				'route' => '/collection',
+				'method' => 'POST',
+				'callback' => [$this, 'createCollection'],
+			],
+			[
+				'route' => '/disconnect',
+				'method' => 'DELETE',
+				'callback' => [$this, 'disconnect'],
 			],
 		];
 
@@ -141,6 +151,28 @@ class RestController
 		return true;
 	}
 
+	public function createCollection(WP_REST_Request $request): WP_REST_Response
+	{
+		$siteId = sanitize_text_field($request->get_param('site_id') ?: '');
+		if (!$siteId) {
+			return new WP_REST_Response([
+				'message' => esc_html__('Missing site id', PCC_HANDLE),
+			], 400);
+		}
+
+		$postType = sanitize_text_field($request->get_param('post_type') ?: '');
+		if (!$postType) {
+			return new WP_REST_Response([
+				'message' => esc_html__('Missing integration post type', PCC_HANDLE),
+			], 400);
+		}
+
+		update_option(PCC_SITE_ID_OPTION_KEY, $siteId);
+		update_option(PCC_INTEGRATION_POST_TYPE_OPTION_KEY, $postType);
+
+		return new WP_REST_Response(esc_html__('Saved!', PCC_HANDLE));
+	}
+
 	/**
 	 * Save Credentials into database
 	 *
@@ -174,25 +206,46 @@ class RestController
 			);
 	}
 
-    /**
-     * Delete saved credentials from the database.
-     *
-     * @return WP_REST_Response
-     */
-    public function deleteSavedCredentials()
-    {
-        if (!current_user_can('manage_options')) {
-            return new WP_REST_Response(esc_html__('You are not authorized to perform this action.', PCC_HANDLE), 401);
-        }
+	/**
+	 * Delete saved credentials from the database.
+	 *
+	 * @return WP_REST_Response
+	 */
+	public function deleteSavedCredentials()
+	{
+		if (!current_user_can('manage_options')) {
+			return new WP_REST_Response(esc_html__('You are not authorized to perform this action.', PCC_HANDLE), 401);
+		}
 
-        return delete_option(PCC_CREDENTIALS_OPTION_KEY) ?
-            new WP_REST_Response(
-                esc_html__('Credentials deleted.', PCC_HANDLE),
-                200
-            ) :
-            new WP_REST_Response(
-                esc_html__('Failed to delete Credentials.', PCC_HANDLE),
-                500
-            );
-    }
+		return delete_option(PCC_CREDENTIALS_OPTION_KEY) ?
+			new WP_REST_Response(
+				esc_html__('Credentials deleted.', PCC_HANDLE),
+				200
+			) :
+			new WP_REST_Response(
+				esc_html__('Failed to delete Credentials.', PCC_HANDLE),
+				500
+			);
+	}
+
+	/**
+	 * Delete saved data from the database.
+	 *
+	 * @return WP_REST_Response
+	 */
+	public function disconnect()
+	{
+		if (!current_user_can('manage_options')) {
+			return new WP_REST_Response(esc_html__('You are not authorized to perform this action.', PCC_HANDLE), 401);
+		}
+
+		delete_option(PCC_CREDENTIALS_OPTION_KEY);
+		delete_option(PCC_SITE_ID_OPTION_KEY);
+		delete_option(PCC_INTEGRATION_POST_TYPE_OPTION_KEY);
+
+		return new WP_REST_Response(
+			esc_html__('Saved Data deleted.', PCC_HANDLE),
+			200
+		);
+	}
 }

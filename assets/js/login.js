@@ -1,6 +1,7 @@
 import {OAuth2Client} from "google-auth-library";
 import {getApiConfig} from "./lib/apiConfig";
 import {getLocalAuthDetails} from "./lib/localStorage";
+
 const OAUTH_SCOPES = ["https://www.googleapis.com/auth/userinfo.email"];
 
 export default function login(extraScopes) {
@@ -8,10 +9,10 @@ export default function login(extraScopes) {
     async (resolve, reject) => {
       try {
         const authData = await getLocalAuthDetails(extraScopes);
-		// @TODO to be discussed / reviewed with the team
+        // @TODO to be discussed / reviewed with the team
         // if (authData) {
         //   const scopes = authData.scope?.split(" ");
-		//
+        //
         //   if (!extraScopes?.length || extraScopes.find((x) => scopes?.includes(x))) {
         //     const jwtPayload = parseJwt(authData.id_token);
         //     return resolve();
@@ -25,15 +26,14 @@ export default function login(extraScopes) {
         });
 
         // Generate the url that will be used for the consent dialog.
-        const authorizeUrl = oAuth2Client.generateAuthUrl({
+        window.location.href = oAuth2Client.generateAuthUrl({
           access_type: "offline",
           scope: [
             ...OAUTH_SCOPES,
             ...extraScopes
           ],
         });
-		window.location.href = authorizeUrl;
-		return resolve();
+        return resolve();
         //@todo: refactor to use a WP endpoint to handle the redirect
         //const server = http.createServer(async (req, res) => {
         //  try {
