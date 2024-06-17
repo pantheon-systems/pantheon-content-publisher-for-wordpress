@@ -24,10 +24,10 @@ use const PCC_PLUGIN_DIR_URL;
 class Settings
 {
 	private $pages = [
-		'connected-collection'  => PCC_PLUGIN_DIR . 'admin/templates/partials/connected-collection.php',
-		'create-collection' => PCC_PLUGIN_DIR . 'admin/templates/partials/create-collection.php',
-		'disconnect-confirmation'  => PCC_PLUGIN_DIR . 'admin/templates/partials/disconnect-confirmation.php',
-		'setup' => PCC_PLUGIN_DIR . 'admin/templates/partials/setup.php',
+		'connected-collection'    => PCC_PLUGIN_DIR . 'admin/templates/partials/connected-collection.php',
+		'create-collection'       => PCC_PLUGIN_DIR . 'admin/templates/partials/create-collection.php',
+		'disconnect-confirmation' => PCC_PLUGIN_DIR . 'admin/templates/partials/disconnect-confirmation.php',
+		'setup'                   => PCC_PLUGIN_DIR . 'admin/templates/partials/setup.php',
 	];
 
 	public function __construct()
@@ -58,8 +58,8 @@ class Settings
 	public function addMenu(): void
 	{
 		add_menu_page(
-			esc_html__('PCC', PCC_HANDLE),
-			esc_html__('PCC', PCC_HANDLE),
+			esc_html__('Pantheon Content Publisher', PCC_HANDLE),
+			esc_html__('Pantheon Content Publisher', PCC_HANDLE),
 			'manage_options',
 			PCC_HANDLE,
 			[$this, 'renderSettingsPage'],
@@ -79,18 +79,39 @@ class Settings
 		$view = isset($_GET['view']) ? $_GET['view'] : null;
 		if ($view && isset($this->pages[$view])) {
 			require $this->pages[$view];
+
 			return;
 		}
 
 		// Site id is set and Credentials are set
 		if ($this->getSiteId() && $this->getCredentials()) {
 			require $this->pages['connected-collection'];
-		// Credentials is set but Site id is not set then user needs to create a new site
+			// Credentials is set but Site id is not set then user needs to create a new site
 		} elseif ($this->getCredentials()) {
 			require $this->pages['create-collection'];
 		} else {
 			require $this->pages['setup'];
 		}
+	}
+
+	/**
+	 * @return false|mixed|null
+	 */
+	private function getSiteId()
+	{
+		return get_option(PCC_SITE_ID_OPTION_KEY);
+	}
+
+	/**
+	 * Get credentials from the database.
+	 *
+	 * @return array|mixed
+	 */
+	private function getCredentials()
+	{
+		$pccCredentials = get_option(PCC_CREDENTIALS_OPTION_KEY);
+
+		return $pccCredentials ? unserialize($pccCredentials) : [];
 	}
 
 	/**
@@ -119,32 +140,12 @@ class Settings
 			PCC_HANDLE,
 			'PCCAdmin',
 			[
-				'rest_url' => get_rest_url(get_current_blog_id(), PCC_API_NAMESPACE),
-				'nonce' => wp_create_nonce('wp_rest'),
+				'rest_url'         => get_rest_url(get_current_blog_id(), PCC_API_NAMESPACE),
+				'nonce'            => wp_create_nonce('wp_rest'),
 				'plugin_main_page' => menu_page_url(PCC_HANDLE, false),
-				'site_url' => site_url(),
+				'site_url'         => site_url(),
 			] + ['credentials' => $this->getCredentials()]
 		);
-	}
-
-	/**
-	 * Get credentials from the database.
-	 *
-	 * @return array|mixed
-	 */
-	private function getCredentials()
-	{
-		$pccCredentials = get_option(PCC_CREDENTIALS_OPTION_KEY);
-
-		return $pccCredentials ? unserialize($pccCredentials) : [];
-	}
-
-	/**
-	 * @return false|mixed|null
-	 */
-	private function getSiteId()
-	{
-		return get_option(PCC_SITE_ID_OPTION_KEY);
 	}
 
 	/**
@@ -158,7 +159,7 @@ class Settings
 		}
 
 		// Show notification when authentication details are not set or collection not created
-		if (!$this->getCredentials() || !$this->getSiteId()) {
+		if (! $this->getCredentials() || ! $this->getSiteId()) {
 			add_action('admin_notices', [$this, 'pluginNotification']);
 		}
 	}
