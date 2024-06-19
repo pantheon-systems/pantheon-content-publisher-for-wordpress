@@ -86,12 +86,15 @@ class Settings
 		// Site id is set and Credentials are set
 		if ($this->getSiteId() && $this->getCredentials()) {
 			require $this->pages['connected-collection'];
-			// Credentials is set but Site id is not set then user needs to create a new site
-		} elseif ($this->getCredentials()) {
-			require $this->pages['create-collection'];
-		} else {
-			require $this->pages['setup'];
+
+			return;
 		}
+		if ($this->getCredentials()) {
+			require $this->pages['create-collection'];
+
+			return;
+		}
+		require $this->pages['setup'];
 	}
 
 	/**
@@ -154,7 +157,7 @@ class Settings
 	public function pluginAdminNotice()
 	{
 		global $pagenow;
-		if ($pagenow != 'plugins.php') {
+		if ($pagenow !== 'plugins.php') {
 			return;
 		}
 
