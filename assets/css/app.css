@@ -202,5 +202,21 @@
 .pcc-notice {
     @apply border-l-primary /*done*/
 }
+.pcc-spinner-container{
+    @apply flex flex-col h-[75vh] items-center justify-center gap-4 m-auto
+}
+.pcc-spinner {
+    @apply w-8 h-8;
+    animation: spin 0.5s linear infinite;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
 
 /** End continue setup Page */
