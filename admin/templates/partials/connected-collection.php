@@ -22,28 +22,28 @@
 						</span>
 					</a>
 				</div>
-                <div>
-                    <div class="divider-border"></div>
-                    <p class="text-lg font-bold mt-10 mb-[1.25rem]" >
-                        <?php esc_html_e('Publish your document as:', PCC_HANDLE) ?>
-                    </p>
-                    <div class="inputs-container">
-                        <?php foreach (['post', 'page'] as $postType) : ?>
-                            <div class="input-wrapper">
-                                <input class="radio-input" name="post_type" type="radio"
-                                       value="<?php echo esc_attr($postType)?>"
-                                       id="radio-<?php echo esc_attr($postType)?>"
-                                    <?php checked(get_option(PCC_INTEGRATION_POST_TYPE_OPTION_KEY), $postType); ?> >
-                                <label class="text-base" for="radio-<?php echo esc_attr($postType)?>">
-                                    <?php esc_html_e(ucfirst($postType), PCC_HANDLE) ?>
-                                </label>
-                            </div>
-                        <?php endforeach; ?>
-                    </div>
-                    <a class="primary-button" id="pcc-create-site" href="#">
-                        <?php esc_html_e('Save configuration', PCC_HANDLE) ?>
-                    </a>
-                </div>
+				<div>
+					<div class="divider-border"></div>
+					<p class="text-lg font-bold mt-10 mb-[1.25rem]" >
+						<?php esc_html_e('Publish your document as:', PCC_HANDLE) ?>
+					</p>
+					<div class="inputs-container">
+						<?php foreach (['post', 'page'] as $postType) : ?>
+							<div class="input-wrapper">
+								<input class="radio-input" name="post_type" type="radio"
+									   value="<?php echo esc_attr($postType)?>"
+									   id="radio-<?php echo esc_attr($postType)?>"
+									<?php checked(get_option(PCC_INTEGRATION_POST_TYPE_OPTION_KEY), $postType); ?> >
+								<label class="text-base" for="radio-<?php echo esc_attr($postType)?>">
+									<?php esc_html_e(ucfirst($postType), PCC_HANDLE) ?>
+								</label>
+							</div>
+						<?php endforeach; ?>
+					</div>
+					<a class="primary-button" id="pcc-create-site" href="#">
+						<?php esc_html_e('Save configuration', PCC_HANDLE) ?>
+					</a>
+				</div>
 			</div>
 			<?php
 			require 'footer.php';

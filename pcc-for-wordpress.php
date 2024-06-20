@@ -1,7 +1,9 @@
-<?php //phpcs:disable Files.SideEffects.FoundWithSymbols
+<?php
+
+//phpcs:disable Files.SideEffects.FoundWithSymbols
 
 /**
- * Plugin Name: Pantheon Content Cloud for WordPress
+ * Plugin Name: Pantheon Content Publisher
  * Description: Publish WordPress content from Google Docs with Pantheon Content Cloud.
  * Plugin URI: https://pantheon.io
  * Author: Pantheon
@@ -14,7 +16,7 @@
 namespace PCC;
 
 // Exit if accessed directly.
-if (!defined('ABSPATH')) {
+if (! defined('ABSPATH')) {
 	exit;
 }
 

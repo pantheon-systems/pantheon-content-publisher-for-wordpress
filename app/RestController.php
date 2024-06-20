@@ -6,6 +6,9 @@
 
 namespace PCC;
 
+use PccPhpSdk\api\ArticlesApi;
+use PccPhpSdk\core\PccClient;
+use PccPhpSdk\core\PccClientConfig;
 use WP_REST_Request;
 use WP_REST_Response;
 
@@ -37,39 +40,77 @@ class RestController
 	{
 		$endpoints = [
 			[
-				'route' => '/oauth/redirect',
-				'method' => 'GET',
+				'route'    => '/oauth/redirect',
+				'method'   => 'GET',
 				'callback' => [$this, 'handleOauthRedirect'],
 			],
 			[
-				'route' => '/oauth/credentials',
-				'method' => 'POST',
+				'route'    => '/oauth/credentials',
+				'method'   => 'POST',
 				'callback' => [$this, 'saveCredentials'],
 			],
 			[
-				'route' => '/oauth/credentials',
-				'method' => 'DELETE',
+				'route'    => '/oauth/credentials',
+				'method'   => 'DELETE',
 				'callback' => [$this, 'deleteSavedCredentials'],
 			],
 			[
-				'route' => '/collection',
-				'method' => 'POST',
+				'route'    => '/collection',
+				'method'   => 'POST',
 				'callback' => [$this, 'createCollection'],
 			],
 			[
-				'route' => '/disconnect',
-				'method' => 'DELETE',
+				'route'    => '/webhook',
+				'method'   => 'get',
+				'callback' => [$this, 'handleWebhook'],
+			],
+			[
+				'route'    => '/disconnect',
+				'method'   => 'DELETE',
 				'callback' => [$this, 'disconnect'],
 			],
 		];
 
 		foreach ($endpoints as $endpoint) {
 			register_rest_route(PCC_API_NAMESPACE, $endpoint['route'], [
-				'methods' => $endpoint['method'],
-				'callback' => $endpoint['callback'],
+				'methods'             => $endpoint['method'],
+				'callback'            => $endpoint['callback'],
 				'permission_callback' => [$this, 'permissionCallback'],
 			]);
 		}
+	}
+
+	/**
+	 * Handle incoming webhook requests.
+	 * @return void
+	 */
+	public function handleWebhook()
+	{
+		//@todo: validate request, capture incoming data
+		$id          = 'id-goes-here'; //@todo: get the id from the incoming request
+		$fields      = ['id', 'snippet', 'slug', 'title'];
+		$credentials = get_option(PCC_CREDENTIALS_OPTION_KEY);
+		$postType    = get_option(PCC_INTEGRATION_POST_TYPE_OPTION_KEY);
+
+		$pccClientConfig = new PccClientConfig(
+			$credentials['client-id'],
+			$credentials['client-secret'],
+		);
+		$pccClient       = new PccClient($pccClientConfig);
+		$articlesApi     = new ArticlesApi($pccClient);
+		$article         = $articlesApi->getArticle($id, $fields);
+		$articleData     = [
+			'ID'           => $id,
+			'post_title'   => $article->getTitle(),
+			'post_content' => $article->getSnippet(),
+			'post_status'  => 'publish',
+			'post_type'    => $postType,
+			'meta_input'   => [
+				'pcc_id' => $article->getId(),
+			],
+		];
+
+		wp_insert_post($articleData);
 	}
 
 	/**
@@ -82,7 +123,7 @@ class RestController
 	public function handleOauthRedirect(WP_REST_Request $request): WP_REST_Response
 	{
 		$code = $request->get_param('code');
-		if (!$code) {
+		if (! $code) {
 			return new WP_REST_Response([
 				'message' => esc_html__('No authorization code provided', PCC_HANDLE),
 			], 400);
@@ -154,14 +195,14 @@ class RestController
 	public function createCollection(WP_REST_Request $request): WP_REST_Response
 	{
 		$siteId = sanitize_text_field($request->get_param('site_id') ?: '');
-		if (!$siteId) {
+		if (! $siteId) {
 			return new WP_REST_Response([
 				'message' => esc_html__('Missing site id', PCC_HANDLE),
 			], 400);
 		}
 
 		$postType = sanitize_text_field($request->get_param('post_type') ?: '');
-		if (!$postType) {
+		if (! $postType) {
 			return new WP_REST_Response([
 				'message' => esc_html__('Missing integration post type', PCC_HANDLE),
 			], 400);
@@ -182,7 +223,7 @@ class RestController
 	 */
 	public function saveCredentials(WP_REST_Request $request): WP_REST_Response
 	{
-		if (!current_user_can('manage_options')) {
+		if (! current_user_can('manage_options')) {
 			return new WP_REST_Response(esc_html__('You are not authorized to perform this action.', PCC_HANDLE), 401);
 		}
 
@@ -213,7 +254,7 @@ class RestController
 	 */
 	public function deleteSavedCredentials()
 	{
-		if (!current_user_can('manage_options')) {
+		if (! current_user_can('manage_options')) {
 			return new WP_REST_Response(esc_html__('You are not authorized to perform this action.', PCC_HANDLE), 401);
 		}
 
@@ -235,7 +276,7 @@ class RestController
 	 */
 	public function disconnect()
 	{
-		if (!current_user_can('manage_options')) {
+		if (! current_user_can('manage_options')) {
 			return new WP_REST_Response(esc_html__('You are not authorized to perform this action.', PCC_HANDLE), 401);
 		}
 
