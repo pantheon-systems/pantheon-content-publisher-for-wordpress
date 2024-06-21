@@ -60,6 +60,11 @@ class RestController
 				'callback' => [$this, 'createCollection'],
 			],
 			[
+				'route'    => '/collection',
+				'method'   => 'PUT',
+				'callback' => [$this, 'updateCollection'],
+			],
+			[
 				'route'    => '/webhook',
 				'method'   => 'get',
 				'callback' => [$this, 'handleWebhook'],
@@ -210,6 +215,27 @@ class RestController
 
 		update_option(PCC_SITE_ID_OPTION_KEY, $siteId);
 		update_option(PCC_INTEGRATION_POST_TYPE_OPTION_KEY, $postType);
+
+		return new WP_REST_Response(esc_html__('Saved!', PCC_HANDLE));
+	}
+
+	/**
+	 * Update collection settings
+	 *
+	 * @param WP_REST_Request $request
+	 * @return WP_REST_Response
+	 */
+	public function updateCollection(WP_REST_Request $request): WP_REST_Response
+	{
+		$siteId = sanitize_text_field($request->get_param('site_id') ?: '');
+		if ($siteId) {
+			update_option(PCC_SITE_ID_OPTION_KEY, $siteId);
+		}
+
+		$postType = sanitize_text_field($request->get_param('post_type') ?: '');
+		if ($postType) {
+			update_option(PCC_INTEGRATION_POST_TYPE_OPTION_KEY, $postType);
+		}
 
 		return new WP_REST_Response(esc_html__('Saved!', PCC_HANDLE));
 	}

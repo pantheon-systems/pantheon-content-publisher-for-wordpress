@@ -40,7 +40,7 @@
 							</div>
 						<?php endforeach; ?>
 					</div>
-					<a class="primary-button" id="pcc-create-site" href="#">
+					<a class="primary-button" id="pcc-update-collection" href="#">
 						<?php esc_html_e('Save configuration', PCC_HANDLE) ?>
 					</a>
 				</div>
