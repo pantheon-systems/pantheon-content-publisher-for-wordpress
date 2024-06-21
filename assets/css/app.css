@@ -29,12 +29,12 @@
 }
 
 .danger-button {
-    @apply bg-light-red inline-block mt-6 text-19.2 font-semibold rounded-[0.1875rem] px-[1.25rem] py-[0.625rem] text-white ; /*done*/
+    @apply text-light-red border border-light-red  inline-block mt-6 text-19.2 font-semibold rounded-[0.1875rem] px-[1.25rem] py-[0.625rem]; /*done*/
     transition: all 0.3s ease;
 }
 
 .danger-button:hover,.danger-button:active,.danger-button:focus {
-    @apply bg-secondary text-white outline-0 border-0; /*done*/
+    @apply text-light-red border border-light-red bg-hover-red text-light-red  outline-0; /*done*/
     box-shadow: 0 0 0 0 white;
 }
 

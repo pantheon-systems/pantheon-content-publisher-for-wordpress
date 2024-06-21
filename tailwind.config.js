@@ -24,6 +24,7 @@ module.exports = {
 			'checked':'#0e65e9',
 			'black':'#000000',
 			'light-red':'#CA3521',
+			'hover-red':'#FFEDEB',
 			'grey':'#6D6D78',
 			'light':'#CFCFD3',
 			'light-grey':'#eeeeee',
