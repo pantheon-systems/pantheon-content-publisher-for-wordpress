@@ -5,6 +5,7 @@ require('./login');
 import login from './login';
 import {fetchTokenAndSaveCredentials, getCodeFromURL, redirectToMainPage} from "./lib/oauthHelper";
 import createSite from "./createSite";
+import {hideSpinner, showSpinner} from "./helper";
 
 console.info('window.PCCAdmin.credentials', window.PCCAdmin.credentials);
 
@@ -17,8 +18,15 @@ if (document.getElementById('pcc-app-authenticate') != undefined) {
 
 if (document.getElementById('pcc-create-site') != undefined) {
 	document.getElementById('pcc-create-site').addEventListener('click', async function () {
-		await createSite();
-		redirectToMainPage();
+		try {
+			showSpinner();
+			await createSite();
+		} catch (error) {
+			console.error('Error while creating site:', error);
+		} finally {
+			hideSpinner();
+			redirectToMainPage();
+		}
 	});
 }
 if (document.getElementById('pcc-disconnect') != undefined) {

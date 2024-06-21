@@ -1,22 +1,42 @@
 import AddOnApiHelper from "./lib/addonApiHelper";
+import {getSelectedPostType, updateSpinnerText} from "./helper";
 import axios from "axios";
-import {redirectToMainPage} from "./lib/oauthHelper";
 
 export default function createSite() {
 	return new Promise(
 		async (resolve, reject) => {
 			try {
-				let url = window.PCCAdmin.site_url;
-				let selectedPostType = jQuery('input[name="post_type"]:checked').val();
-				let siteId = await AddOnApiHelper.createSite(url);
-				let resp = await axios.post(`${window.PCCAdmin.rest_url}/collection`, {
-						site_id: siteId,
-						post_type: selectedPostType,
-					}, {headers: {'X-WP-Nonce': window.PCCAdmin.nonce}}
-				);
-				return resolve();
-			} catch (e) {
-				reject(e);
+				const siteUrl = window.PCCAdmin.site_url;
+				const selectedPostType = getSelectedPostType();
+				if (!selectedPostType) {
+					alert('Please select a post type');
+					return reject(new Error('Post type not selected'));
+				}
+
+				updateSpinnerText('Creating your collection...');
+				const siteId = await AddOnApiHelper.createSite(siteUrl);
+				await createCollection(siteId, selectedPostType);
+				resolve();
+			} catch (error) {
+				updateSpinnerText('Error while creating your collection. Please try again.');
+				reject(error);
 			}
 		},);
+}
+
+/**
+ * Save created site id & post type in database
+ *
+ * @param siteId
+ * @param postType
+ * @returns {Promise<axios.AxiosResponse<any>>}
+ */
+async function createCollection(siteId, postType) {
+	const { rest_url, nonce } = window.PCCAdmin;
+	return await axios.post(`${rest_url}/collection`, {
+		site_id: siteId,
+		post_type: postType,
+	}, {
+		headers: { 'X-WP-Nonce': nonce }
+	});
 }
