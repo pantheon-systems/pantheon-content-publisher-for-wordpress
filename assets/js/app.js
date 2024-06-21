@@ -5,7 +5,7 @@ require('./login');
 import login from './login';
 import {fetchTokenAndSaveCredentials, getCodeFromURL, redirectToMainPage} from "./lib/oauthHelper";
 import createSite from "./createSite";
-import {hideSpinner, showSpinner} from "./helper";
+import {hideSpinner, showSpinner, updateSpinnerText} from "./helper";
 import updatePostType from "./updatePostType";
 
 console.info('window.PCCAdmin.credentials', window.PCCAdmin.credentials);
@@ -46,10 +46,13 @@ if (document.getElementById('pcc-update-collection') != undefined) {
 if (document.getElementById('pcc-disconnect') != undefined) {
 	document.getElementById('pcc-disconnect').addEventListener('click', async function () {
 		try {
+			showSpinner();
+			updateSpinnerText('Disconnecting your collection...')
 			await deleteConfigDetails();
+		} catch (error) {
+			console.error('Error while disconnecting:', error);
+		} finally {
 			redirectToMainPage();
-		} catch (e) {
-			console.log('Error while disconnecting', e);
 		}
 	});
 }
