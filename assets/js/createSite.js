@@ -9,7 +9,6 @@ export default function createSite() {
 				const siteUrl = window.PCCAdmin.site_url;
 				const selectedPostType = getSelectedPostType();
 				if (!selectedPostType) {
-					alert('Please select a post type');
 					return reject(new Error('Post type not selected'));
 				}
 

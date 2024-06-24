@@ -1,6 +1,7 @@
 import {OAuth2Client} from "google-auth-library";
 import {getApiConfig} from "./lib/apiConfig";
 import {getLocalAuthDetails} from "./lib/localStorage";
+import {showErrorMessage} from "./helper";
 
 const OAUTH_SCOPES = ["https://www.googleapis.com/auth/userinfo.email"];
 
@@ -66,6 +67,7 @@ export default function login(extraScopes) {
         //  open(authorizeUrl, {wait: true}).then((cp) => cp.kill());
         //});
       } catch (e) {
+        showErrorMessage(`Error: ${e.message}`)
         reject(e);
       }
     },);

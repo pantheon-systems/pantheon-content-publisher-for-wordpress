@@ -6,6 +6,7 @@
 		<?php require PCC_PLUGIN_DIR . 'admin/templates/partials/spinner.php'; ?>
 		<div id="pcc-content">
 			<div class="create-collection-page">
+                <?php require PCC_PLUGIN_DIR . 'admin/templates/partials/error-message.php'; ?>
 				<div class="page-grid">
 					<div class="col-span-7 justify-self-start">
 						<h1 class="page-header mt-[1.875rem]">

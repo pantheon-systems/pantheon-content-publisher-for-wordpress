@@ -47,7 +47,7 @@
 }
 
 .page-styles {
-    @apply bg-white container rounded-[0.375rem] py-[1rem] /*done*/
+    @apply bg-white container rounded-[0.375rem] py-[1.5rem] /*done*/
 }
 
 .page-header {
@@ -202,6 +202,11 @@
 .pcc-notice {
     @apply border-l-primary /*done*/
 }
+
+/** End continue setup Page */
+
+/** Start Spinner Page */
+
 .pcc-spinner-container{
     @apply flex flex-col h-[75vh] items-center justify-center gap-4 m-auto
 }
@@ -219,4 +224,12 @@
     }
 }
 
-/** End continue setup Page */
+/** end Spinner Page */
+
+/** start error-notice Page */
+
+.pcc-error-message {
+    @apply px-4 container rounded-[0.375rem] py-4 bg-hover-red
+}
+
+/** end error-notice Page */

@@ -1,4 +1,3 @@
-import AddOnApiHelper from "./lib/addonApiHelper";
 import {getSelectedPostType, updateSpinnerText} from "./helper";
 import axios from "axios";
 
@@ -9,7 +8,6 @@ export default function updatePostType() {
 				const siteUrl = window.PCCAdmin.site_url;
 				const selectedPostType = getSelectedPostType();
 				if (!selectedPostType) {
-					alert('Please select a post type');
 					return reject(new Error('Post type not selected'));
 				}
 
