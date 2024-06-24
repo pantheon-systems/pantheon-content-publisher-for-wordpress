@@ -24,6 +24,7 @@ use const PCC_PLUGIN_DIR_URL;
  */
 class Settings
 {
+	const PCC_STATUS_ENDPOINT = 'api/pantheoncloud/status';
 	private $pages = [
 		'connected-collection'    => PCC_PLUGIN_DIR . 'admin/templates/partials/connected-collection.php',
 		'create-collection'       => PCC_PLUGIN_DIR . 'admin/templates/partials/create-collection.php',
@@ -43,6 +44,7 @@ class Settings
 	 */
 	private function addHooks(): void
 	{
+		add_action('template_redirect', [$this, 'registerPantheonCloudStatusEndpoint']);
 		add_action('admin_menu', [$this, 'addMenu']);
 		add_action(
 			'admin_enqueue_scripts',
@@ -50,6 +52,19 @@ class Settings
 		);
 		add_action('admin_menu', [$this, 'pluginAdminNotice']);
 		add_filter('post_row_actions', [$this, 'addRowActions'], 10, 2);
+	}
+
+	/**
+	 * Register custom endpoint for Pantheon Cloud Status.
+	 * This endpoint is used to check if the site is hosted live.
+	 * and checked only one time to show your website on PCC google addon
+	 */
+	public function registerPantheonCloudStatusEndpoint()
+	{
+		global $wp;
+		if (static::PCC_STATUS_ENDPOINT === $wp->request) {
+			wp_send_json([]);
+		}
 	}
 
 	public function addRowActions($actions, $post)
