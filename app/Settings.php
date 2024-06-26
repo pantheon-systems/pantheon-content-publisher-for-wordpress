@@ -63,7 +63,10 @@ class Settings
 	{
 		global $wp;
 		if (static::PCC_STATUS_ENDPOINT === $wp->request) {
-			wp_send_json([]);
+			header('Content-Type: application/json');
+			status_header(200);
+			echo "{}";
+			exit;
 		}
 	}
 
