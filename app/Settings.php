@@ -271,14 +271,15 @@ class Settings
 	public function modifyAuthorName($authorName)
 	{
 		global $post;
-		$post_type = get_option(PCC_INTEGRATION_POST_TYPE_OPTION_KEY);
-		if ($post->post_type !== $post_type) {
+		$postType = get_option(PCC_INTEGRATION_POST_TYPE_OPTION_KEY);
+		if ($post->post_type !== $postType) {
 			return $authorName;
 		}
-		$pcc_post = get_post_meta($post->ID, PCC_CONTENT_META_KEY, true);
-		if (!$pcc_post) {
-			return $authorName;
+		$value = get_post_meta($post->ID, PCC_CONTENT_META_KEY, true);
+		if ($value) {
+			return self::PCC_AUTHOR;
 		}
-		return self::PCC_AUTHOR;
+
+		return $authorName;
 	}
 }
