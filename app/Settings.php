@@ -55,32 +55,6 @@ class Settings
 		);
 		add_action('admin_menu', [$this, 'pluginAdminNotice']);
 		add_filter('post_row_actions', [$this, 'addRowActions'], 10, 2);
-		add_filter('the_author', [$this,'modifyAuthorName']);
-	}
-
-	/**
-	 * Publish documents from Google Docs.
-	 */
-	public function publishDocuments()
-	{
-//		api/pantheoncloud/document/16Zaqua8BDQaqxmePljZ94huVs7sOcFnWY9msb8KLTc8/?publishingLevel=PRODUCTION
-//		api/pantheoncloud/document/16Zaqua8BDQaqxmePljZ94huVs7sOcFnWY9msb8KLTc8/?pccGrant=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MTk0MTI0MDksImlhdCI6MTcxOTM5MDgwOSwic3ViIjoibWdvdWRhQGNyb3dkZmF2b3JpdGUuY29tIiwic2l0ZSI6InlaYVFyb2FoRU90MlRSZGdZUFhqIiwic2NvcGUiOiJwY2NfZ3JhbnQifQ.qrJc73w8MiLBR7NCVpRy6Hhv-2lelmwBguePkfUaJrQ&publishingLevel=REALTIME
-		global $wp;
-		$strLen = strlen(static::PCC_PUBLISH_DOCUMENT_ENDPOINT);
-		if (substr($wp->request, 0, $strLen) !== static::PCC_PUBLISH_DOCUMENT_ENDPOINT) {
-			return;
-		}
-
-		// Publish document
-		if (isset($_GET['publishingLevel']) && 'production' === strtolower($_GET['publishingLevel'])) {
-			$parts = explode('/', $wp->request);
-			$documentId = end($parts);
-			$pcc = new PccSyncManager($this->getSiteId());
-			$postId = $pcc->fetchAndStoreDocument($documentId);
-
-			wp_redirect(get_permalink($postId));
-			exit;
-		}
 	}
 
 	/**
