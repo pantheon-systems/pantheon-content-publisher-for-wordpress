@@ -10,7 +10,12 @@
 				<div class="page-grid">
 					<div class="col-span-7">
 						<h1 class="page-header">
-							<?php esc_html_e('Are you sure you want to disconnect the content collection?', PCC_HANDLE) ?>
+							<?php
+							esc_html_e(
+								'Are you sure you want to disconnect the content collection?',
+								PCC_HANDLE
+							)
+							?>
 						</h1>
 						<p class="page-description">
 							<?php esc_html_e(

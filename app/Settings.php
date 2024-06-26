@@ -26,6 +26,7 @@ class Settings
 {
 	const PCC_STATUS_ENDPOINT = 'api/pantheoncloud/status';
 	const PCC_PUBLISH_DOCUMENT_ENDPOINT = 'api/pantheoncloud/document/';
+	private const PCC_AUTHOR = 'Pantheon Content Publisher';
 	private $pages = [
 		'connected-collection'    => PCC_PLUGIN_DIR . 'admin/templates/partials/connected-collection.php',
 		'create-collection'       => PCC_PLUGIN_DIR . 'admin/templates/partials/create-collection.php',
@@ -54,6 +55,7 @@ class Settings
 		);
 		add_action('admin_menu', [$this, 'pluginAdminNotice']);
 		add_filter('post_row_actions', [$this, 'addRowActions'], 10, 2);
+		add_filter('the_author', [$this,'modifyAuthorName']);
 	}
 
 	/**
@@ -107,14 +109,30 @@ class Settings
 		if (! $pcc_post) {
 			return $actions;
 		}
-		$actions['pcc'] = sprintf(
-			'<a href="#" class="pcc-sync" data-id="%d">%s</a>',
-			$post->ID,
-			esc_html__(
-				'Edit in Google Docs',
-				PCC_HANDLE
-			) . '<svg width="12px" height="12px" viewBox="0 0 24 24" style="display:inline"><g stroke-width="2.1" stroke="#666" fill="none" stroke-linecap="round" stroke-linejoin="round"><polyline points="17 13.5 17 19.5 5 19.5 5 7.5 11 7.5"></polyline><path d="M14,4.5 L20,4.5 L20,10.5 M20,4.5 L11,13.5"></path></g></svg>'
+
+		$customActions = array(
+			'pcc' => sprintf(
+				'<a href="#" class="pcc-sync" data-id="%d">%s</a>',
+				$post->ID,
+				esc_html__(
+					'Edit in Google Docs',
+					PCC_HANDLE
+				) . '<svg width="12px" height="12px" viewBox="0 0 24 24" style="display:inline">
+                    <g stroke-width="2.1" stroke="#666" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="17 13.5 17 19.5 5 19.5 5 7.5 11 7.5"></polyline>
+                    <path d="M14,4.5 L20,4.5 L20,10.5 M20,4.5 L11,13.5"></path></g></svg>'
+			)
 		);
+
+		$actions = array_merge($customActions, $actions);
+
+		if (isset($actions['edit'])) {
+			unset($actions['edit']);
+		}
+
+		if (isset($actions['inline hide-if-no-js'])) {
+			unset($actions['inline hide-if-no-js']);
+		}
 
 		return $actions;
 	}
@@ -242,5 +260,25 @@ class Settings
 	public function pluginNotification()
 	{
 		require PCC_PLUGIN_DIR . 'admin/templates/partials/plugin-notification.php';
+	}
+
+	/**
+	 * Modify Author name
+	 *
+	 * @param $authorName
+	 * @return mixed|string
+	 */
+	public function modifyAuthorName($authorName)
+	{
+		global $post;
+		$post_type = get_option(PCC_INTEGRATION_POST_TYPE_OPTION_KEY);
+		if ($post->post_type !== $post_type) {
+			return $authorName;
+		}
+		$pcc_post = get_post_meta($post->ID, PCC_CONTENT_META_KEY, true);
+		if (!$pcc_post) {
+			return $authorName;
+		}
+		return self::PCC_AUTHOR;
 	}
 }
