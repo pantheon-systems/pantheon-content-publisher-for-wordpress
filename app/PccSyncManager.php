@@ -21,7 +21,7 @@ class PccSyncManager
 	 */
 	private string $token = '5d8d5649-c060-4f29-b267-e11fa1abdf01';
 
-	private PccClient $pccClient;
+	private $pccClient;
 
 	public function __construct($siteId)
 	{
@@ -48,6 +48,14 @@ class PccSyncManager
 		return $this->pccClient;
 	}
 
+	public function fetchAndStoreDocument($documentId)
+	{
+		$articlesApi = new ArticlesApi($this->pccClient());
+		$article = $articlesApi->getArticleById($documentId);
+
+		return $this->storeArticle($article);
+	}
+
 	/**
 	 * Store articles from PCC to WordPress.
 	 */
@@ -60,11 +68,30 @@ class PccSyncManager
 		$articles = $articlesApi->getAllArticles();
 		/** @var Article $article */
 		foreach ($articles->articles as $article) {
-			$postId = $this->findExistingConnectedPost($article->id);
-			$this->createOrUpdatePost($postId, $article);
+			$this->storeArticle($article);
 		}
 	}
 
+	/**
+	 * Store article.
+	 *
+	 * @param Article $article
+	 * @return int
+	 */
+	private function storeArticle(Article $article)
+	{
+		$postId = $this->findExistingConnectedPost($article->id);
+
+		return $this->createOrUpdatePost($postId, $article);
+	}
+
+	/**
+	 * Create or update post.
+	 *
+	 * @param $postId
+	 * @param Article $article
+	 * @return int post id
+	 */
 	private function createOrUpdatePost($postId, Article $article)
 	{
 		$data = [
@@ -78,11 +105,12 @@ class PccSyncManager
 			$data['ID'] = $postId;
 			$postId = wp_insert_post($data);
 			update_post_meta($postId, PCC_CONTENT_META_KEY, $article->id);
-			return;
+			return $postId;
 		}
 
 		$data['ID'] = $postId;
 		wp_update_post($data);
+		return $postId;
 	}
 
 	/**
