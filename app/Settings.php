@@ -76,7 +76,7 @@ class Settings
 		if ($post->post_type !== $post_type) {
 			return $actions;
 		}
-		$pcc_post = get_post_meta($post->ID, 'pcc_id', true);
+		$pcc_post = get_post_meta($post->ID, PCC_CONTENT_META_KEY, true);
 		if (! $pcc_post) {
 			return $actions;
 		}
