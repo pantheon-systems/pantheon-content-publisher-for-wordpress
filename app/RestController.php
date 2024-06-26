@@ -66,7 +66,7 @@ class RestController
 			],
 			[
 				'route'    => '/webhook',
-				'method'   => 'get',
+				'method'   => 'POST',
 				'callback' => [$this, 'handleWebhook'],
 			],
 			[
@@ -89,33 +89,43 @@ class RestController
 	 * Handle incoming webhook requests.
 	 * @return void
 	 */
-	public function handleWebhook()
+	public function handleWebhook(WP_REST_Request $request)
 	{
-		//@todo: validate request, capture incoming data
-		$id          = 'id-goes-here'; //@todo: get the id from the incoming request
-		$fields      = ['id', 'snippet', 'slug', 'title'];
-		$credentials = get_option(PCC_CREDENTIALS_OPTION_KEY);
-		$postType    = get_option(PCC_INTEGRATION_POST_TYPE_OPTION_KEY);
+		if ($request->get_header('x-pcc-webhook-secret')) {
+			//@todo: validate request, capture incoming data using x-pcc-webhook-secret
+		}
 
-		$pccClientConfig = new PccClientConfig(
-			$credentials['client-id'],
-			$credentials['client-secret'],
-		);
-		$pccClient       = new PccClient($pccClientConfig);
-		$articlesApi     = new ArticlesApi($pccClient);
-		$article         = $articlesApi->getArticle($id, $fields);
-		$articleData     = [
-			'ID'           => $id,
-			'post_title'   => $article->getTitle(),
-			'post_content' => $article->getSnippet(),
-			'post_status'  => 'publish',
-			'post_type'    => $postType,
-			'meta_input'   => [
-				'pcc_id' => $article->getId(),
-			],
-		];
+		$event = $request->get_param('event');
+		$payload = $request->get_param('payload');
+		$siteId = get_option(PCC_SITE_ID_OPTION_KEY);
 
-		wp_insert_post($articleData);
+		// Bail if site id is not set
+		if (!$siteId) {
+			return new WP_REST_Response(
+				esc_html__('Site configuration is pending completion.', PCC_HANDLE),
+				200
+			);
+		}
+
+		if (!is_array($payload) || !isset($payload['articleId']) || empty($payload['articleId'])) {
+			return new WP_REST_Response(esc_html__('Invalid article ID in payload', PCC_HANDLE), 400);
+		}
+
+		$articleId = sanitize_text_field($payload['articleId']);
+		$pccManager = new PccSyncManager($siteId);
+		switch ($event) {
+			case 'article.unpublish':
+				$pccManager->unPublishPostByDocumentId($articleId);
+				break;
+			case 'article.update':
+				$pccManager->fetchAndStoreDocument($articleId);
+				break;
+			default:
+				return new WP_REST_Response(
+					esc_html__('Event type is currently unsupported', PCC_HANDLE),
+					200
+				);
+		}
 	}
 
 	/**
