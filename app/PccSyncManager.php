@@ -23,7 +23,7 @@ class PccSyncManager
 
 	private $pccClient;
 
-	public function __construct($siteId)
+	public function __construct($siteId = null)
 	{
 		// @TODO change it to be dynamic
 		$this->siteId = 'yZaQroahEOt2TRdgYPXj';
@@ -138,5 +138,24 @@ class PccSyncManager
 	private function getIntegrationPostType()
 	{
 		return get_option(PCC_INTEGRATION_POST_TYPE_OPTION_KEY);
+	}
+
+	/**
+	 * Publish post by document id.
+	 *
+	 * @param $documentId
+	 * @return void
+	 */
+	public function unPublishPostByDocumentId($documentId)
+	{
+		$postId = $this->findExistingConnectedPost($documentId);
+		if (!$postId) {
+			return;
+		}
+
+		wp_update_post([
+			'ID' => $postId,
+			'post_status' => 'draft',
+		]);
 	}
 }
