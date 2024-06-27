@@ -55,7 +55,6 @@ class Settings
 		);
 		add_action('admin_menu', [$this, 'pluginAdminNotice']);
 		add_filter('post_row_actions', [$this, 'addRowActions'], 10, 2);
-		add_filter('the_author', [$this,'modifyAuthorName']);
 	}
 
 	/**
@@ -260,26 +259,5 @@ class Settings
 	public function pluginNotification()
 	{
 		require PCC_PLUGIN_DIR . 'admin/templates/partials/plugin-notification.php';
-	}
-
-	/**
-	 * Modify Author name
-	 *
-	 * @param $authorName
-	 * @return mixed|string
-	 */
-	public function modifyAuthorName($authorName)
-	{
-		global $post;
-		$postType = get_option(PCC_INTEGRATION_POST_TYPE_OPTION_KEY);
-		if ($post->post_type !== $postType) {
-			return $authorName;
-		}
-		$value = get_post_meta($post->ID, PCC_CONTENT_META_KEY, true);
-		if ($value) {
-			return self::PCC_AUTHOR;
-		}
-
-		return $authorName;
 	}
 }
