@@ -24,9 +24,21 @@ use const PCC_PLUGIN_DIR_URL;
  */
 class Settings
 {
+	/**
+	 * Pantheon Cloud Status endpoint required by PCC
+	 */
 	const PCC_STATUS_ENDPOINT = 'api/pantheoncloud/status';
+
+	/**
+	 * Publish document endpoint required by PCC
+	 */
 	const PCC_PUBLISH_DOCUMENT_ENDPOINT = 'api/pantheoncloud/document/';
-	private const PCC_AUTHOR = 'Pantheon Content Publisher';
+
+	/**
+	 * Google Docs edit URL.
+	 */
+	const PCC_DOCUMENT_EDIT_URL = 'https://docs.google.com/document/d/%s/edit';
+
 	private $pages = [
 		'connected-collection'    => PCC_PLUGIN_DIR . 'admin/templates/partials/connected-collection.php',
 		'create-collection'       => PCC_PLUGIN_DIR . 'admin/templates/partials/create-collection.php',
@@ -98,20 +110,27 @@ class Settings
 		}
 	}
 
+	/**
+	 * Build the Google Docs edit URL.
+	 *
+	 * @param string $documentId
+	 * @return string
+	 */
+	private function buildEditDocumentURL($documentId)
+	{
+		return sprintf(self::PCC_DOCUMENT_EDIT_URL, $documentId);
+	}
+
 	public function addRowActions($actions, $post)
 	{
-		$post_type = get_option(PCC_INTEGRATION_POST_TYPE_OPTION_KEY);
-		if ($post->post_type !== $post_type) {
-			return $actions;
-		}
-		$pcc_post = get_post_meta($post->ID, PCC_CONTENT_META_KEY, true);
-		if (! $pcc_post) {
+		$documentId = get_post_meta($post->ID, PCC_CONTENT_META_KEY, true);
+		if (! $documentId) {
 			return $actions;
 		}
 
 		$customActions = array(
 			'pcc' => sprintf(
-				'<a href="#" class="pcc-sync" data-id="%d">%s</a>',
+				'<a href="' . $this->buildEditDocumentURL($documentId) . '" class="pcc-sync" data-id="%d" target="_blank">%s</a>',
 				$post->ID,
 				esc_html__(
 					'Edit in Google Docs',
