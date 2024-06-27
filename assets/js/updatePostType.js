@@ -1,8 +1,7 @@
-import AddOnApiHelper from "./lib/addonApiHelper";
 import {getSelectedPostType, updateSpinnerText} from "./helper";
 import axios from "axios";
 
-export default function createSite() {
+export default function updatePostType() {
 	return new Promise(
 		async (resolve, reject) => {
 			try {
@@ -12,28 +11,26 @@ export default function createSite() {
 					return reject(new Error('Post type not selected'));
 				}
 
-				updateSpinnerText('Creating your collection...');
-				const siteId = await AddOnApiHelper.createSite(siteUrl);
-				await createCollection(siteId, selectedPostType);
+				updateSpinnerText('Updating your collection...');
+				await updateConfiguration(selectedPostType);
 				resolve();
 			} catch (error) {
-				updateSpinnerText('Error while creating your collection. Please try again.');
+				updateSpinnerText('Error while updating your collection. Please try again.');
 				reject(error);
 			}
 		},);
 }
 
+
 /**
- * Save created site id & post type in database
+ * Update integration post type in database
  *
- * @param siteId
  * @param postType
  * @returns {Promise<axios.AxiosResponse<any>>}
  */
-async function createCollection(siteId, postType) {
+async function updateConfiguration(postType) {
 	const { rest_url, nonce } = window.PCCAdmin;
-	return await axios.post(`${rest_url}/collection`, {
-		site_id: siteId,
+	return await axios.put(`${rest_url}/collection`, {
 		post_type: postType,
 	}, {
 		headers: { 'X-WP-Nonce': nonce }

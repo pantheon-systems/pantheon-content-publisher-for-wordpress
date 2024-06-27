@@ -13,6 +13,7 @@ use function filemtime;
 use function wp_enqueue_script;
 
 use const PCC_HANDLE;
+use const PCC_INTEGRATION_POST_TYPE_OPTION_KEY;
 use const PCC_PLUGIN_DIR;
 use const PCC_PLUGIN_DIR_URL;
 
@@ -48,6 +49,29 @@ class Settings
 			[$this, 'enqueueAssets']
 		);
 		add_action('admin_menu', [$this, 'pluginAdminNotice']);
+		add_filter('post_row_actions', [$this, 'addRowActions'], 10, 2);
+	}
+
+	public function addRowActions($actions, $post)
+	{
+		$post_type = get_option(PCC_INTEGRATION_POST_TYPE_OPTION_KEY);
+		if ($post->post_type !== $post_type) {
+			return $actions;
+		}
+		$pcc_post = get_post_meta($post->ID, PCC_CONTENT_META_KEY, true);
+		if (! $pcc_post) {
+			return $actions;
+		}
+		$actions['pcc'] = sprintf(
+			'<a href="#" class="pcc-sync" data-id="%d">%s</a>',
+			$post->ID,
+			esc_html__(
+				'Edit in Google Docs',
+				PCC_HANDLE
+			) . '<svg width="12px" height="12px" viewBox="0 0 24 24" style="display:inline"><g stroke-width="2.1" stroke="#666" fill="none" stroke-linecap="round" stroke-linejoin="round"><polyline points="17 13.5 17 19.5 5 19.5 5 7.5 11 7.5"></polyline><path d="M14,4.5 L20,4.5 L20,10.5 M20,4.5 L11,13.5"></path></g></svg>'
+		);
+
+		return $actions;
 	}
 
 	/**
@@ -86,12 +110,15 @@ class Settings
 		// Site id is set and Credentials are set
 		if ($this->getSiteId() && $this->getCredentials()) {
 			require $this->pages['connected-collection'];
-			// Credentials is set but Site id is not set then user needs to create a new site
-		} elseif ($this->getCredentials()) {
-			require $this->pages['create-collection'];
-		} else {
-			require $this->pages['setup'];
+
+			return;
 		}
+		if ($this->getCredentials()) {
+			require $this->pages['create-collection'];
+
+			return;
+		}
+		require $this->pages['setup'];
 	}
 
 	/**
@@ -154,7 +181,7 @@ class Settings
 	public function pluginAdminNotice()
 	{
 		global $pagenow;
-		if ($pagenow != 'plugins.php') {
+		if ($pagenow !== 'plugins.php') {
 			return;
 		}
 

@@ -4,6 +4,7 @@
 	?>
 	<div class="page-content">
 		<div class="welcome-page">
+			<?php require PCC_PLUGIN_DIR . 'admin/templates/partials/error-message.php'; ?>
 			<div class="page-grid">
 				<div class="col-span-7">
 					<h1 class="page-header">

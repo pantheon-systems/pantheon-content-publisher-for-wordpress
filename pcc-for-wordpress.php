@@ -29,6 +29,7 @@ define('PCC_CREDENTIALS_OPTION_KEY', 'pcc_credentials');
 define('PCC_SITE_ID_OPTION_KEY', 'pcc_site_id');
 define('PCC_INTEGRATION_POST_TYPE_OPTION_KEY', 'pcc_integration_post_type');
 define('PCC_API_NAMESPACE', 'pcc/v1');
+define('PCC_CONTENT_META_KEY', 'pcc_id');
 
 call_user_func(static function ($rootPath) {
 	$autoload = "{$rootPath}vendor/autoload.php";

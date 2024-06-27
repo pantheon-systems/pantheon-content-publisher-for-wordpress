@@ -29,12 +29,12 @@
 }
 
 .danger-button {
-    @apply bg-light-red inline-block mt-6 text-19.2 font-semibold rounded-[0.1875rem] px-[1.25rem] py-[0.625rem] text-white ; /*done*/
+    @apply text-light-red border border-light-red  inline-block mt-6 text-19.2 font-semibold rounded-[0.1875rem] px-[1.25rem] py-[0.625rem]; /*done*/
     transition: all 0.3s ease;
 }
 
 .danger-button:hover,.danger-button:active,.danger-button:focus {
-    @apply bg-secondary text-white outline-0 border-0; /*done*/
+    @apply text-light-red border border-light-red bg-hover-red text-light-red  outline-0; /*done*/
     box-shadow: 0 0 0 0 white;
 }
 
@@ -47,7 +47,7 @@
 }
 
 .page-styles {
-    @apply bg-white container rounded-[0.375rem] py-[1rem] /*done*/
+    @apply bg-white container rounded-[0.375rem] py-[1.5rem] /*done*/
 }
 
 .page-header {
@@ -204,3 +204,32 @@
 }
 
 /** End continue setup Page */
+
+/** Start Spinner Page */
+
+.pcc-spinner-container{
+    @apply flex flex-col h-[75vh] items-center justify-center gap-4 m-auto
+}
+.pcc-spinner {
+    @apply w-8 h-8;
+    animation: spin 0.5s linear infinite;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+/** end Spinner Page */
+
+/** start error-notice Page */
+
+.pcc-error-message {
+    @apply px-4 container rounded-[0.375rem] py-4 bg-hover-red
+}
+
+/** end error-notice Page */
