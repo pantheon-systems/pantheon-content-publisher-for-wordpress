@@ -316,10 +316,28 @@ class RestController
 		delete_option(PCC_CREDENTIALS_OPTION_KEY);
 		delete_option(PCC_SITE_ID_OPTION_KEY);
 		delete_option(PCC_INTEGRATION_POST_TYPE_OPTION_KEY);
+		$this->removeMetaDataFromPosts();
 
 		return new WP_REST_Response(
 			esc_html__('Saved Data deleted.', PCC_HANDLE),
 			200
+		);
+	}
+
+	/**
+	 * Remove all saved meta from posts
+	 *
+	 * @return void
+	 */
+	private function removeMetaDataFromPosts()
+	{
+		global $wpdb;
+		// Delete all post meta entries with the key 'terminate'
+		$wpdb->query(
+			$wpdb->prepare(
+				"DELETE FROM {$wpdb->postmeta} WHERE meta_key = %s",
+				PCC_CONTENT_META_KEY
+			)
 		);
 	}
 }
