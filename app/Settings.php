@@ -67,6 +67,7 @@ class Settings
 		);
 		add_action('admin_menu', [$this, 'pluginAdminNotice']);
 		add_filter('post_row_actions', [$this, 'addRowActions'], 10, 2);
+		add_action('admin_init', [$this,'preventPostEditing']);
 	}
 
 	/**
@@ -121,6 +122,33 @@ class Settings
 		return sprintf(self::PCC_DOCUMENT_EDIT_URL, $documentId);
 	}
 
+	/**
+	 * Prevent editing of PCC posts.
+	 *
+	 * @return void
+	 */
+	public function preventPostEditing()
+	{
+		global $pagenow;
+		// Check if the current page is the post/page edit page
+		if ($pagenow == 'post.php' && isset($_GET['post']) && 'edit' === strtolower($_GET['action'])) {
+			$documentId = get_post_meta(intval($_GET['post']), PCC_CONTENT_META_KEY, true);
+			if (! $documentId) {
+				return ;
+			}
+
+			wp_redirect($this->buildEditDocumentURL($documentId));
+			die(200);
+		}
+	}
+
+	/**
+	 * Add PCC actions to quick edit box.
+	 *
+	 * @param $actions
+	 * @param $post
+	 * @return array|mixed
+	 */
 	public function addRowActions($actions, $post)
 	{
 		$documentId = get_post_meta($post->ID, PCC_CONTENT_META_KEY, true);
