@@ -67,6 +67,7 @@ class Settings
 		);
 		add_action('admin_menu', [$this, 'pluginAdminNotice']);
 		add_filter('post_row_actions', [$this, 'addRowActions'], 10, 2);
+		add_filter('page_row_actions', [$this, 'addRowActions'], 10, 2);
 		add_action('admin_init', [$this,'preventPostEditing']);
 	}
 
