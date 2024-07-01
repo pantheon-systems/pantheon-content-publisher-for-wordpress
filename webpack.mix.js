@@ -3,6 +3,15 @@ const NodePolyfillPlugin = require("node-polyfill-webpack-plugin");
 const tailwindcss = require('tailwindcss');
 const postCssPrefixSelector = require('postcss-prefix-selector');
 
+const excludedSelectors = [
+  '.pcc-content',
+  '.pcc-notice',
+  '.pcc-icon',
+  '.pcc-post-title-container'
+];
+
+const shouldExcludeSelector = (selector) => excludedSelectors.includes(selector);
+
 mix.options({
   manifest: false,
   legacyNodePolyfills: true
@@ -22,7 +31,7 @@ mix.options({
     prefix: '.pcc-content', // Replace with your desired class
     transform(prefix, selector, prefixedSelector) {
       // Exclude 'html' and 'body' tags from being prefixed
-      if ( selector === '.pcc-content' || selector === '.pcc-notice' ) {
+      if (shouldExcludeSelector(selector)) {
         return selector;
       }
       return prefixedSelector;
