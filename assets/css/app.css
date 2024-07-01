@@ -233,3 +233,13 @@
 }
 
 /** end error-notice Page */
+
+.pcc-icon{
+    @apply absolute md:left-[3rem] left-[0.75rem] pt-[3px];
+    transform: scale(1.4);
+}
+
+.pcc-post-title-container{
+
+    @apply ms-[1rem];
+}
