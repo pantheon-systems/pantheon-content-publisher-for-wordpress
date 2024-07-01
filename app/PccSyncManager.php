@@ -23,10 +23,9 @@ class PccSyncManager
 
 	private $pccClient;
 
-	public function __construct($siteId = null)
+	public function __construct()
 	{
-		// @TODO change it to be dynamic
-		$this->siteId = 'yZaQroahEOt2TRdgYPXj';
+		$this->siteId = get_option(PCC_SITE_ID_OPTION_KEY);
 	}
 
 	/**
