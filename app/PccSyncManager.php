@@ -2,6 +2,7 @@
 
 namespace PCC;
 
+use PccPhpSdk\api\Query\Enums\PublishingLevel;
 use PccPhpSdk\api\Response\Article;
 use PccPhpSdk\api\ArticlesApi;
 use PccPhpSdk\core\PccClient;
@@ -33,18 +34,14 @@ class PccSyncManager
 	 *
 	 * @return PccClient
 	 */
-	private function pccClient(): PccClient
+	private function pccClient(string $pccGrant = null): PccClient
 	{
-		if ($this->pccClient) {
-			return $this->pccClient;
+		$args = [$this->siteId, $this->token];
+		if ($pccGrant) {
+			$args = [$this->siteId, '', null, $pccGrant];
 		}
 
-		$pccClientConfig = new PccClientConfig(
-			$this->siteId,
-			$this->token
-		);
-		$this->pccClient = new PccClient($pccClientConfig);
-		return $this->pccClient;
+		return new PccClient(new PccClientConfig(...$args));
 	}
 
 	public function fetchAndStoreDocument($documentId)
@@ -156,5 +153,22 @@ class PccSyncManager
 			'ID' => $postId,
 			'post_status' => 'draft',
 		]);
+	}
+
+	public function preaprePreviewingURL(string $documentId, string $pccGrant)
+	{
+//		$config = $this->pccClient($pccGrant);
+//		$articleApi = new ArticlesApi($config);
+//		$article = $articleApi->getArticleById($documentId, [], PublishingLevel::REALTIME);
+
+		return add_query_arg(
+			[
+				'preview' => 'google_document',
+				'pccGrant' => $pccGrant,
+				'publishing_level' => PublishingLevel::REALTIME->value,
+				'document_id' => $documentId,
+			],
+			get_permalink($this->findExistingConnectedPost($documentId))
+		);
 	}
 }

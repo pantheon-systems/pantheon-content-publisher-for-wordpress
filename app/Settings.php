@@ -8,6 +8,8 @@
 
 namespace PCC;
 
+use PccPhpSdk\api\Query\Enums\PublishingLevel;
+
 use function add_action;
 use function filemtime;
 use function wp_enqueue_script;
@@ -77,8 +79,7 @@ class Settings
 	 */
 	public function publishDocuments()
 	{
-//		api/pantheoncloud/document/16Zaqua8BDQaqxmePljZ94huVs7sOcFnWY9msb8KLTc8/?publishingLevel=PRODUCTION
-//		api/pantheoncloud/document/16Zaqua8BDQaqxmePljZ94huVs7sOcFnWY9msb8KLTc8/?pccGrant=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MTk0MTI0MDksImlhdCI6MTcxOTM5MDgwOSwic3ViIjoibWdvdWRhQGNyb3dkZmF2b3JpdGUuY29tIiwic2l0ZSI6InlaYVFyb2FoRU90MlRSZGdZUFhqIiwic2NvcGUiOiJwY2NfZ3JhbnQifQ.qrJc73w8MiLBR7NCVpRy6Hhv-2lelmwBguePkfUaJrQ&publishingLevel=REALTIME
+//		https://pantheon.xyz/api/pantheoncloud/document/1Lw7UH3Rf77_rzvTTkd_CLPpOMnIfV5qXEZtMsnee3IE/?pccGrant=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MTk4NzczMzQsImlhdCI6MTcxOTg1NTczNCwic3ViIjoibWdvdWRhQGNyb3dkZmF2b3JpdGUuY29tIiwic2l0ZSI6InlaYVFyb2FoRU90MlRSZGdZUFhqIiwic2NvcGUiOiJwY2NfZ3JhbnQifQ.J5BU3tPt2VPAqAPjdebod4SRCJAwrtGHQ8o4nl5zqCY&publishingLevel=REALTIME
 		global $wp;
 		$strLen = strlen(static::PCC_PUBLISH_DOCUMENT_ENDPOINT);
 		if (substr($wp->request, 0, $strLen) !== static::PCC_PUBLISH_DOCUMENT_ENDPOINT) {
@@ -86,13 +87,24 @@ class Settings
 		}
 
 		// Publish document
-		if (isset($_GET['publishingLevel']) && 'production' === strtolower($_GET['publishingLevel'])) {
+		if (isset($_GET['publishingLevel']) && PublishingLevel::PRODUCTION->value === $_GET['publishingLevel']) {
 			$parts = explode('/', $wp->request);
 			$documentId = end($parts);
-			$pcc = new PccSyncManager($this->getSiteId());
+			$pcc = new PccSyncManager();
 			$postId = $pcc->fetchAndStoreDocument($documentId);
 
 			wp_redirect(get_permalink($postId));
+			exit;
+		}
+
+		// Publish document
+		if (isset($_GET['pccGrant']) && isset($_GET['publishingLevel']) && PublishingLevel::REALTIME->value === $_GET['publishingLevel']) {
+			$parts = explode('/', $wp->request);
+			$documentId = end($parts);
+			$pcc = new PccSyncManager();
+			$url = $pcc->preaprePreviewingURL($documentId, sanitize_text_field($_GET['pccGrant']));
+
+			wp_redirect($url);
 			exit;
 		}
 	}
