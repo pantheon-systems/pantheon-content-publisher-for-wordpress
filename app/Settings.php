@@ -69,6 +69,7 @@ class Settings
 		add_filter('post_row_actions', [$this, 'addRowActions'], 10, 2);
 		add_filter('page_row_actions', [$this, 'addRowActions'], 10, 2);
 		add_action('admin_init', [$this,'preventPostEditing']);
+		add_filter('wp_list_table_class_name', [ $this, 'overrideAdminWPPostsTable' ]);
 	}
 
 	/**
@@ -306,5 +307,21 @@ class Settings
 	public function pluginNotification()
 	{
 		require PCC_PLUGIN_DIR . 'admin/templates/partials/plugin-notification.php';
+	}
+
+	/**
+	 * Replace WP_Posts_List_Table with Custom_Posts_List_Table.
+	 *
+	 * @param   string  $className  The list table class to use.
+	 *
+	 * @return string The custom list table class.
+	 */
+	public function overrideAdminWPPostsTable($className)
+	{
+		if ('WP_Posts_List_Table' === $className) {
+			return PccPostsListTable::class;
+		}
+
+		return $className;
 	}
 }
