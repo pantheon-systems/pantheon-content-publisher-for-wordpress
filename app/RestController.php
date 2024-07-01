@@ -74,6 +74,11 @@ class RestController
 				'method'   => 'DELETE',
 				'callback' => [$this, 'disconnect'],
 			],
+			[
+				'route'    => 'api/pantheoncloud/status',
+				'method'   => 'GET',
+				'callback' => [$this, 'pantheonCloudStatusCheck'],
+			],
 		];
 
 		foreach ($endpoints as $endpoint) {
@@ -83,6 +88,16 @@ class RestController
 				'permission_callback' => [$this, 'permissionCallback'],
 			]);
 		}
+	}
+
+	/**
+	 * Public endpoint for to check website publish status.
+	 *
+	 * @return WP_REST_Response
+	 */
+	public function pantheonCloudStatusCheck()
+	{
+		return new WP_REST_Response((object)[]);
 	}
 
 	/**
