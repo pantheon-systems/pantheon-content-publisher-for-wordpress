@@ -24,9 +24,21 @@ use const PCC_PLUGIN_DIR_URL;
  */
 class Settings
 {
+	/**
+	 * Pantheon Cloud Status endpoint required by PCC
+	 */
 	const PCC_STATUS_ENDPOINT = 'api/pantheoncloud/status';
+
+	/**
+	 * Publish document endpoint required by PCC
+	 */
 	const PCC_PUBLISH_DOCUMENT_ENDPOINT = 'api/pantheoncloud/document/';
-	private const PCC_AUTHOR = 'Pantheon Content Publisher';
+
+	/**
+	 * Google Docs edit URL.
+	 */
+	const PCC_DOCUMENT_EDIT_URL = 'https://docs.google.com/document/d/%s/edit';
+
 	private $pages = [
 		'connected-collection'    => PCC_PLUGIN_DIR . 'admin/templates/partials/connected-collection.php',
 		'create-collection'       => PCC_PLUGIN_DIR . 'admin/templates/partials/create-collection.php',
@@ -55,7 +67,8 @@ class Settings
 		);
 		add_action('admin_menu', [$this, 'pluginAdminNotice']);
 		add_filter('post_row_actions', [$this, 'addRowActions'], 10, 2);
-		add_filter('the_author', [$this,'modifyAuthorName']);
+		add_filter('page_row_actions', [$this, 'addRowActions'], 10, 2);
+		add_action('admin_init', [$this,'preventPostEditing']);
 	}
 
 	/**
@@ -99,20 +112,54 @@ class Settings
 		}
 	}
 
+	/**
+	 * Build the Google Docs edit URL.
+	 *
+	 * @param string $documentId
+	 * @return string
+	 */
+	private function buildEditDocumentURL($documentId)
+	{
+		return sprintf(self::PCC_DOCUMENT_EDIT_URL, $documentId);
+	}
+
+	/**
+	 * Prevent editing of PCC posts.
+	 *
+	 * @return void
+	 */
+	public function preventPostEditing()
+	{
+		global $pagenow;
+		// Check if the current page is the post/page edit page
+		if ($pagenow == 'post.php' && isset($_GET['post']) && 'edit' === strtolower($_GET['action'])) {
+			$documentId = get_post_meta(intval($_GET['post']), PCC_CONTENT_META_KEY, true);
+			if (! $documentId) {
+				return ;
+			}
+
+			wp_redirect($this->buildEditDocumentURL($documentId));
+			die(200);
+		}
+	}
+
+	/**
+	 * Add PCC actions to quick edit box.
+	 *
+	 * @param $actions
+	 * @param $post
+	 * @return array|mixed
+	 */
 	public function addRowActions($actions, $post)
 	{
-		$post_type = get_option(PCC_INTEGRATION_POST_TYPE_OPTION_KEY);
-		if ($post->post_type !== $post_type) {
-			return $actions;
-		}
-		$pcc_post = get_post_meta($post->ID, PCC_CONTENT_META_KEY, true);
-		if (! $pcc_post) {
+		$documentId = get_post_meta($post->ID, PCC_CONTENT_META_KEY, true);
+		if (! $documentId) {
 			return $actions;
 		}
 
 		$customActions = array(
 			'pcc' => sprintf(
-				'<a href="#" class="pcc-sync" data-id="%d">%s</a>',
+				'<a href="' . $this->buildEditDocumentURL($documentId) . '" class="pcc-sync" data-id="%d" target="_blank">%s</a>',
 				$post->ID,
 				esc_html__(
 					'Edit in Google Docs',
@@ -260,26 +307,5 @@ class Settings
 	public function pluginNotification()
 	{
 		require PCC_PLUGIN_DIR . 'admin/templates/partials/plugin-notification.php';
-	}
-
-	/**
-	 * Modify Author name
-	 *
-	 * @param $authorName
-	 * @return mixed|string
-	 */
-	public function modifyAuthorName($authorName)
-	{
-		global $post;
-		$postType = get_option(PCC_INTEGRATION_POST_TYPE_OPTION_KEY);
-		if ($post->post_type !== $postType) {
-			return $authorName;
-		}
-		$value = get_post_meta($post->ID, PCC_CONTENT_META_KEY, true);
-		if ($value) {
-			return self::PCC_AUTHOR;
-		}
-
-		return $authorName;
 	}
 }
