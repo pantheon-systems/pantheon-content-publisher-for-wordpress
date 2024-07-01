@@ -105,10 +105,9 @@ class Settings
 	{
 		global $wp;
 		if (static::PCC_STATUS_ENDPOINT === $wp->request) {
-			header('Content-Type: application/json');
-			status_header(200);
-			echo "{}";
-			exit;
+			$url = rest_url(PCC_API_NAMESPACE . '/' . static::PCC_STATUS_ENDPOINT);
+
+			return wp_redirect($url);
 		}
 	}
 
