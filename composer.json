@@ -24,7 +24,8 @@
   "require": {
 	"php": ">=8.3",
 	"digitalpolygon/pcc-php-sdk": "dev-main",
-    "cboden/ratchet": "^0.4.4"
+    "cboden/ratchet": "^0.4.4",
+    "phrity/websocket": "^3.0"
   },
   "require-dev": {
 	"wp-coding-standards/wpcs": "^3.1"
