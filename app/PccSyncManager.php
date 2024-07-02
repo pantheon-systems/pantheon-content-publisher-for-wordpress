@@ -2,11 +2,16 @@
 
 namespace PCC;
 
+use Exception;
 use PccPhpSdk\api\Query\Enums\PublishingLevel;
 use PccPhpSdk\api\Response\Article;
 use PccPhpSdk\api\ArticlesApi;
 use PccPhpSdk\core\PccClient;
 use PccPhpSdk\core\PccClientConfig;
+use Phrity\Net\Uri;
+use WebSocket\Client;
+use WebSocket\Middleware\CloseHandler;
+use WebSocket\Middleware\PingResponder;
 
 class PccSyncManager
 {
@@ -22,8 +27,6 @@ class PccSyncManager
 	 */
 	private string $token = '5d8d5649-c060-4f29-b267-e11fa1abdf01';
 
-	private $pccClient;
-
 	public function __construct()
 	{
 		$this->siteId = get_option(PCC_SITE_ID_OPTION_KEY);
@@ -34,7 +37,7 @@ class PccSyncManager
 	 *
 	 * @return PccClient
 	 */
-	private function pccClient(string $pccGrant = null): PccClient
+	public function pccClient(string $pccGrant = null): PccClient
 	{
 		$args = [$this->siteId, $this->token];
 		if ($pccGrant) {
@@ -155,12 +158,30 @@ class PccSyncManager
 		]);
 	}
 
+	/**
+	 * Share document id over websocket.
+	 *
+	 * @param $documentId
+	 * @return void|\WP_Error
+	 */
+	public function shareDocumentIdOverWebSocket($documentId)
+	{
+		try {
+			$uri = new Uri('ws://localhost:8080/websocket');
+			$client = new Client($uri);
+			// Add standard middlewares
+			$client
+				->addMiddleware(new CloseHandler())
+				->addMiddleware(new PingResponder());
+			$client->text($documentId);
+			$client->close();
+		} catch (Exception $e) {
+			return new \WP_Error('pcc_websocket_error', $e->getMessage());
+		}
+	}
+
 	public function preaprePreviewingURL(string $documentId, string $pccGrant)
 	{
-//		$config = $this->pccClient($pccGrant);
-//		$articleApi = new ArticlesApi($config);
-//		$article = $articleApi->getArticleById($documentId, [], PublishingLevel::REALTIME);
-
 		return add_query_arg(
 			[
 				'preview' => 'google_document',
@@ -170,5 +191,19 @@ class PccSyncManager
 			],
 			get_permalink($this->findExistingConnectedPost($documentId))
 		);
+	}
+
+	/**
+	 * Get preview content from PCC.
+	 *
+	 * @param string $documentId
+	 * @param string $pccGrant
+	 * @return Article
+	 */
+	public function getPreviewContent(string $documentId, string $pccGrant)
+	{
+		$articleApi = new ArticlesApi($this->pccClient($pccGrant));
+
+		return $articleApi->getArticleById($documentId, [], PublishingLevel::REALTIME);
 	}
 }
