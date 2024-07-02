@@ -185,7 +185,7 @@ class PccSyncManager
 		return add_query_arg(
 			[
 				'preview' => 'google_document',
-				'pccGrant' => $pccGrant,
+				'pcc_grant' => $pccGrant,
 				'publishing_level' => PublishingLevel::REALTIME->value,
 				'document_id' => $documentId,
 			],

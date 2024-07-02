@@ -65,7 +65,11 @@ class Settings
 		add_action('admin_menu', [$this, 'addMenu']);
 		add_action(
 			'admin_enqueue_scripts',
-			[$this, 'enqueueAssets']
+			[$this, 'enqueueAdminAssets']
+		);
+		add_action(
+			'wp_enqueue_scripts',
+			[$this, 'enqueueFrontAssets']
 		);
 		add_action('admin_menu', [$this, 'pluginAdminNotice']);
 		add_filter('post_row_actions', [$this, 'addRowActions'], 10, 2);
@@ -268,7 +272,7 @@ class Settings
 	 *
 	 * @return void
 	 */
-	public function enqueueAssets(): void
+	public function enqueueAdminAssets(): void
 	{
 		wp_enqueue_script(
 			PCC_HANDLE,
@@ -294,6 +298,31 @@ class Settings
 				'plugin_main_page' => menu_page_url(PCC_HANDLE, false),
 				'site_url'         => site_url(),
 			] + ['credentials' => $this->getCredentials()]
+		);
+	}
+
+	/**
+	 * Enqueue plugin assets on the WP front.
+	 *
+	 * @return void
+	 */
+	public function enqueueFrontAssets(): void
+	{
+		wp_enqueue_script(
+			PCC_HANDLE,
+			PCC_PLUGIN_DIR_URL . 'assets/js/pcc-front.js',
+			[],
+			filemtime(PCC_PLUGIN_DIR . 'assets/js/pcc-front.js'),
+			true
+		);
+
+		wp_localize_script(
+			PCC_HANDLE,
+			'PCCFront',
+			[
+				'rest_url'         => get_rest_url(get_current_blog_id(), PCC_API_NAMESPACE),
+				'nonce'            => wp_create_nonce('wp_rest'),
+			]
 		);
 	}
 
