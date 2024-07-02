@@ -7,6 +7,7 @@
 namespace PCC;
 
 use PccPhpSdk\api\ArticlesApi;
+use PccPhpSdk\api\Query\Enums\PublishingLevel;
 use PccPhpSdk\core\PccClient;
 use PccPhpSdk\core\PccClientConfig;
 use WP_REST_Request;
@@ -79,6 +80,11 @@ class RestController
 				'method'   => 'GET',
 				'callback' => [$this, 'pantheonCloudStatusCheck'],
 			],
+			[
+				'route'    => '/preview-content',
+				'method'   => 'POST',
+				'callback' => [$this, 'previewContent'],
+			],
 		];
 
 		foreach ($endpoints as $endpoint) {
@@ -127,13 +133,13 @@ class RestController
 		}
 
 		$articleId = sanitize_text_field($payload['articleId']);
-		$pccManager = new PccSyncManager($siteId);
+		$pccManager = new PccSyncManager();
 		switch ($event) {
 			case 'article.unpublish':
 				$pccManager->unPublishPostByDocumentId($articleId);
 				break;
 			case 'article.update':
-				// Websocket Sender;
+				$pccManager->shareDocumentIdOverWebSocket($articleId);
 				break;
 			default:
 				return new WP_REST_Response(
@@ -141,6 +147,22 @@ class RestController
 					200
 				);
 		}
+	}
+
+	/**
+	 * Preview content from PCC.
+	 *
+	 * @param WP_REST_Request $request
+	 * @return WP_REST_Response
+	 */
+	public function previewContent(WP_REST_Request $request)
+	{
+		$params = $request->get_json_params();
+		$documentId = isset($params['document_id']) ? sanitize_text_field($params['document_id']) : '';
+		$pccGrant = isset($params['pcc_grant']) ? sanitize_text_field($params['pcc_grant']) : '';
+		$article = (new PccSyncManager())->getPreviewContent($documentId, $pccGrant);
+
+		return new WP_REST_Response(['title' => $article->title, 'content' => $article->content]);
 	}
 
 	/**
