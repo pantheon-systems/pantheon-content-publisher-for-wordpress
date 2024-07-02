@@ -132,6 +132,9 @@ class RestController
 			case 'article.unpublish':
 				$pccManager->unPublishPostByDocumentId($articleId);
 				break;
+			case 'article.update':
+				// Websocket Sender;
+				break;
 			default:
 				return new WP_REST_Response(
 					esc_html__('Event type is currently unsupported', PCC_HANDLE),
