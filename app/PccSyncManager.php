@@ -8,10 +8,10 @@ use PccPhpSdk\api\Response\Article;
 use PccPhpSdk\api\ArticlesApi;
 use PccPhpSdk\core\PccClient;
 use PccPhpSdk\core\PccClientConfig;
-use Phrity\Net\Uri;
-use WebSocket\Client;
-use WebSocket\Middleware\CloseHandler;
-use WebSocket\Middleware\PingResponder;
+use Ratchet\Client\Connector;
+use Ratchet\Client\WebSocket;
+use React\EventLoop\Loop;
+use React\Socket\Connector as SocketConnector;
 
 class PccSyncManager
 {
@@ -167,14 +167,18 @@ class PccSyncManager
 	public function shareDocumentIdOverWebSocket($documentId)
 	{
 		try {
-			$uri = new Uri('ws://localhost:8080/websocket');
-			$client = new Client($uri);
-			// Add standard middlewares
-			$client
-				->addMiddleware(new CloseHandler())
-				->addMiddleware(new PingResponder());
-			$client->text($documentId);
-			$client->close();
+			$loop      = Loop::get();
+			$connector = new Connector($loop, new SocketConnector($loop));
+
+			$connector(PCC_WEBSOCKET_URL)
+				->then(function (WebSocket $conn) use ($documentId) {
+					$conn->send($documentId);
+					$conn->close();
+				}, function ($e) {
+					error_log("Could not connect: {$e->getMessage()}");
+				});
+
+			$loop->run();
 		} catch (Exception $e) {
 			return new \WP_Error('pcc_websocket_error', $e->getMessage());
 		}
