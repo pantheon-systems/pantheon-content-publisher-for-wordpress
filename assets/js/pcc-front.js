@@ -1,4 +1,4 @@
-var conn = new WebSocket('ws://localhost:8080/websocket');
+var conn = new WebSocket(window.PCCFront.websocket_url);
 
 conn.onopen = function(e) {
     console.log("Preview connection established!");
@@ -6,10 +6,16 @@ conn.onopen = function(e) {
 
 conn.onmessage = function(e) {
     let articleId = e.data;
+
     // Get the current URL
     const url = new URL(window.location.href);
     const params = new URLSearchParams(url.search);
     const pccGrant = params.get('pcc_grant');
+
+	// Bail if document id is not same as article id
+    if(params.get('document_id') !== articleId){
+        return
+    }
 
     // Create data object to send
     const data = {
@@ -17,7 +23,6 @@ conn.onmessage = function(e) {
         pcc_grant: pccGrant
     };
 
-	`${window.PCCAdmin.rest_url}/disconnect`
     // Send data to WordPress REST API endpoint via AJAX (fetch API)
     fetch(`${window.PCCFront.rest_url}/preview-content`, {
         method: 'POST',
@@ -30,11 +35,14 @@ conn.onmessage = function(e) {
         .then(response => response.json())
         .then(result => {
             console.log('Success:', result);
+            var entryTitle = document.getElementsByClassName('wp-block-post-title');
             var entryContents = document.getElementsByClassName('entry-content');
+
+            // Iterate through each element with class 'wp-block-post-title'
+            entryTitle[0].innerHTML = result.title
 
             // Iterate through each element with class 'entry-content'
             entryContents[0].innerHTML = result.content
-            // entryContents[0].innerHTML = result.title
         })
         .catch(error => {
             console.error('Error:', error);
