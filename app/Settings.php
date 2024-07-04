@@ -19,7 +19,7 @@ use const PCC_INTEGRATION_POST_TYPE_OPTION_KEY;
 use const PCC_PLUGIN_DIR;
 use const PCC_PLUGIN_DIR_URL;
 use const PCC_WEBSOCKET_PORT;
-use const PCC_WEBSOCKET_PATH;
+use const PCC_WEBSOCKET_URI;
 use const PCC_WEBSOCKET_HOST;
 
 // phpcs:disable PSR1.Files.SideEffects.FoundWithSymbols
@@ -424,7 +424,7 @@ class Settings
 				   . 'app/websocket/StartWebSocketServer.php '
 				   . PCC_WEBSOCKET_HOST . ' '
 				   . PCC_WEBSOCKET_PORT . ' '
-				   . PCC_WEBSOCKET_PATH . ' > /dev/null 2>&1 &';
+				   . PCC_WEBSOCKET_URI . ' > /dev/null 2>&1 &';
 
 		// Execute the command.
 		exec($command);
