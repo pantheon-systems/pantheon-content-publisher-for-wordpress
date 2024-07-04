@@ -18,6 +18,11 @@ use const PCC_HANDLE;
 use const PCC_INTEGRATION_POST_TYPE_OPTION_KEY;
 use const PCC_PLUGIN_DIR;
 use const PCC_PLUGIN_DIR_URL;
+use const PCC_WEBSOCKET_PORT;
+use const PCC_WEBSOCKET_PATH;
+use const PCC_WEBSOCKET_HOST;
+
+// phpcs:disable PSR1.Files.SideEffects.FoundWithSymbols
 
 /**
  * Class Settings
@@ -51,6 +56,19 @@ class Settings
 	public function __construct()
 	{
 		$this->addHooks();
+		$this->addWPCLICommand();
+	}
+
+	/**
+	 * Add WP CLI command to run the WebSocket server.
+	 *
+	 * @return void
+	 */
+	public function addWPCLICommand()
+	{
+		if (defined('WP_CLI') && WP_CLI) {
+			\WP_CLI::add_command('run_websocket_server', [$this, 'runWebSocketServer']);
+		}
 	}
 
 	/**
@@ -76,6 +94,7 @@ class Settings
 		add_filter('page_row_actions', [$this, 'addRowActions'], 10, 2);
 		add_action('admin_init', [$this,'preventPostEditing']);
 		add_filter('wp_list_table_class_name', [ $this, 'overrideAdminWPPostsTable' ]);
+		add_filter('init', [ $this, 'initializeWebSocketServer' ]);
 	}
 
 	/**
@@ -310,7 +329,7 @@ class Settings
 	{
 		wp_enqueue_script(
 			PCC_HANDLE,
-			PCC_PLUGIN_DIR_URL . 'assets/js/pcc-front.js',
+			PCC_PLUGIN_DIR_URL . 'dist/pcc-front.js',
 			[],
 			filemtime(PCC_PLUGIN_DIR . 'assets/js/pcc-front.js'),
 			true
@@ -320,8 +339,9 @@ class Settings
 			PCC_HANDLE,
 			'PCCFront',
 			[
-				'rest_url'         => get_rest_url(get_current_blog_id(), PCC_API_NAMESPACE),
-				'nonce'            => wp_create_nonce('wp_rest'),
+				'rest_url'      => get_rest_url(get_current_blog_id(), PCC_API_NAMESPACE),
+				'websocket_url' => PCC_WEBSOCKET_URL,
+				'nonce'         => wp_create_nonce('wp_rest'),
 			]
 		);
 	}
@@ -364,5 +384,73 @@ class Settings
 		}
 
 		return $className;
+	}
+
+	/**
+	 * Initialize and schedule the WebSocket server to run hourly.
+	 *
+	 * @return void
+	 */
+	public function initializeWebSocketServer()
+	{
+		// Schedule the WebSocket server to run hourly if it's not already scheduled.
+		if (!wp_next_scheduled(PCC_WEBSOCKET_SCHEDULE_EVENT)) {
+			wp_schedule_event(time(), 'hourly', PCC_WEBSOCKET_SCHEDULE_EVENT);
+		}
+
+		// Hook the runServer method to the scheduled event.
+		add_action(PCC_WEBSOCKET_SCHEDULE_EVENT, [$this, 'runWebSocketServer']);
+	}
+
+	/**
+	 * Run the WebSocket server.
+	 *
+	 * @return void
+	 */
+	public function runWebSocketServer()
+	{
+		// Check if the server is already running.
+		if ($this->isWebSocketServerRunning()) {
+			if (defined('WP_CLI') && WP_CLI) {
+				\WP_CLI::success('WebSocket server is already running.');
+			}
+
+			return;
+		}
+
+		// Command to run the WebSocket server in the background with parameters.
+		$command = 'php '
+				   . PCC_PLUGIN_DIR
+				   . 'app/websocket/StartWebSocketServer.php '
+				   . PCC_WEBSOCKET_HOST . ' '
+				   . PCC_WEBSOCKET_PORT . ' '
+				   . PCC_WEBSOCKET_PATH . ' > /dev/null 2>&1 &';
+
+		// Execute the command.
+		exec($command);
+
+		if (defined('WP_CLI') && WP_CLI) {
+			// Display a success message when the server starts successfully.
+			\WP_CLI::success('WebSocket server successfully started.');
+		}
+	}
+
+	/**
+	 * Check if the WebSocket server is already running.
+	 *
+	 * @return bool True if the server is running, false otherwise.
+	 */
+	private function isWebSocketServerRunning()
+	{
+		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fsockopen
+		$connection = @fsockopen(PCC_WEBSOCKET_HOST, PCC_WEBSOCKET_PORT, $errno, $errstr, 2);
+
+		if (is_resource($connection)) {
+			// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose
+			fclose($connection);
+			return true;
+		}
+
+		return false;
 	}
 }
