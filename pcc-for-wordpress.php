@@ -58,9 +58,9 @@ function getSiteUrlWithoutScheme()
 }
 
 define('PCC_WEBSOCKET_HOST', getSiteUrlWithoutScheme());
-define('PCC_WEBSOCKET_PORT', 443);
-define('PCC_WEBSOCKET_URI', '/websocket');
-define('PCC_WEBSOCKET_URL', 'wss://' . PCC_WEBSOCKET_HOST . ':' . PCC_WEBSOCKET_PORT . PCC_WEBSOCKET_URI);
+define('PCC_WEBSOCKET_PORT', 8080);
+define('PCC_WEBSOCKET_URI', '/ws');
+define('PCC_WEBSOCKET_URL', 'ws://' . PCC_WEBSOCKET_HOST . ':' . PCC_WEBSOCKET_PORT . PCC_WEBSOCKET_URI);
 define('PCC_WEBSOCKET_SCHEDULE_EVENT', 'pcc_execute_websocket_server');
 
 

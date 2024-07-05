@@ -10,9 +10,9 @@ if ($argc < 4) {
 	exit(1);
 }
 
-$host = 'pantheon.xyz';
-$port = 443;
-$path = 'websocket';
+$host = $argv[1];
+$port = (int)$argv[2];
+$path = $argv[3];
 
 $server = new App($host, $port);
 $server->route($path, new WebSocketServer(), ['*']);
