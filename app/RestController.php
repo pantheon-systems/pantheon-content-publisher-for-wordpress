@@ -162,6 +162,10 @@ class RestController
 		$pccGrant = isset($params['pcc_grant']) ? sanitize_text_field($params['pcc_grant']) : '';
 		$article = (new PccSyncManager())->getPreviewContent($documentId, $pccGrant);
 
+		if (!$article) {
+			return new WP_REST_Response('Invalid request: malformed JWT token or document ID', 400);
+		}
+
 		return new WP_REST_Response(['title' => $article->title, 'content' => $article->content]);
 	}
 

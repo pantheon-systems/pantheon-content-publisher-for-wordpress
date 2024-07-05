@@ -32,9 +32,16 @@ conn.onmessage = function(e) {
         },
         body: JSON.stringify(data)
     })
-        .then(response => response.json())
+        .then(response => {
+			if (!response.ok) {
+				return response.json().then(errorMessage => {
+					alert(errorMessage)
+				});
+
+			}
+			return response.json();
+		})
         .then(result => {
-            console.log('Success:', result);
             var entryTitle = document.getElementsByClassName('wp-block-post-title');
             var entryContents = document.getElementsByClassName('entry-content');
 
