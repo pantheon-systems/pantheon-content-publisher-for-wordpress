@@ -125,7 +125,12 @@ class Settings
 			$parts = explode('/', $wp->request);
 			$documentId = end($parts);
 			$pcc = new PccSyncManager();
-			$url = $pcc->preaprePreviewingURL($documentId, sanitize_text_field($_GET['pccGrant']));
+			$postId = $pcc->findExistingConnectedPost($documentId);
+			if (!$postId) {
+				$postId = $pcc->fetchAndStoreDocument($documentId, true);
+			}
+
+			$url = $pcc->preaprePreviewingURL($documentId, sanitize_text_field($_GET['pccGrant']), $postId);
 
 			wp_redirect($url);
 			exit;

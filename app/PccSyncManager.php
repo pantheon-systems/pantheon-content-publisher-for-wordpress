@@ -47,12 +47,19 @@ class PccSyncManager
 		return new PccClient(new PccClientConfig(...$args));
 	}
 
-	public function fetchAndStoreDocument($documentId)
+	/**
+	 * Fetch and store document.
+	 *
+	 * @param $documentId
+	 * @param bool $isDraft
+	 * @return int
+	 */
+	public function fetchAndStoreDocument($documentId, $isDraft = false)
 	{
 		$articlesApi = new ArticlesApi($this->pccClient());
 		$article = $articlesApi->getArticleById($documentId);
 
-		return $this->storeArticle($article);
+		return $this->storeArticle($article, $isDraft);
 	}
 
 	/**
@@ -75,13 +82,14 @@ class PccSyncManager
 	 * Store article.
 	 *
 	 * @param Article $article
+	 * @param bool $isDraft
 	 * @return int
 	 */
-	private function storeArticle(Article $article)
+	private function storeArticle(Article $article, bool $isDraft = false)
 	{
 		$postId = $this->findExistingConnectedPost($article->id);
 
-		return $this->createOrUpdatePost($postId, $article);
+		return $this->createOrUpdatePost($postId, $article, $isDraft);
 	}
 
 	/**
@@ -91,12 +99,12 @@ class PccSyncManager
 	 * @param Article $article
 	 * @return int post id
 	 */
-	private function createOrUpdatePost($postId, Article $article)
+	private function createOrUpdatePost($postId, Article $article, bool $isDraft = false)
 	{
 		$data = [
 			'post_title' => $article->title,
 			'post_content' => $article->content,
-			'post_status' => 'publish',
+			'post_status' => $isDraft ? 'draft' : 'publish',
 			'post_name' => $article->slug,
 			'post_type' => $this->getIntegrationPostType(),
 		];
@@ -116,7 +124,7 @@ class PccSyncManager
 	 * @param $value
 	 * @return int|null
 	 */
-	private function findExistingConnectedPost($value)
+	public function findExistingConnectedPost($value)
 	{
 		global $wpdb;
 
@@ -184,8 +192,9 @@ class PccSyncManager
 		}
 	}
 
-	public function preaprePreviewingURL(string $documentId, string $pccGrant)
+	public function preaprePreviewingURL(string $documentId, string $pccGrant, $postId = null)
 	{
+		$postId = $postId ?: $this->findExistingConnectedPost($documentId);
 		return add_query_arg(
 			[
 				'preview' => 'google_document',
@@ -193,7 +202,7 @@ class PccSyncManager
 				'publishing_level' => PublishingLevel::REALTIME->value,
 				'document_id' => $documentId,
 			],
-			get_permalink($this->findExistingConnectedPost($documentId))
+			get_permalink($postId)
 		);
 	}
 
