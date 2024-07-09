@@ -106,9 +106,7 @@ class Settings
 		global $wp;
 		$strLen = strlen(static::PCC_PUBLISH_DOCUMENT_ENDPOINT);
 		if (substr($wp->request, 0, $strLen) !== static::PCC_PUBLISH_DOCUMENT_ENDPOINT) {
-			$url = rest_url(PCC_API_NAMESPACE . '/' . static::PCC_STATUS_ENDPOINT);
-
-			return wp_redirect($url);
+			return;
 		}
 
 		// Publish document
