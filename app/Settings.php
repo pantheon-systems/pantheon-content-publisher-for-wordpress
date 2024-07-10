@@ -332,23 +332,29 @@ class Settings
 	 */
 	public function enqueueFrontAssets(): void
 	{
-		wp_enqueue_script(
-			PCC_HANDLE,
-			PCC_PLUGIN_DIR_URL . 'dist/pcc-front.js',
-			[],
-			filemtime(PCC_PLUGIN_DIR . 'assets/js/pcc-front.js'),
-			true
-		);
+		if (
+			isset($_GET['preview']) && $_GET['preview'] === 'google_document'
+			&& isset($_GET['pcc_grant']) && $_GET['pcc_grant']
+			&& isset($_GET['publishing_level']) && $_GET['publishing_level'] === PublishingLevel::REALTIME->value
+		) {
+			wp_enqueue_script(
+				PCC_HANDLE,
+				PCC_PLUGIN_DIR_URL . 'dist/pcc-front.js',
+				[],
+				filemtime(PCC_PLUGIN_DIR . 'assets/js/pcc-front.js'),
+				true
+			);
 
-		wp_localize_script(
-			PCC_HANDLE,
-			'PCCFront',
-			[
-				'rest_url'      => get_rest_url(get_current_blog_id(), PCC_API_NAMESPACE),
-				'websocket_url' => PCC_WEBSOCKET_URL,
-				'nonce'         => wp_create_nonce('wp_rest'),
-			]
-		);
+			wp_localize_script(
+				PCC_HANDLE,
+				'PCCFront',
+				[
+					'rest_url'      => get_rest_url(get_current_blog_id(), PCC_API_NAMESPACE),
+					'websocket_url' => PCC_WEBSOCKET_URL,
+					'nonce'         => wp_create_nonce('wp_rest'),
+				]
+			);
+		}
 	}
 
 	/**
