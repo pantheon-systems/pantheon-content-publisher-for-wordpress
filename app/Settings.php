@@ -316,7 +316,7 @@ class Settings
 	{
 		if (
 			isset($_GET['preview']) && $_GET['preview'] === 'google_document'
-			&& isset($_GET['pcc_grant']) && $_GET['pcc_grant']
+			&& isset($_GET['document_id']) && $_GET['document_id']
 			&& isset($_GET['publishing_level']) && $_GET['publishing_level'] === PublishingLevel::REALTIME->value
 		) {
 			wp_enqueue_script(
@@ -331,8 +331,9 @@ class Settings
 				PCC_HANDLE,
 				'PCCFront',
 				[
-					'rest_url'      => get_rest_url(get_current_blog_id(), PCC_API_NAMESPACE),
-					'nonce'         => wp_create_nonce('wp_rest'),
+					'preview_document_id' => sanitize_text_field($_GET['document_id']),
+					'site_id' => sanitize_text_field($this->getSiteId()),
+					'token' => PccSyncManager::$TOKEN,
 				]
 			);
 		}

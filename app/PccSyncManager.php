@@ -2,7 +2,6 @@
 
 namespace PCC;
 
-use Exception;
 use PccPhpSdk\api\Query\Enums\PublishingLevel;
 use PccPhpSdk\api\Response\Article;
 use PccPhpSdk\api\ArticlesApi;
@@ -21,7 +20,7 @@ class PccSyncManager
 	 *
 	 * @var string $token
 	 */
-	private string $token = '5d8d5649-c060-4f29-b267-e11fa1abdf01';
+	static string $TOKEN = 'b1faf779-c715-4fcd-b9fe-d647ebc16656';
 
 	public function __construct()
 	{
@@ -35,7 +34,7 @@ class PccSyncManager
 	 */
 	public function pccClient(string $pccGrant = null): PccClient
 	{
-		$args = [$this->siteId, $this->token];
+		$args = [$this->siteId, self::$TOKEN];
 		if ($pccGrant) {
 			$args = [$this->siteId, '', null, $pccGrant];
 		}
@@ -168,7 +167,6 @@ class PccSyncManager
 		return add_query_arg(
 			[
 				'preview' => 'google_document',
-				'pcc_grant' => $pccGrant,
 				'publishing_level' => PublishingLevel::REALTIME->value,
 				'document_id' => $documentId,
 			],

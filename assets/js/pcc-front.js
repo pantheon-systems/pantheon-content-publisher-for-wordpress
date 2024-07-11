@@ -1,65 +1,93 @@
-var conn = new WebSocket(window.PCCFront.websocket_url);
+import {ARTICLE_UPDATE_SUBSCRIPTION, PantheonClient, PublishingLevel} from "@pantheon-systems/pcc-sdk-core";
 
-conn.onopen = function(e) {
-    console.log("Preview connection established!");
-};
+const url = new URL(window.location.href);
+const params = new URLSearchParams(url.search);
+const documentId = params.get('document_id');
 
-conn.onmessage = function(e) {
-    let articleId = e.data;
+const pantheonClient = new PantheonClient({
+	siteId: window.PCCFront.site_id,
+	token: window.PCCFront.token
+});
 
-    // Get the current URL
-    const url = new URL(window.location.href);
-    const params = new URLSearchParams(url.search);
-    const pccGrant = params.get('pcc_grant');
+const observable = pantheonClient.apolloClient.subscribe({
+	query: ARTICLE_UPDATE_SUBSCRIPTION,
+	variables: {
+		id: window.PCCFront.preview_document_id, //replace with dynamic article ID
+		contentType: "TREE_PANTHEON_V2",
+		publishingLevel: PublishingLevel.REALTIME,
+	},
+});
 
-	// Bail if document id is not same as article id
-    if(params.get('document_id') !== articleId){
-        return
-    }
+observable.subscribe({
+	next: (update) => {
+		if (!update.data) return;
+		const article = update.data.article;
+		// Bail if current article is not equal to one in session
+		// @TODO it's already checked and register above and needs to be revisited again before removing the following code
+		if (documentId !== article.id) {
+			return;
+		}
 
-    // Create data object to send
-    const data = {
-        document_id: articleId,
-        pcc_grant: pccGrant
-    };
+		var entryTitle = document.getElementsByClassName('wp-block-post-title');
+		var entryContents = document.getElementsByClassName('entry-content');
+		entryTitle[0].innerHTML = article.title
 
-    // Send data to WordPress REST API endpoint via AJAX (fetch API)
-    fetch(`${window.PCCFront.rest_url}/preview-content`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-WP-Nonce': window.PCCFront.nonce // Assuming wpApiSettings is enqueued and available
-        },
-        body: JSON.stringify(data)
-    })
-        .then(response => {
-			if (!response.ok) {
-				return response.json().then(errorMessage => {
-					alert(errorMessage)
-				});
+		if (entryContents.length > 0) {
+			entryContents[0].innerHTML = ''; // Clear existing content
+			entryContents[0].appendChild(generateHTMLFromJSON(JSON.parse(update.data.article.content)));
+		}
+	},
+});
 
+function generateHTMLFromJSON(json, parentElement = null) {
+	const createElement = (tag, attrs = {}, styles = {}, content = '') => {
+		if (undefined === tag) {
+			tag = 'div';
+		}
+		const element = document.createElement(tag);
+
+		// Set attributes
+		for (const [key, value] of Object.entries(attrs)) {
+			element.setAttribute(key, value);
+		}
+
+		// Set styles
+		if (Array.isArray(styles)) {
+			styles.forEach(style => {
+				const [key, value] = style.split(':').map(s => s.trim());
+				element.style[key] = value;
+			});
+		} else if (typeof styles === 'object') {
+			for (const [key, value] of Object.entries(styles)) {
+				element.style[key] = value;
 			}
-			return response.json();
-		})
-        .then(result => {
-            var entryTitle = document.getElementsByClassName('wp-block-post-title');
-            var entryContents = document.getElementsByClassName('entry-content');
+		}
 
-            // Iterate through each element with class 'wp-block-post-title'
-            entryTitle[0].innerHTML = result.title
+		// Set content
+		if (content !== null) {
+			element.innerHTML = content;
+		}
 
-            // Iterate through each element with class 'entry-content'
-            entryContents[0].innerHTML = result.content
-        })
-        .catch(error => {
-            console.error('Error:', error);
-        });
-    };
+		return element;
+	};
 
-conn.onerror = function(error) {
-    console.error('WebSocket error: ' + error.message);
-};
+	const processNode = (node, parent) => {
+		const {tag, data, children, style, attrs} = node;
 
-conn.onclose = function(e) {
-    console.log('Connection closed');
-};
+		const element = createElement(tag, attrs, style || [], data !== null ? data : '');
+
+		if (children && children.length) {
+			children.forEach(child => processNode(child, element));
+		}
+
+		parent.appendChild(element);
+	};
+
+	// Create a container if parentElement is not provided
+	const container = parentElement || document.createElement('div');
+
+	processNode(json, container);
+
+	return container;
+}
+
