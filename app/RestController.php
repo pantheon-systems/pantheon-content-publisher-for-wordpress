@@ -80,11 +80,6 @@ class RestController
 				'method'   => 'GET',
 				'callback' => [$this, 'pantheonCloudStatusCheck'],
 			],
-			[
-				'route'    => '/preview-content',
-				'method'   => 'POST',
-				'callback' => [$this, 'previewContent'],
-			],
 		];
 
 		foreach ($endpoints as $endpoint) {
@@ -144,26 +139,6 @@ class RestController
 					200
 				);
 		}
-	}
-
-	/**
-	 * Preview content from PCC.
-	 *
-	 * @param WP_REST_Request $request
-	 * @return WP_REST_Response
-	 */
-	public function previewContent(WP_REST_Request $request)
-	{
-		$params = $request->get_json_params();
-		$documentId = isset($params['document_id']) ? sanitize_text_field($params['document_id']) : '';
-		$pccGrant = isset($params['pcc_grant']) ? sanitize_text_field($params['pcc_grant']) : '';
-		$article = (new PccSyncManager())->getPreviewContent($documentId, $pccGrant);
-
-		if (!$article) {
-			return new WP_REST_Response('Invalid request: malformed JWT token or document ID', 400);
-		}
-
-		return new WP_REST_Response(['title' => $article->title, 'content' => $article->content]);
 	}
 
 	/**
