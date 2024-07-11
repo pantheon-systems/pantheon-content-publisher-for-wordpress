@@ -22,7 +22,7 @@
 	}
   },
   "require": {
-	"php": ">=8.3",
+	"php": ">=8.1",
 	"digitalpolygon/pcc-php-sdk": "dev-main",
     "ratchet/pawl": "^0.4.1",
     "cboden/ratchet": "^0.4.4"
