@@ -8,10 +8,6 @@ use PccPhpSdk\api\Response\Article;
 use PccPhpSdk\api\ArticlesApi;
 use PccPhpSdk\core\PccClient;
 use PccPhpSdk\core\PccClientConfig;
-use Ratchet\Client\Connector;
-use Ratchet\Client\WebSocket;
-use React\EventLoop\Loop;
-use React\Socket\Connector as SocketConnector;
 
 class PccSyncManager
 {
@@ -164,32 +160,6 @@ class PccSyncManager
 			'ID' => $postId,
 			'post_status' => 'draft',
 		]);
-	}
-
-	/**
-	 * Share document id over websocket.
-	 *
-	 * @param $documentId
-	 * @return void|\WP_Error
-	 */
-	public function shareDocumentIdOverWebSocket($documentId)
-	{
-		try {
-			$loop      = Loop::get();
-			$connector = new Connector($loop, new SocketConnector($loop));
-
-			$connector(PCC_WEBSOCKET_URL)
-				->then(function (WebSocket $conn) use ($documentId) {
-					$conn->send($documentId);
-					$conn->close();
-				}, function ($e) {
-					error_log("Could not connect: {$e->getMessage()}");
-				});
-
-			$loop->run();
-		} catch (Exception $e) {
-			return new \WP_Error('pcc_websocket_error', $e->getMessage());
-		}
 	}
 
 	public function preaprePreviewingURL(string $documentId, string $pccGrant, $postId = null)
