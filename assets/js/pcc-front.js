@@ -71,13 +71,27 @@ function generateHTMLFromJSON(json, parentElement = null) {
 		return element;
 	};
 
-	const processNode = (node, parent) => {
-		const {tag, data, children, style, attrs} = node;
+	const processNode = (node, parent, uniqueClass) => {
+		const { tag, data, children, style, attrs } = node;
+
+		const hasChildren = children && children.length;
+		const hasData = data !== null && data !== '';
+		if (!hasChildren && !hasData && (attrs === undefined || Object.keys(attrs).length === 0)) {
+			return;
+		}
+
+		// Scope styles if the tag is 'style'
+		if (tag === 'style' && data) {
+			const scopedData = `.${uniqueClass} ${data}`;
+			const element = createElement(tag, attrs, style || [], scopedData);
+			parent.appendChild(element);
+			return;
+		}
 
 		const element = createElement(tag, attrs, style || [], data !== null ? data : '');
 
-		if (children && children.length) {
-			children.forEach(child => processNode(child, element));
+		if (hasChildren) {
+			children.forEach(child => processNode(child, element, uniqueClass));
 		}
 
 		parent.appendChild(element);
@@ -86,7 +100,11 @@ function generateHTMLFromJSON(json, parentElement = null) {
 	// Create a container if parentElement is not provided
 	const container = parentElement || document.createElement('div');
 
-	processNode(json, container);
+	// Generate a unique class name for scoping
+	const uniqueClass = 'scoped-' + Math.random().toString(36).substr(2, 9);
+	container.classList.add(uniqueClass);
+
+	processNode(json, container, uniqueClass);
 
 	return container;
 }
