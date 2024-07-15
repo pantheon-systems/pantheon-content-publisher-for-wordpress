@@ -161,7 +161,7 @@ class PccSyncManager
 		]);
 	}
 
-	public function preaprePreviewingURL(string $documentId, string $pccGrant, $postId = null)
+	public function preaprePreviewingURL(string $documentId, $postId = null)
 	{
 		$postId = $postId ?: $this->findExistingConnectedPost($documentId);
 		return add_query_arg(

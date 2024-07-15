@@ -112,7 +112,7 @@ class Settings
 				$postId = $pcc->fetchAndStoreDocument($documentId, true);
 			}
 
-			$url = $pcc->preaprePreviewingURL($documentId, sanitize_text_field($_GET['pccGrant']), $postId);
+			$url = $pcc->preaprePreviewingURL($documentId, $postId);
 
 			wp_redirect($url);
 			exit;
