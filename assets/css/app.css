@@ -80,6 +80,10 @@
     box-shadow: 0 0 0 0 #0e65e9; /*done*/
 }
 
+.input-with-border{
+    @apply w-full border border-light py-[0.5rem] px-[0.625rem] text-base text-grey rounded-[0.3rem]; /*done*/
+}
+
 .text-with-border{
     @apply w-full border border-light py-[0.5rem] px-[0.625rem] text-base text-grey rounded-[0.3rem]; /*done*/
 }
@@ -124,6 +128,7 @@
 .welcome-page {
     @apply page-styles flex flex-col justify-between /*done*/
 }
+
 /** End Welcome Page */
 
 /** Start Auth Page */

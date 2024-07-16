@@ -35,6 +35,15 @@ export function getSelectedPostType() {
 }
 
 /**
+ * Get Access Token
+ *
+ * @returns {string}
+ */
+export function getAccessToken() {
+	return document.getElementById('access-token')?.value;
+}
+
+/**
  * Show error message
  * @param message
  */

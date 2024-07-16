@@ -1,19 +1,15 @@
 import {deleteConfigDetails} from "./lib/localStorage";
-
-require('./login');
-
-import login from './login';
 import {fetchTokenAndSaveCredentials, getCodeFromURL, redirectToMainPage} from "./lib/oauthHelper";
 import createSite from "./createSite";
 import {hideErrorMessage, hideSpinner, showErrorMessage, showSpinner, updateSpinnerText} from "./helper";
 import updatePostType from "./updatePostType";
+import authenticate from "./authenticate";
 
 console.info('window.PCCAdmin.credentials', window.PCCAdmin.credentials);
 
-
 if (document.getElementById('pcc-app-authenticate') != undefined) {
 	document.getElementById('pcc-app-authenticate').addEventListener('click', function () {
-		login([]);
+		authenticate([]);
 	});
 }
 

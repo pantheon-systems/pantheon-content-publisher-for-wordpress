@@ -16,7 +16,7 @@ use WP_REST_Response;
 use function esc_html__;
 use function serialize;
 
-use const PCC_CREDENTIALS_OPTION_KEY;
+use const PCC_ACCESS_TOKEN_OPTION_KEY;
 use const PCC_HANDLE;
 
 /**
@@ -46,9 +46,9 @@ class RestController
 				'callback' => [$this, 'handleOauthRedirect'],
 			],
 			[
-				'route'    => '/oauth/credentials',
+				'route'    => '/oauth/access-token',
 				'method'   => 'POST',
-				'callback' => [$this, 'saveCredentials'],
+				'callback' => [$this, 'saveAccessToken'],
 			],
 			[
 				'route'    => '/oauth/credentials',
@@ -270,28 +270,29 @@ class RestController
 	 *
 	 * @return WP_REST_Response
 	 */
-	public function saveCredentials(WP_REST_Request $request): WP_REST_Response
+	public function saveAccessToken(WP_REST_Request $request): WP_REST_Response
 	{
 		if (! current_user_can('manage_options')) {
 			return new WP_REST_Response(esc_html__('You are not authorized to perform this action.', PCC_HANDLE), 401);
 		}
 
-		$data = $request->get_params();
+		$data = $request->get_params('access_token');
+
 		// Validate input field
 		if (empty($data)) {
 			return new WP_REST_Response(
-				esc_html__('Validation failed.', PCC_HANDLE),
+				esc_html__('Access Token cannot be empty.', PCC_HANDLE),
 				400
 			);
 		}
 
-		return update_option(PCC_CREDENTIALS_OPTION_KEY, serialize($data)) ?
+		return update_option(PCC_ACCESS_TOKEN_OPTION_KEY, $data) ?
 			new WP_REST_Response(
-				esc_html__('Credentials saved.', PCC_HANDLE),
+				esc_html__('Access Token saved.', PCC_HANDLE),
 				200
 			) :
 			new WP_REST_Response(
-				esc_html__('Failed to save Credentials.', PCC_HANDLE),
+				esc_html__('Failed to save Access Token.', PCC_HANDLE),
 				500
 			);
 	}
@@ -307,7 +308,7 @@ class RestController
 			return new WP_REST_Response(esc_html__('You are not authorized to perform this action.', PCC_HANDLE), 401);
 		}
 
-		return delete_option(PCC_CREDENTIALS_OPTION_KEY) ?
+		return delete_option(PCC_ACCESS_TOKEN_OPTION_KEY) ?
 			new WP_REST_Response(
 				esc_html__('Credentials deleted.', PCC_HANDLE),
 				200
@@ -329,7 +330,7 @@ class RestController
 			return new WP_REST_Response(esc_html__('You are not authorized to perform this action.', PCC_HANDLE), 401);
 		}
 
-		delete_option(PCC_CREDENTIALS_OPTION_KEY);
+		delete_option(PCC_ACCESS_TOKEN_OPTION_KEY);
 		delete_option(PCC_SITE_ID_OPTION_KEY);
 		delete_option(PCC_INTEGRATION_POST_TYPE_OPTION_KEY);
 		$this->removeMetaDataFromPosts();

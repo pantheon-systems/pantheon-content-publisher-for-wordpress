@@ -239,13 +239,13 @@ class Settings
 			return;
 		}
 
-		// Site id is set and Credentials are set
-		if ($this->getSiteId() && $this->getCredentials()) {
+		// Site id is set and access token is set
+		if ($this->getSiteId() && $this->getAccessToken()) {
 			require $this->pages['connected-collection'];
 
 			return;
 		}
-		if ($this->getCredentials()) {
+		if ($this->getAccessToken()) {
 			require $this->pages['create-collection'];
 
 			return;
@@ -262,15 +262,15 @@ class Settings
 	}
 
 	/**
-	 * Get credentials from the database.
+	 * Get access token from the database.
 	 *
 	 * @return array|mixed
 	 */
-	private function getCredentials()
+	private function getAccessToken()
 	{
-		$pccCredentials = get_option(PCC_CREDENTIALS_OPTION_KEY);
+		$pccToken = get_option(PCC_ACCESS_TOKEN_OPTION_KEY);
 
-		return $pccCredentials ? unserialize($pccCredentials) : [];
+		return $pccToken ?: [];
 	}
 
 	/**
@@ -303,7 +303,7 @@ class Settings
 				'nonce'            => wp_create_nonce('wp_rest'),
 				'plugin_main_page' => menu_page_url(PCC_HANDLE, false),
 				'site_url'         => site_url(),
-			] + ['credentials' => $this->getCredentials()]
+			]
 		);
 	}
 
@@ -350,7 +350,7 @@ class Settings
 		}
 
 		// Show notification when authentication details are not set or collection not created
-		if (! $this->getCredentials() || ! $this->getSiteId()) {
+		if (! $this->getAccessToken() || ! $this->getSiteId()) {
 			add_action('admin_notices', [$this, 'pluginNotification']);
 		}
 	}

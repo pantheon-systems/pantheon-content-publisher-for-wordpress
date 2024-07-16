@@ -1,5 +1,4 @@
 import axios, {AxiosError, HttpStatusCode} from "axios";
-import login from "../login"; //@todo: refactor out these commands
 import {getApiConfig} from "./apiConfig";
 import {getLocalAuthDetails} from "./localStorage";
 import {toKebabCase} from "./utils";
