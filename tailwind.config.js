@@ -29,6 +29,7 @@ module.exports = {
 			'light':'#CFCFD3',
 			'light-grey':'#eeeeee',
 			'light-blue':'#0F62FE',
+			'royal-purple':'#654BD5',
 			'white':'#ffffff',
 		},
 		extend: {

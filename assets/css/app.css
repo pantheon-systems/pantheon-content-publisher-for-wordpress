@@ -90,6 +90,17 @@
 .divider-border {
     @apply border border-solid border-light-grey mb-[1.25rem] /*done*/
 }
+
+.tooltip {
+    @apply cursor-pointer relative inline-block;
+}
+
+.tooltip .tooltip-text {
+    @apply text-xs invisible w-56 text-white bg-grey text-center rounded p-2 absolute z-10 bottom-full left-1/2 transform -translate-x-1/2 mb-2 opacity-0 transition-opacity duration-300
+}
+.tooltip:hover .tooltip-text {
+    @apply cursor-pointer visible opacity-100;
+}
 /** End General Styles */
 
 /** Start Header Styles */
@@ -127,6 +138,14 @@
 /** Start Welcome Page */
 .welcome-page {
     @apply page-styles flex flex-col justify-between /*done*/
+}
+
+.pantheon-link:link {
+    @apply underline text-light-blue
+}
+
+.pantheon-link:hover, .pantheon-link:active, .pantheon-link:visited {
+    @apply text-royal-purple
 }
 
 /** End Welcome Page */

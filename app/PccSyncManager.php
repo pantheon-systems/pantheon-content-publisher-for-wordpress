@@ -20,7 +20,7 @@ class PccSyncManager
 	 *
 	 * @var string $token
 	 */
-	static string $TOKEN = 'b1faf779-c715-4fcd-b9fe-d647ebc16656';
+	public static string $TOKEN = 'b1faf779-c715-4fcd-b9fe-d647ebc16656';
 
 	public function __construct()
 	{
