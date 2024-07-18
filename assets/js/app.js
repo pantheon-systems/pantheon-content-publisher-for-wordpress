@@ -1,5 +1,4 @@
-import {deleteConfigDetails} from "./lib/localStorage";
-import {redirectToMainPage} from "./lib/oauthHelper";
+import {deleteConfigDetails, redirectToMainPage} from "./helper";
 import createSite from "./createSite";
 import {hideErrorMessage, hideSpinner, showErrorMessage, showSpinner, updateSpinnerText} from "./helper";
 import updatePostType from "./updatePostType";

@@ -65,3 +65,24 @@ export function hideErrorMessage() {
 		errorMessageContainer.classList.add('hidden');
 	}
 }
+
+/**
+ * Redirect to main page
+ */
+export const redirectToMainPage = () => {
+	window.location.href = window.PCCAdmin.plugin_main_page
+}
+
+/**
+ * Delete the API configuration details
+ *
+ * @param payload
+ * @returns {Promise<*>}
+ */
+export const deleteConfigDetails = async (payload) => {
+	const resp = await axios.delete(`${window.PCCAdmin.rest_url}/disconnect`,
+		{headers: {'X-WP-Nonce': window.PCCAdmin.nonce}}
+	);
+
+	return resp
+};
