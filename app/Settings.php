@@ -84,7 +84,6 @@ class Settings
 	 */
 	public function publishDocuments()
 	{
-//		https://pantheon.xyz/api/pantheoncloud/document/1Lw7UH3Rf77_rzvTTkd_CLPpOMnIfV5qXEZtMsnee3IE/?pccGrant=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MTk4NzczMzQsImlhdCI6MTcxOTg1NTczNCwic3ViIjoibWdvdWRhQGNyb3dkZmF2b3JpdGUuY29tIiwic2l0ZSI6InlaYVFyb2FoRU90MlRSZGdZUFhqIiwic2NvcGUiOiJwY2NfZ3JhbnQifQ.J5BU3tPt2VPAqAPjdebod4SRCJAwrtGHQ8o4nl5zqCY&publishingLevel=REALTIME
 		global $wp;
 		$strLen = strlen(static::PCC_PUBLISH_DOCUMENT_ENDPOINT);
 		if (substr($wp->request, 0, $strLen) !== static::PCC_PUBLISH_DOCUMENT_ENDPOINT) {
