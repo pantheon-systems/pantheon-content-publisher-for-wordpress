@@ -1,3 +1,4 @@
+import axios from "axios";
 export function showSpinner() {
 	const spinnerBox = document.getElementById('spinner-box');
 	const pccContent = document.getElementById('pcc-content');
@@ -76,12 +77,12 @@ export const redirectToMainPage = () => {
 /**
  * Delete the API configuration details
  *
- * @param payload
  * @returns {Promise<*>}
  */
-export const deleteConfigDetails = async (payload) => {
-	const resp = await axios.delete(`${window.PCCAdmin.rest_url}/disconnect`,
-		{headers: {'X-WP-Nonce': window.PCCAdmin.nonce}}
+export const deleteConfigDetails = async () => {
+	const { rest_url, nonce } = window.PCCAdmin;
+	const resp = await axios.delete(`${rest_url}/disconnect`,
+		{headers: {'X-WP-Nonce': nonce}}
 	);
 
 	return resp

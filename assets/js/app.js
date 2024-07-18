@@ -25,7 +25,6 @@ if (document.getElementById('pcc-create-site') != undefined) {
 			redirectToMainPage();
 		} catch (error) {
 			showErrorMessage(`Error while creating site: ${error.message}`)
-		} finally {
 			hideSpinner();
 		}
 	});
@@ -52,7 +51,7 @@ if (document.getElementById('pcc-disconnect') != undefined) {
 			redirectToMainPage();
 		} catch (error) {
 			showErrorMessage(`Error while disconnecting: ${error.message}`)
-		} finally {
+			hideSpinner();
 		}
 	});
 }
