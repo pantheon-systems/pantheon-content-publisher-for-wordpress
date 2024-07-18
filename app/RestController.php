@@ -102,8 +102,11 @@ class RestController
 	 */
 	public function handleWebhook(WP_REST_Request $request)
 	{
-		if ($request->get_header('x-pcc-webhook-secret')) {
-			//@todo: validate request, capture incoming data using x-pcc-webhook-secret
+		if (get_option(PCC_WEBHOOK_SECRET_OPTION_KEY) !== $request->get_header('x-pcc-webhook-secret')) {
+			return new WP_REST_Response(
+				esc_html__('You are not authorized to perform this action', PCC_HANDLE),
+				401
+			);
 		}
 
 		$event = $request->get_param('event');
