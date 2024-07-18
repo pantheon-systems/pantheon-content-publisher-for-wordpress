@@ -276,25 +276,21 @@ class RestController
 			return new WP_REST_Response(esc_html__('You are not authorized to perform this action.', PCC_HANDLE), 401);
 		}
 
-		$data = $request->get_params('access_token');
+		$accessToken = sanitize_text_field($request->get_param('access_token'));
 
 		// Validate input field
-		if (empty($data)) {
+		if (empty($accessToken)) {
 			return new WP_REST_Response(
 				esc_html__('Access Token cannot be empty.', PCC_HANDLE),
 				400
 			);
 		}
 
-		return update_option(PCC_ACCESS_TOKEN_OPTION_KEY, $data) ?
-			new WP_REST_Response(
-				esc_html__('Access Token saved.', PCC_HANDLE),
-				200
-			) :
-			new WP_REST_Response(
-				esc_html__('Failed to save Access Token.', PCC_HANDLE),
-				500
-			);
+		update_option(PCC_ACCESS_TOKEN_OPTION_KEY, $accessToken);
+		return new WP_REST_Response(
+			esc_html__('Access Token saved.', PCC_HANDLE),
+			200
+		);
 	}
 
 	/**

@@ -11,11 +11,12 @@ export default function authenticate() {
 			  return reject(new Error('Access token cannot be empty'));
 		  }
 
-        return await axios.post(`${rest_url}/oauth/access-token`, {
+        await axios.post(`${rest_url}/oauth/access-token`, {
           access_token: getAccessToken(),
         }, {
           headers: { 'X-WP-Nonce': nonce }
         });
+		resolve();
       } catch (e) {
         showErrorMessage(`Error: ${e.message}`)
         reject(e);
