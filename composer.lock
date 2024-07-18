@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "a4a1be7268402063c2d9aea02b09792f",
+    "content-hash": "c5fbcca827a3b734fca5855f017907b2",
     "packages": [
         {
             "name": "cfpinto/graphql",
@@ -1143,8 +1143,8 @@
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
-        "php": ">=8.3"
+        "php": ">=8.1"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.3.0"
+    "plugin-api-version": "2.6.0"
 }

@@ -2,6 +2,7 @@
 
 namespace PCC;
 
+use PccPhpSdk\api\Query\Enums\PublishingLevel;
 use PccPhpSdk\api\Response\Article;
 use PccPhpSdk\api\ArticlesApi;
 use PccPhpSdk\core\PccClient;
@@ -19,9 +20,7 @@ class PccSyncManager
 	 *
 	 * @var string $token
 	 */
-	private string $token = '5d8d5649-c060-4f29-b267-e11fa1abdf01';
-
-	private $pccClient;
+	static string $TOKEN = 'b1faf779-c715-4fcd-b9fe-d647ebc16656';
 
 	public function __construct()
 	{
@@ -33,26 +32,29 @@ class PccSyncManager
 	 *
 	 * @return PccClient
 	 */
-	private function pccClient(): PccClient
+	public function pccClient(string $pccGrant = null): PccClient
 	{
-		if ($this->pccClient) {
-			return $this->pccClient;
+		$args = [$this->siteId, self::$TOKEN];
+		if ($pccGrant) {
+			$args = [$this->siteId, '', null, $pccGrant];
 		}
 
-		$pccClientConfig = new PccClientConfig(
-			$this->siteId,
-			$this->token
-		);
-		$this->pccClient = new PccClient($pccClientConfig);
-		return $this->pccClient;
+		return new PccClient(new PccClientConfig(...$args));
 	}
 
-	public function fetchAndStoreDocument($documentId)
+	/**
+	 * Fetch and store document.
+	 *
+	 * @param $documentId
+	 * @param bool $isDraft
+	 * @return int
+	 */
+	public function fetchAndStoreDocument($documentId, $isDraft = false)
 	{
 		$articlesApi = new ArticlesApi($this->pccClient());
 		$article = $articlesApi->getArticleById($documentId);
 
-		return $this->storeArticle($article);
+		return $this->storeArticle($article, $isDraft);
 	}
 
 	/**
@@ -75,13 +77,14 @@ class PccSyncManager
 	 * Store article.
 	 *
 	 * @param Article $article
+	 * @param bool $isDraft
 	 * @return int
 	 */
-	private function storeArticle(Article $article)
+	private function storeArticle(Article $article, bool $isDraft = false)
 	{
 		$postId = $this->findExistingConnectedPost($article->id);
 
-		return $this->createOrUpdatePost($postId, $article);
+		return $this->createOrUpdatePost($postId, $article, $isDraft);
 	}
 
 	/**
@@ -91,12 +94,12 @@ class PccSyncManager
 	 * @param Article $article
 	 * @return int post id
 	 */
-	private function createOrUpdatePost($postId, Article $article)
+	private function createOrUpdatePost($postId, Article $article, bool $isDraft = false)
 	{
 		$data = [
 			'post_title' => $article->title,
 			'post_content' => $article->content,
-			'post_status' => 'publish',
+			'post_status' => $isDraft ? 'draft' : 'publish',
 			'post_name' => $article->slug,
 			'post_type' => $this->getIntegrationPostType(),
 		];
@@ -116,7 +119,7 @@ class PccSyncManager
 	 * @param $value
 	 * @return int|null
 	 */
-	private function findExistingConnectedPost($value)
+	public function findExistingConnectedPost($value)
 	{
 		global $wpdb;
 
@@ -156,5 +159,32 @@ class PccSyncManager
 			'ID' => $postId,
 			'post_status' => 'draft',
 		]);
+	}
+
+	public function preaprePreviewingURL(string $documentId, $postId = null)
+	{
+		$postId = $postId ?: $this->findExistingConnectedPost($documentId);
+		return add_query_arg(
+			[
+				'preview' => 'google_document',
+				'publishing_level' => PublishingLevel::REALTIME->value,
+				'document_id' => $documentId,
+			],
+			get_permalink($postId)
+		);
+	}
+
+	/**
+	 * Get preview content from PCC.
+	 *
+	 * @param string $documentId
+	 * @param string $pccGrant
+	 * @return Article
+	 */
+	public function getPreviewContent(string $documentId, string $pccGrant)
+	{
+		$articleApi = new ArticlesApi($this->pccClient($pccGrant));
+
+		return $articleApi->getArticleById($documentId, [], PublishingLevel::REALTIME);
 	}
 }

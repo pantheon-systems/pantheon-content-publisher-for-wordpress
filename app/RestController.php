@@ -7,6 +7,7 @@
 namespace PCC;
 
 use PccPhpSdk\api\ArticlesApi;
+use PccPhpSdk\api\Query\Enums\PublishingLevel;
 use PccPhpSdk\core\PccClient;
 use PccPhpSdk\core\PccClientConfig;
 use WP_REST_Request;
@@ -127,7 +128,7 @@ class RestController
 		}
 
 		$articleId = sanitize_text_field($payload['articleId']);
-		$pccManager = new PccSyncManager($siteId);
+		$pccManager = new PccSyncManager();
 		switch ($event) {
 			case 'article.unpublish':
 				$pccManager->unPublishPostByDocumentId($articleId);

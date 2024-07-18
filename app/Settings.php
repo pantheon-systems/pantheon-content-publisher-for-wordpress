@@ -8,14 +8,17 @@
 
 namespace PCC;
 
+use PccPhpSdk\api\Query\Enums\PublishingLevel;
+
 use function add_action;
 use function filemtime;
 use function wp_enqueue_script;
 
 use const PCC_HANDLE;
-use const PCC_INTEGRATION_POST_TYPE_OPTION_KEY;
 use const PCC_PLUGIN_DIR;
 use const PCC_PLUGIN_DIR_URL;
+
+// phpcs:disable PSR1.Files.SideEffects.FoundWithSymbols
 
 /**
  * Class Settings
@@ -63,7 +66,11 @@ class Settings
 		add_action('admin_menu', [$this, 'addMenu']);
 		add_action(
 			'admin_enqueue_scripts',
-			[$this, 'enqueueAssets']
+			[$this, 'enqueueAdminAssets']
+		);
+		add_action(
+			'wp_enqueue_scripts',
+			[$this, 'enqueueFrontAssets']
 		);
 		add_action('admin_menu', [$this, 'pluginAdminNotice']);
 		add_filter('post_row_actions', [$this, 'addRowActions'], 10, 2);
@@ -77,8 +84,6 @@ class Settings
 	 */
 	public function publishDocuments()
 	{
-//		api/pantheoncloud/document/16Zaqua8BDQaqxmePljZ94huVs7sOcFnWY9msb8KLTc8/?publishingLevel=PRODUCTION
-//		api/pantheoncloud/document/16Zaqua8BDQaqxmePljZ94huVs7sOcFnWY9msb8KLTc8/?pccGrant=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MTk0MTI0MDksImlhdCI6MTcxOTM5MDgwOSwic3ViIjoibWdvdWRhQGNyb3dkZmF2b3JpdGUuY29tIiwic2l0ZSI6InlaYVFyb2FoRU90MlRSZGdZUFhqIiwic2NvcGUiOiJwY2NfZ3JhbnQifQ.qrJc73w8MiLBR7NCVpRy6Hhv-2lelmwBguePkfUaJrQ&publishingLevel=REALTIME
 		global $wp;
 		$strLen = strlen(static::PCC_PUBLISH_DOCUMENT_ENDPOINT);
 		if (substr($wp->request, 0, $strLen) !== static::PCC_PUBLISH_DOCUMENT_ENDPOINT) {
@@ -86,13 +91,29 @@ class Settings
 		}
 
 		// Publish document
-		if (isset($_GET['publishingLevel']) && 'production' === strtolower($_GET['publishingLevel'])) {
+		if (isset($_GET['publishingLevel']) && PublishingLevel::PRODUCTION->value === $_GET['publishingLevel']) {
 			$parts = explode('/', $wp->request);
 			$documentId = end($parts);
-			$pcc = new PccSyncManager($this->getSiteId());
+			$pcc = new PccSyncManager();
 			$postId = $pcc->fetchAndStoreDocument($documentId);
 
 			wp_redirect(get_permalink($postId));
+			exit;
+		}
+
+		// Publish document
+		if (isset($_GET['pccGrant']) && isset($_GET['publishingLevel']) && PublishingLevel::REALTIME->value === $_GET['publishingLevel']) {
+			$parts = explode('/', $wp->request);
+			$documentId = end($parts);
+			$pcc = new PccSyncManager();
+			$postId = $pcc->findExistingConnectedPost($documentId);
+			if (!$postId) {
+				$postId = $pcc->fetchAndStoreDocument($documentId, true);
+			}
+
+			$url = $pcc->preaprePreviewingURL($documentId, $postId);
+
+			wp_redirect($url);
 			exit;
 		}
 	}
@@ -256,7 +277,7 @@ class Settings
 	 *
 	 * @return void
 	 */
-	public function enqueueAssets(): void
+	public function enqueueAdminAssets(): void
 	{
 		wp_enqueue_script(
 			PCC_HANDLE,
@@ -283,6 +304,38 @@ class Settings
 				'site_url'         => site_url(),
 			] + ['credentials' => $this->getCredentials()]
 		);
+	}
+
+	/**
+	 * Enqueue plugin assets on the WP front.
+	 *
+	 * @return void
+	 */
+	public function enqueueFrontAssets(): void
+	{
+		if (
+			isset($_GET['preview']) && $_GET['preview'] === 'google_document'
+			&& isset($_GET['document_id']) && $_GET['document_id']
+			&& isset($_GET['publishing_level']) && $_GET['publishing_level'] === PublishingLevel::REALTIME->value
+		) {
+			wp_enqueue_script(
+				PCC_HANDLE,
+				PCC_PLUGIN_DIR_URL . 'dist/pcc-front.js',
+				[],
+				filemtime(PCC_PLUGIN_DIR . 'assets/js/pcc-front.js'),
+				true
+			);
+
+			wp_localize_script(
+				PCC_HANDLE,
+				'PCCFront',
+				[
+					'preview_document_id' => sanitize_text_field($_GET['document_id']),
+					'site_id' => sanitize_text_field($this->getSiteId()),
+					'token' => PccSyncManager::$TOKEN,
+				]
+			);
+		}
 	}
 
 	/**
