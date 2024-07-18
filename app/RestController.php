@@ -61,6 +61,11 @@ class RestController
 				'callback' => [$this, 'handleWebhook'],
 			],
 			[
+				'route'    => '/webhook',
+				'method'   => 'PUT',
+				'callback' => [$this, 'registerWebhook'],
+			],
+			[
 				'route'    => '/disconnect',
 				'method'   => 'DELETE',
 				'callback' => [$this, 'disconnect'],
@@ -169,42 +174,42 @@ class RestController
 	 */
 	public function createSite(WP_REST_Request $request): WP_REST_Response
 	{
-		$siteURL = $request->get_param('url') ?: site_url();
-		if (! $siteURL) {
-			return new WP_REST_Response(esc_html__('Missing site URL', PCC_HANDLE), 400);
-		}
-
 		// Check if you are authorized
 		if (! current_user_can('manage_options')) {
 			return new WP_REST_Response(esc_html__('You are not authorized to perform this action.', PCC_HANDLE), 401);
 		}
-		$accessToken = trim(get_option(PCC_ACCESS_TOKEN_OPTION_KEY));
 		// Check access token is set
-		if (! $accessToken) {
+		if (! get_option(PCC_ACCESS_TOKEN_OPTION_KEY)) {
 			return new WP_REST_Response(esc_html__('Access token is not set yet', PCC_HANDLE), 401);
 		}
 
-		$args = [
-			'headers' => [
-				'Content-Type' => 'application/json',
-				'Authorization' => sprintf('Bearer %s', $accessToken),
-			],
-			'body' => json_encode(['url' => $siteURL, 'name' => get_bloginfo('name') ?: $siteURL]),
-		];
-
-		$endpoint = PCC_ENDPOINT . '/sites';
-		$response = wp_remote_post($endpoint, $args);
+		$siteManager = new PccSiteManager();
+		$response = $siteManager->createSite($request->get_param('site'));
 		if (is_wp_error($response)) {
 			return new WP_REST_Response($response->get_error_message(), $response->get_error_code());
 		}
 
-		// Handle HTTP 200 [PCC always returns 200]
-		$content = json_decode(wp_remote_retrieve_body($response), true);
-		if (isset($content['id']) && !empty($content['id'])) {
-			return new WP_REST_Response($content['id']);
+		return new WP_REST_Response($response);
+	}
+
+	public function registerWebhook(): WP_REST_Response
+	{
+		// Check access token is set
+		if (! get_option(PCC_ACCESS_TOKEN_OPTION_KEY)) {
+			return new WP_REST_Response(esc_html__('Access token is not set yet', PCC_HANDLE), 400);
 		}
 
-		return new WP_REST_Response(esc_html__('Error while creating your site. Please try again.'), 400);
+		// Check site id is set
+		if (! get_option(PCC_SITE_ID_OPTION_KEY)) {
+			return new WP_REST_Response(esc_html__('Site is not created yet', PCC_HANDLE), 400);
+		}
+
+		$siteManager = new PccSiteManager();
+		if ($siteManager->registerWebhook()) {
+			return new WP_REST_Response(esc_html__('Webhook registered', PCC_HANDLE));
+		}
+
+		return new WP_REST_Response(esc_html__('Error while register webhook', PCC_HANDLE), 400);
 	}
 
 	/**
@@ -272,6 +277,7 @@ class RestController
 		delete_option(PCC_ACCESS_TOKEN_OPTION_KEY);
 		delete_option(PCC_SITE_ID_OPTION_KEY);
 		delete_option(PCC_INTEGRATION_POST_TYPE_OPTION_KEY);
+		delete_option(PCC_WEBHOOK_SECRET_OPTION_KEY);
 		$this->removeMetaDataFromPosts();
 
 		return new WP_REST_Response(

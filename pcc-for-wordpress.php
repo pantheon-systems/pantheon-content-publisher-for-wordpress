@@ -31,6 +31,7 @@ define('PCC_INTEGRATION_POST_TYPE_OPTION_KEY', 'pcc_integration_post_type');
 define('PCC_API_NAMESPACE', 'pcc/v1');
 define('PCC_CONTENT_META_KEY', 'pcc_id');
 define('PCC_ENDPOINT', 'https://addonapi-gfttxsojwq-uc.a.run.app');
+define('PCC_WEBHOOK_SECRET_OPTION_KEY', 'pcc_webhook_secret');
 
 call_user_func(static function ($rootPath) {
 	$autoload = "{$rootPath}vendor/autoload.php";
