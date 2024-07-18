@@ -28,6 +28,8 @@ module.exports = {
 			'grey':'#6D6D78',
 			'light':'#CFCFD3',
 			'light-grey':'#eeeeee',
+			'light-blue':'#0F62FE',
+			'royal-purple':'#654BD5',
 			'white':'#ffffff',
 		},
 		extend: {

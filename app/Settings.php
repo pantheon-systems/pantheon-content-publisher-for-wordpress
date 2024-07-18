@@ -30,17 +30,17 @@ class Settings
 	/**
 	 * Pantheon Cloud Status endpoint required by PCC
 	 */
-	const PCC_STATUS_ENDPOINT = 'api/pantheoncloud/status';
+	private const PCC_STATUS_ENDPOINT = 'api/pantheoncloud/status';
 
 	/**
 	 * Publish document endpoint required by PCC
 	 */
-	const PCC_PUBLISH_DOCUMENT_ENDPOINT = 'api/pantheoncloud/document/';
+	private const PCC_PUBLISH_DOCUMENT_ENDPOINT = 'api/pantheoncloud/document/';
 
 	/**
 	 * Google Docs edit URL.
 	 */
-	const PCC_DOCUMENT_EDIT_URL = 'https://docs.google.com/document/d/%s/edit';
+	private const PCC_DOCUMENT_EDIT_URL = 'https://docs.google.com/document/d/%s/edit';
 
 	private $pages = [
 		'connected-collection'    => PCC_PLUGIN_DIR . 'admin/templates/partials/connected-collection.php',
@@ -91,6 +91,7 @@ class Settings
 		}
 
 		// Publish document
+        // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		if (isset($_GET['publishingLevel']) && PublishingLevel::PRODUCTION->value === $_GET['publishingLevel']) {
 			$parts = explode('/', $wp->request);
 			$documentId = end($parts);
@@ -101,8 +102,12 @@ class Settings
 			exit;
 		}
 
-		// Publish document
-		if (isset($_GET['pccGrant']) && isset($_GET['publishingLevel']) && PublishingLevel::REALTIME->value === $_GET['publishingLevel']) {
+		// Preview document
+		if (
+            // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			isset($_GET['pccGrant']) && isset($_GET['publishingLevel']) &&
+			PublishingLevel::REALTIME->value === $_GET['publishingLevel'] // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		) {
 			$parts = explode('/', $wp->request);
 			$documentId = end($parts);
 			$pcc = new PccSyncManager();
@@ -153,7 +158,9 @@ class Settings
 	{
 		global $pagenow;
 		// Check if the current page is the post/page edit page
+        // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		if ($pagenow == 'post.php' && isset($_GET['post']) && 'edit' === strtolower($_GET['action'])) {
+            // phpcs:ignore
 			$documentId = get_post_meta(intval($_GET['post']), PCC_CONTENT_META_KEY, true);
 			if (! $documentId) {
 				return ;
@@ -180,7 +187,8 @@ class Settings
 
 		$customActions = array(
 			'pcc' => sprintf(
-				'<a href="' . $this->buildEditDocumentURL($documentId) . '" class="pcc-sync" data-id="%d" target="_blank">%s</a>',
+				'<a href="' . $this->buildEditDocumentURL($documentId) . '" 
+                        class="pcc-sync" data-id="%d" target="_blank">%s</a>',
 				$post->ID,
 				esc_html__(
 					'Edit in Google Docs',
@@ -238,13 +246,13 @@ class Settings
 			return;
 		}
 
-		// Site id is set and Credentials are set
-		if ($this->getSiteId() && $this->getCredentials()) {
+		// Site id is set and access token is set
+		if ($this->getSiteId() && $this->getAccessToken()) {
 			require $this->pages['connected-collection'];
 
 			return;
 		}
-		if ($this->getCredentials()) {
+		if ($this->getAccessToken()) {
 			require $this->pages['create-collection'];
 
 			return;
@@ -261,15 +269,15 @@ class Settings
 	}
 
 	/**
-	 * Get credentials from the database.
+	 * Get access token from the database.
 	 *
 	 * @return array|mixed
 	 */
-	private function getCredentials()
+	private function getAccessToken()
 	{
-		$pccCredentials = get_option(PCC_CREDENTIALS_OPTION_KEY);
+		$pccToken = get_option(PCC_ACCESS_TOKEN_OPTION_KEY);
 
-		return $pccCredentials ? unserialize($pccCredentials) : [];
+		return $pccToken ?: [];
 	}
 
 	/**
@@ -302,7 +310,7 @@ class Settings
 				'nonce'            => wp_create_nonce('wp_rest'),
 				'plugin_main_page' => menu_page_url(PCC_HANDLE, false),
 				'site_url'         => site_url(),
-			] + ['credentials' => $this->getCredentials()]
+			]
 		);
 	}
 
@@ -313,10 +321,12 @@ class Settings
 	 */
 	public function enqueueFrontAssets(): void
 	{
+
 		if (
-			isset($_GET['preview']) && $_GET['preview'] === 'google_document'
-			&& isset($_GET['document_id']) && $_GET['document_id']
-			&& isset($_GET['publishing_level']) && $_GET['publishing_level'] === PublishingLevel::REALTIME->value
+            // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			isset($_GET['preview']) && $_GET['preview'] === 'google_document' && isset($_GET['document_id'])
+			&& $_GET['document_id'] && isset($_GET['publishing_level']) && // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			$_GET['publishing_level'] === PublishingLevel::REALTIME->value // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		) {
 			wp_enqueue_script(
 				PCC_HANDLE,
@@ -330,6 +340,7 @@ class Settings
 				PCC_HANDLE,
 				'PCCFront',
 				[
+                    // phpcs:ignore
 					'preview_document_id' => sanitize_text_field($_GET['document_id']),
 					'site_id' => sanitize_text_field($this->getSiteId()),
 					'token' => PccSyncManager::$TOKEN,
@@ -349,7 +360,7 @@ class Settings
 		}
 
 		// Show notification when authentication details are not set or collection not created
-		if (! $this->getCredentials() || ! $this->getSiteId()) {
+		if (! $this->getAccessToken() || ! $this->getSiteId()) {
 			add_action('admin_notices', [$this, 'pluginNotification']);
 		}
 	}

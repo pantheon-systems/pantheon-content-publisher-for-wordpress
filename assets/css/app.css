@@ -80,11 +80,26 @@
     box-shadow: 0 0 0 0 #0e65e9; /*done*/
 }
 
+.input-with-border{
+    @apply w-full border border-light py-[0.5rem] px-[0.625rem] text-base text-grey rounded-[0.3rem]; /*done*/
+}
+
 .text-with-border{
     @apply w-full border border-light py-[0.5rem] px-[0.625rem] text-base text-grey rounded-[0.3rem]; /*done*/
 }
 .divider-border {
     @apply border border-solid border-light-grey mb-[1.25rem] /*done*/
+}
+
+.tooltip {
+    @apply cursor-pointer relative inline-block;
+}
+
+.tooltip .tooltip-text {
+    @apply text-xs invisible w-56 text-white bg-grey text-center rounded p-2 absolute z-10 bottom-full left-1/2 transform -translate-x-1/2 mb-2 opacity-0 transition-opacity duration-300
+}
+.tooltip:hover .tooltip-text {
+    @apply cursor-pointer visible opacity-100;
 }
 /** End General Styles */
 
@@ -124,6 +139,15 @@
 .welcome-page {
     @apply page-styles flex flex-col justify-between /*done*/
 }
+
+.pantheon-link:link {
+    @apply underline text-light-blue
+}
+
+.pantheon-link:hover, .pantheon-link:active, .pantheon-link:visited {
+    @apply text-royal-purple
+}
+
 /** End Welcome Page */
 
 /** Start Auth Page */

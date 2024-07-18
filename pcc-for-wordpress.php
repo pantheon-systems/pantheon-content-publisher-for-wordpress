@@ -25,11 +25,12 @@ define('PCC_PLUGIN_DIR', plugin_dir_path(PCC_PLUGIN_FILE));
 define('PCC_BASENAME', plugin_basename(PCC_PLUGIN_FILE));
 define('PCC_PLUGIN_DIR_URL', plugin_dir_url(PCC_PLUGIN_FILE));
 define('PCC_HANDLE', 'pcc');
-define('PCC_CREDENTIALS_OPTION_KEY', 'pcc_credentials');
+define('PCC_ACCESS_TOKEN_OPTION_KEY', 'pcc_access_token');
 define('PCC_SITE_ID_OPTION_KEY', 'pcc_site_id');
 define('PCC_INTEGRATION_POST_TYPE_OPTION_KEY', 'pcc_integration_post_type');
 define('PCC_API_NAMESPACE', 'pcc/v1');
 define('PCC_CONTENT_META_KEY', 'pcc_id');
+define('PCC_ENDPOINT', 'https://addonapi-gfttxsojwq-uc.a.run.app');
 
 call_user_func(static function ($rootPath) {
 	$autoload = "{$rootPath}vendor/autoload.php";

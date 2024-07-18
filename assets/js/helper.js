@@ -1,3 +1,4 @@
+import axios from "axios";
 export function showSpinner() {
 	const spinnerBox = document.getElementById('spinner-box');
 	const pccContent = document.getElementById('pcc-content');
@@ -35,6 +36,15 @@ export function getSelectedPostType() {
 }
 
 /**
+ * Get Access Token
+ *
+ * @returns {string}
+ */
+export function getAccessToken() {
+	return document.getElementById('access-token')?.value;
+}
+
+/**
  * Show error message
  * @param message
  */
@@ -56,3 +66,24 @@ export function hideErrorMessage() {
 		errorMessageContainer.classList.add('hidden');
 	}
 }
+
+/**
+ * Redirect to main page
+ */
+export const redirectToMainPage = () => {
+	window.location.href = window.PCCAdmin.plugin_main_page
+}
+
+/**
+ * Delete the API configuration details
+ *
+ * @returns {Promise<*>}
+ */
+export const deleteConfigDetails = async () => {
+	const { rest_url, nonce } = window.PCCAdmin;
+	const resp = await axios.delete(`${rest_url}/disconnect`,
+		{headers: {'X-WP-Nonce': nonce}}
+	);
+
+	return resp
+};

@@ -14,17 +14,12 @@ class PccSyncManager
 	 * @var string $siteId
 	 */
 	private string $siteId;
-
-	/**
-	 * @TODO it shouldn't be hardcoded and to waiting Kevin to create an endpoint to get the token and avoid CLI
-	 *
-	 * @var string $token
-	 */
-	static string $TOKEN = 'b1faf779-c715-4fcd-b9fe-d647ebc16656';
+	private string $accessToken;
 
 	public function __construct()
 	{
 		$this->siteId = get_option(PCC_SITE_ID_OPTION_KEY);
+		$this->accessToken = get_option(PCC_ACCESS_TOKEN_OPTION_KEY);
 	}
 
 	/**
@@ -34,7 +29,7 @@ class PccSyncManager
 	 */
 	public function pccClient(string $pccGrant = null): PccClient
 	{
-		$args = [$this->siteId, self::$TOKEN];
+		$args = [$this->siteId, $this->accessToken];
 		if ($pccGrant) {
 			$args = [$this->siteId, '', null, $pccGrant];
 		}
