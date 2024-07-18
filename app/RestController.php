@@ -6,15 +6,10 @@
 
 namespace PCC;
 
-use PccPhpSdk\api\ArticlesApi;
-use PccPhpSdk\api\Query\Enums\PublishingLevel;
-use PccPhpSdk\core\PccClient;
-use PccPhpSdk\core\PccClientConfig;
 use WP_REST_Request;
 use WP_REST_Response;
 
 use function esc_html__;
-use function serialize;
 
 use const PCC_ACCESS_TOKEN_OPTION_KEY;
 use const PCC_HANDLE;
@@ -41,19 +36,9 @@ class RestController
 	{
 		$endpoints = [
 			[
-				'route'    => '/oauth/redirect',
-				'method'   => 'GET',
-				'callback' => [$this, 'handleOauthRedirect'],
-			],
-			[
 				'route'    => '/oauth/access-token',
 				'method'   => 'POST',
 				'callback' => [$this, 'saveAccessToken'],
-			],
-			[
-				'route'    => '/oauth/credentials',
-				'method'   => 'DELETE',
-				'callback' => [$this, 'deleteSavedCredentials'],
 			],
 			[
 				'route'    => '/collection',
@@ -142,75 +127,6 @@ class RestController
 	}
 
 	/**
-	 * Handle OAuth2 redirect.
-	 *
-	 * @param WP_REST_Request $request
-	 *
-	 * @return WP_REST_Response
-	 */
-	public function handleOauthRedirect(WP_REST_Request $request): WP_REST_Response
-	{
-		$code = $request->get_param('code');
-		if (! $code) {
-			return new WP_REST_Response([
-				'message' => esc_html__('No authorization code provided', PCC_HANDLE),
-			], 400);
-		}
-
-		$credentials = $this->getToken($code);
-		if (is_wp_error($credentials)) {
-			return new WP_REST_Response([
-				'message' => esc_html__('Missing authorization token', PCC_HANDLE),
-			], 400);
-		}
-
-		$jwtPayload = $this->parseJwt($credentials['id_token']);
-		$this->persistAuthDetails($credentials);
-
-		return new WP_REST_Response([
-			'email' => $jwtPayload['email'],
-		], 200);
-	}
-
-	/**
-	 * @param $code
-	 *
-	 * @return void
-	 */
-	private function getToken($code)
-	{
-		// Implement the function to get the token using the authorization code
-		// Example:
-		// $response = wp_remote_post('https://example.com/oauth/token', array(...));
-		// return json_decode(wp_remote_retrieve_body($response), true);
-	}
-
-	/**
-	 * @param $jwt
-	 *
-	 * @return void
-	 */
-	private function parseJwt($jwt)
-	{
-		// Implement the function to parse the JWT
-		// Example:
-		// list($header, $payload, $signature) = explode('.', $jwt);
-		// return json_decode(base64_decode($payload), true);
-	}
-
-	/**
-	 * @param $credentials
-	 *
-	 * @return void
-	 */
-	private function persistAuthDetails($credentials)
-	{
-		// Implement the function to persist authentication details
-		// Example:
-		// update_option('oauth_credentials', $credentials);
-	}
-
-	/**
 	 * @return true
 	 */
 	public function permissionCallback()
@@ -291,28 +207,6 @@ class RestController
 			esc_html__('Access Token saved.', PCC_HANDLE),
 			200
 		);
-	}
-
-	/**
-	 * Delete saved credentials from the database.
-	 *
-	 * @return WP_REST_Response
-	 */
-	public function deleteSavedCredentials()
-	{
-		if (! current_user_can('manage_options')) {
-			return new WP_REST_Response(esc_html__('You are not authorized to perform this action.', PCC_HANDLE), 401);
-		}
-
-		return delete_option(PCC_ACCESS_TOKEN_OPTION_KEY) ?
-			new WP_REST_Response(
-				esc_html__('Credentials deleted.', PCC_HANDLE),
-				200
-			) :
-			new WP_REST_Response(
-				esc_html__('Failed to delete Credentials.', PCC_HANDLE),
-				500
-			);
 	}
 
 	/**
