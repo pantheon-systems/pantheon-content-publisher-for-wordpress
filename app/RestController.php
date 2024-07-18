@@ -46,6 +46,11 @@ class RestController
 				'callback' => [$this, 'createCollection'],
 			],
 			[
+				'route'    => '/site',
+				'method'   => 'POST',
+				'callback' => [$this, 'createSite'],
+			],
+			[
 				'route'    => '/collection',
 				'method'   => 'PUT',
 				'callback' => [$this, 'updateCollection'],
@@ -156,6 +161,25 @@ class RestController
 		update_option(PCC_INTEGRATION_POST_TYPE_OPTION_KEY, $postType);
 
 		return new WP_REST_Response(esc_html__('Saved!', PCC_HANDLE));
+	}
+
+	/**
+	 * @param WP_REST_Request $request
+	 * @return WP_REST_Response
+	 */
+	public function createSite(WP_REST_Request $request): WP_REST_Response
+	{
+		$url = $request->get_param('url') ?: site_url();
+		if (! $url) {
+			return new WP_REST_Response(esc_html__('Missing site URL', PCC_HANDLE), 400);
+		}
+
+		// Check if you are authorized
+		if (! current_user_can('manage_options')) {
+			return new WP_REST_Response(esc_html__('You are not authorized to perform this action.', PCC_HANDLE), 401);
+		}
+
+		return new WP_REST_Response('DGiol57niHrrNM1KZU06');
 	}
 
 	/**
