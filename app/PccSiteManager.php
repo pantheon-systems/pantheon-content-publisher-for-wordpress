@@ -9,6 +9,7 @@ class PccSiteManager
 	private $endpoints = [
 		'create_site' => PCC_ENDPOINT . '/sites',
 		'site' => PCC_ENDPOINT . '/sites/%s',
+		'api_key' => PCC_ENDPOINT . '/api-key',
 	];
 
 	/**
@@ -66,6 +67,34 @@ class PccSiteManager
 		}
 
 		return new WP_Error(400, 'Error while creating your site. Please try again.');
+	}
+
+	/**
+	 * Create Site API Key for article management
+	 *
+	 * @return mixed|WP_Error
+	 */
+	public function createSiteApiKey()
+	{
+		$args = [
+			'headers' => $this->getHeaders(),
+			'body' => json_encode([
+				'siteId' => get_option(PCC_SITE_ID_OPTION_KEY),
+				'isManagementKey' => true,
+			]),
+		];
+		$response = wp_remote_post($this->endpoints['api_key'], $args);
+		$content = $this->parseResponse($response);
+
+		if (isset($content['apiKey']) && !empty($content['apiKey'])) {
+			return $content['apiKey'];
+		}
+
+		if (isset($content['code']) && isset($content['message'])) {
+			return new WP_Error($content['code'], $content['message']);
+		}
+
+		return new WP_Error(400, 'Error while creating your API key. Please try again.');
 	}
 
 	/**

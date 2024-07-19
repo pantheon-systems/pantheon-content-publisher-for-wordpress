@@ -27,6 +27,7 @@ define('PCC_PLUGIN_DIR_URL', plugin_dir_url(PCC_PLUGIN_FILE));
 define('PCC_HANDLE', 'pcc');
 define('PCC_ACCESS_TOKEN_OPTION_KEY', 'pcc_access_token');
 define('PCC_SITE_ID_OPTION_KEY', 'pcc_site_id');
+define('PCC_API_KEY_OPTION_KEY', 'pcc_api_key');
 define('PCC_INTEGRATION_POST_TYPE_OPTION_KEY', 'pcc_integration_post_type');
 define('PCC_API_NAMESPACE', 'pcc/v1');
 define('PCC_CONTENT_META_KEY', 'pcc_id');

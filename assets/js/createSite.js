@@ -13,6 +13,8 @@ export default function createSite() {
 
 				updateSpinnerText('Creating your site...');
 				let siteId = (await createSiteId(siteUrl)).data;
+				updateSpinnerText('Creating Api key...');
+				await createApiKey();
 				updateSpinnerText('Register webhook...');
 				await registerWebhook(siteUrl);
 				updateSpinnerText('Creating your collection...');
@@ -54,6 +56,13 @@ async function createSiteId(url) {
 async function registerWebhook() {
 	const { rest_url, nonce } = window.PCCAdmin;
 	return await axios.put(`${rest_url}/webhook`, {}, {
+		headers: { 'X-WP-Nonce': nonce }
+	});
+}
+
+async function createApiKey() {
+	const { rest_url, nonce } = window.PCCAdmin;
+	return await axios.post(`${rest_url}/api-key`, {}, {
 		headers: { 'X-WP-Nonce': nonce }
 	});
 }
