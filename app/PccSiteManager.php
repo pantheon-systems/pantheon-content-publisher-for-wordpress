@@ -61,6 +61,10 @@ class PccSiteManager
 			return $content['id'];
 		}
 
+		if (isset($content['code']) && isset($content['message'])) {
+			return new WP_Error($content['code'], $content['message']);
+		}
+
 		return new WP_Error(400, 'Error while creating your site. Please try again.');
 	}
 
