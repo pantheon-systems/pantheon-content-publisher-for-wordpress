@@ -51,6 +51,11 @@ class RestController
 				'callback' => [$this, 'createSite'],
 			],
 			[
+				'route'    => '/api-key',
+				'method'   => 'POST',
+				'callback' => [$this, 'createApiKey'],
+			],
+			[
 				'route'    => '/collection',
 				'method'   => 'PUT',
 				'callback' => [$this, 'updateCollection'],
@@ -197,6 +202,11 @@ class RestController
 		return new WP_REST_Response($response);
 	}
 
+	/**
+	 * Create API key for the site
+	 *
+	 * @return WP_REST_Response
+	 */
 	public function registerWebhook(): WP_REST_Response
 	{
 		// Check access token is set
@@ -209,12 +219,45 @@ class RestController
 			return new WP_REST_Response(esc_html__('Site is not created yet', PCC_HANDLE), 400);
 		}
 
+		// Check if you are authorized
+		if (! current_user_can('manage_options')) {
+			return new WP_REST_Response(esc_html__('You are not authorized to perform this action.', PCC_HANDLE), 401);
+		}
+
 		$siteManager = new PccSiteManager();
 		if ($siteManager->registerWebhook()) {
 			return new WP_REST_Response(esc_html__('Webhook registered', PCC_HANDLE));
 		}
 
 		return new WP_REST_Response(esc_html__('Error while register webhook', PCC_HANDLE), 400);
+	}
+
+	/**
+	 * Create Api Key
+	 *
+	 * @param WP_REST_Request $request
+	 * @return WP_REST_Response
+	 */
+	public function createApiKey(): WP_REST_Response
+	{
+		// Check site id is set
+		if (! get_option(PCC_SITE_ID_OPTION_KEY)) {
+			return new WP_REST_Response(esc_html__('Site is not created yet', PCC_HANDLE), 400);
+		}
+
+		// Check if you are authorized
+		if (! current_user_can('manage_options')) {
+			return new WP_REST_Response(esc_html__('You are not authorized to perform this action.', PCC_HANDLE), 401);
+		}
+
+		$siteManager = new PccSiteManager();
+		$apiKey = $siteManager->createSiteApiKey();
+		if ($apiKey) {
+			update_option(PCC_API_KEY_OPTION_KEY, $apiKey);
+			return new WP_REST_Response(esc_html__('API created', PCC_HANDLE));
+		}
+
+		return new WP_REST_Response(esc_html__('Error while creating API key', PCC_HANDLE), 400);
 	}
 
 	/**
@@ -283,6 +326,7 @@ class RestController
 		delete_option(PCC_SITE_ID_OPTION_KEY);
 		delete_option(PCC_INTEGRATION_POST_TYPE_OPTION_KEY);
 		delete_option(PCC_WEBHOOK_SECRET_OPTION_KEY);
+		delete_option(PCC_API_KEY_OPTION_KEY);
 		$this->removeMetaDataFromPosts();
 
 		return new WP_REST_Response(
