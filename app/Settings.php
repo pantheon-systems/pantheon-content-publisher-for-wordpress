@@ -187,7 +187,7 @@ class Settings
 
 		$customActions = array(
 			'pcc' => sprintf(
-				'<a href="' . $this->buildEditDocumentURL($documentId) . '" 
+				'<a href="' . $this->buildEditDocumentURL($documentId) . '"
                         class="pcc-sync" data-id="%d" target="_blank">%s</a>',
 				$post->ID,
 				esc_html__(
@@ -343,7 +343,7 @@ class Settings
                     // phpcs:ignore
 					'preview_document_id' => sanitize_text_field($_GET['document_id']),
 					'site_id' => sanitize_text_field($this->getSiteId()),
-					'token' => PccSyncManager::$TOKEN,
+					'token' => get_option(PCC_ACCESS_TOKEN_OPTION_KEY),
 				]
 			);
 		}

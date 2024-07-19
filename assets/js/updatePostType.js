@@ -5,7 +5,6 @@ export default function updatePostType() {
 	return new Promise(
 		async (resolve, reject) => {
 			try {
-				const siteUrl = window.PCCAdmin.site_url;
 				const selectedPostType = getSelectedPostType();
 				if (!selectedPostType) {
 					return reject(new Error('Post type not selected'));
