@@ -80,7 +80,7 @@ class PccSiteManager
 			'headers' => $this->getHeaders(),
 			'body' => json_encode([
 				'siteId' => get_option(PCC_SITE_ID_OPTION_KEY),
-				'isManagementKey' => true,
+				'isManagementKey' => false,
 			]),
 		];
 		$response = wp_remote_post($this->endpoints['api_key'], $args);
