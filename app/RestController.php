@@ -192,6 +192,8 @@ class RestController
 			return new WP_REST_Response($response->get_error_message(), $response->get_error_code());
 		}
 
+		// Update with the site id
+		update_option(PCC_SITE_ID_OPTION_KEY, $response);
 		return new WP_REST_Response($response);
 	}
 
