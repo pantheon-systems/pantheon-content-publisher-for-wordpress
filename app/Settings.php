@@ -343,7 +343,7 @@ class Settings
                     // phpcs:ignore
 					'preview_document_id' => sanitize_text_field($_GET['document_id']),
 					'site_id' => sanitize_text_field($this->getSiteId()),
-					'token' => get_option(PCC_ACCESS_TOKEN_OPTION_KEY),
+					'token' => get_option(PCC_API_KEY_OPTION_KEY),
 				]
 			);
 		}

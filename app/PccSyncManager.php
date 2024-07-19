@@ -14,12 +14,12 @@ class PccSyncManager
 	 * @var string $siteId
 	 */
 	private string $siteId;
-	private string $accessToken;
+	private string $apiKey;
 
 	public function __construct()
 	{
 		$this->siteId = get_option(PCC_SITE_ID_OPTION_KEY);
-		$this->accessToken = get_option(PCC_ACCESS_TOKEN_OPTION_KEY);
+		$this->apiKey = get_option(PCC_API_KEY_OPTION_KEY);
 	}
 
 	/**
@@ -29,7 +29,7 @@ class PccSyncManager
 	 */
 	public function pccClient(string $pccGrant = null): PccClient
 	{
-		$args = [$this->siteId, $this->accessToken];
+		$args = [$this->siteId, $this->apiKey];
 		if ($pccGrant) {
 			$args = [$this->siteId, '', null, $pccGrant];
 		}
