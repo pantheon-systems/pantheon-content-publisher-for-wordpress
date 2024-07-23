@@ -34,7 +34,7 @@
 							<a class="secondary-button"
 							   href="<?php echo esc_url(add_query_arg([
 								   'page' => PCC_HANDLE,
-								   'view' => 'connected-collection'], admin_url())) ?>">
+								   'view' => 'connected-collection'], admin_url('admin.php'))) ?>">
 								<?php esc_html_e('Stay connected', PCC_HANDLE) ?>
 							</a>
 							<a class="danger-button" id="pcc-disconnect" href="#">
