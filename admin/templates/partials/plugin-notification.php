@@ -14,13 +14,13 @@
 				<p class="page-description">
 					<?php
 					esc_html_e(
-						'Plugin installed! To create and publish content, 
+						'Plugin installed! To create and publish content,
 					complete the setup by connecting Google Workspace to your WordPress site.',
 						PCC_HANDLE
 					) ?>
 				</p>
 				<a href="<?php
-				echo esc_url(add_query_arg(['page' => PCC_HANDLE], admin_url())) ?>"
+				echo esc_url(add_query_arg(['page' => PCC_HANDLE], admin_url('admin.php'))) ?>"
 				   class="primary-button me-auto"><?php
 					esc_html_e('Complete setup', PCC_HANDLE) ?>
 				</a>

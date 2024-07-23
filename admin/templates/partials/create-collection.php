@@ -36,7 +36,7 @@
 							<?php endforeach; ?>
 						</div>
 						<a class="primary-button" id="pcc-create-site" href="#">
-							<?php esc_html_e('Create Collection', PCC_HANDLE) ?>
+							<?php esc_html_e('Create collection', PCC_HANDLE) ?>
 						</a>
 					</div>
 					<div class="col-span-5 justify-self-end">

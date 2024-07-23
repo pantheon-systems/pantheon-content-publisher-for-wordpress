@@ -17,7 +17,7 @@
 					   href="<?php echo esc_url(add_query_arg([
 						   'page' => PCC_HANDLE,
 						   'view' => 'disconnect-confirmation'
-					   ], admin_url())) ?>">
+					   ], admin_url('admin.php'))) ?>">
 						<span>
 							<?php esc_html_e('Disconnect collection', PCC_HANDLE) ?>
 						</span>

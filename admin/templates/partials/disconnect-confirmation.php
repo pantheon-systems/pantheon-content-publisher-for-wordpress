@@ -17,11 +17,16 @@
 							)
 							?>
 						</h1>
-						<p class="page-description">
+						<p class="page-description mb-5">
 							<?php esc_html_e(
 								'All Google Docs in the collection will be disconnected from your site
-                            , and you wont be able to update site content in Google Docs anymore.
-                            The content will remain on the site, manageable using the WordPress admin interface.',
+                            , and you wont be able to update site content in Google Docs anymore.',
+								PCC_HANDLE
+							) ?>
+						</p>
+						<p class="page-description">
+							<?php esc_html_e(
+								'The content will remain on the site, manageable using the WordPress admin interface.',
 								PCC_HANDLE
 							) ?>
 						</p>
@@ -29,7 +34,7 @@
 							<a class="secondary-button"
 							   href="<?php echo esc_url(add_query_arg([
 								   'page' => PCC_HANDLE,
-								   'view' => 'connected-collection'], admin_url())) ?>">
+								   'view' => 'connected-collection'], admin_url('admin.php'))) ?>">
 								<?php esc_html_e('Stay connected', PCC_HANDLE) ?>
 							</a>
 							<a class="danger-button" id="pcc-disconnect" href="#">
