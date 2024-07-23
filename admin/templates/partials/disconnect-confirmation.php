@@ -17,11 +17,16 @@
 							)
 							?>
 						</h1>
-						<p class="page-description">
+						<p class="page-description mb-5">
 							<?php esc_html_e(
 								'All Google Docs in the collection will be disconnected from your site
-                            , and you wont be able to update site content in Google Docs anymore.
-                            The content will remain on the site, manageable using the WordPress admin interface.',
+                            , and you wont be able to update site content in Google Docs anymore.',
+								PCC_HANDLE
+							) ?>
+						</p>
+						<p class="page-description">
+							<?php esc_html_e(
+								'The content will remain on the site, manageable using the WordPress admin interface.',
 								PCC_HANDLE
 							) ?>
 						</p>

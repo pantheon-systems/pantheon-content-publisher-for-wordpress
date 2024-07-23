@@ -51,7 +51,7 @@
 }
 
 .page-header {
-    @apply text-7xl font-bold capitalize /*done*/
+    @apply text-7xl font-bold /*done*/
 }
 
 .page-description {

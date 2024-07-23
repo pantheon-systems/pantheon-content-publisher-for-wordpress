@@ -16,8 +16,8 @@
 							<p class="page-description">
 								<?php
 								esc_html_e(
-									'Effortlessly publish content from Google Docs to your WordPress site using Pantheon
-                            Content Publisher.',
+									'Effortlessly publish content from Google Docs to your WordPress site using 
+									Pantheon Content Publisher.',
 									PCC_HANDLE
 								) ?>
 							</p>
@@ -25,12 +25,13 @@
 							<span class="font-semibold text-[0.83rem]">
 								<?php esc_html_e('Access token', PCC_HANDLE) ?>
 							</span>
-								<img class="scale-110 -ms-1 pb-2.5 inline"
+								<img class="scale-110 ms-1 pb-2.5 inline"
 									 src="<?php echo esc_url(PCC_PLUGIN_DIR_URL . 'assets/images/red-dot.svg') ?>"
 									 alt="Red Dot Icon">
 								<div class="tooltip inline">
 									<img class="scale-110 ms-2 pb-1 inline"
-										 src="<?php echo esc_url(PCC_PLUGIN_DIR_URL . 'assets/images/circle-info.svg') ?>"
+										 src="<?php echo
+											esc_url(PCC_PLUGIN_DIR_URL . 'assets/images/circle-info.svg') ?>"
 										 alt="Circle Info">
 									<span class="tooltip-text">
 									<?php
