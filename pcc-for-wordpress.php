@@ -8,7 +8,7 @@
  * Plugin URI: https://pantheon.io
  * Author: Pantheon
  * Author URI: https://pantheon.io
- * Version: 0.0.1
+ * Version: 0.9.9
  *
  * @package pantheon\pcc-for-wordpress
  */
@@ -16,7 +16,7 @@
 namespace PCC;
 
 // Exit if accessed directly.
-if (! defined('ABSPATH')) {
+if (!defined('ABSPATH')) {
 	exit;
 }
 
