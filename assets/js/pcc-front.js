@@ -29,13 +29,11 @@ observable.subscribe({
 		}
 
 		var entryTitle = document.getElementsByClassName('wp-block-post-title');
-		var entryContents = document.getElementsByClassName('entry-content');
-		entryTitle[0].innerHTML = article.title
+		entryTitle[0].innerHTML = article.title;
 
-		if (entryContents.length > 0) {
-			entryContents[0].innerHTML = ''; // Clear existing content
-			entryContents[0].appendChild(generateHTMLFromJSON(JSON.parse(update.data.article.content)));
-		}
+		var previewContentContainer = document.getElementById('pcc-content-preview');
+		previewContentContainer.innerHTML = '';
+		previewContentContainer.appendChild(generateHTMLFromJSON(JSON.parse(update.data.article.content)));
 	},
 });
 
@@ -108,4 +106,3 @@ function generateHTMLFromJSON(json, parentElement = null) {
 
 	return container;
 }
-
