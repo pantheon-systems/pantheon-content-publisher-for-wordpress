@@ -44,10 +44,12 @@ class PccSyncManager
 	 * @param bool $isDraft
 	 * @return int
 	 */
-	public function fetchAndStoreDocument($documentId, $isDraft = false)
+	public function fetchAndStoreDocument($documentId, $isDraft = false, PublishingLevel $publishingLevel = null)
 	{
 		$articlesApi = new ArticlesApi($this->pccClient());
-		$article = $articlesApi->getArticleById($documentId);
+		// If publishing level is not provided, it will default to production.
+		$args = $publishingLevel ? [$documentId, [], $publishingLevel] : [$documentId];
+		$article = $articlesApi->getArticleById(...$args);
 
 		return $this->storeArticle($article, $isDraft);
 	}
