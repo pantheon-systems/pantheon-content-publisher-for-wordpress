@@ -15,6 +15,7 @@ use function filemtime;
 use function wp_enqueue_script;
 
 use const PCC_HANDLE;
+use const PCC_INTEGRATION_POST_TYPE_OPTION_KEY;
 use const PCC_PLUGIN_DIR;
 use const PCC_PLUGIN_DIR_URL;
 
@@ -88,8 +89,10 @@ class Settings
 
 	/**
 	 * Publish documents from Google Docs.
+	 *
+	 * @return void
 	 */
-	public function publishDocuments()
+	public function publishDocuments(): void
 	{
 		global $wp;
 		if (!str_starts_with($wp->request, static::PCC_PUBLISH_DOCUMENT_ENDPOINT)) {
@@ -112,17 +115,26 @@ class Settings
 		if (
 			// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			isset($_GET['pccGrant']) && isset($_GET['publishingLevel']) &&
-			PublishingLevel::REALTIME->value === $_GET['publishingLevel'] // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			PublishingLevel::REALTIME->value === $_GET['publishingLevel']
 		) {
 			$parts = explode('/', $wp->request);
 			$documentId = end($parts);
 			$pcc = new PccSyncManager();
-			$postId = $pcc->findExistingConnectedPost($documentId);
-			if (!$postId) {
-				$postId = $pcc->fetchAndStoreDocument($documentId, true, PublishingLevel::REALTIME);
+			if (!$pcc->findExistingConnectedPost($documentId)) {
+				$pcc->fetchAndStoreDocument($documentId, true, PublishingLevel::REALTIME);
 			}
 
-			$url = $pcc->preaprePreviewingURL($documentId, $postId);
+			$query = get_posts([
+				'post_type' => get_option(PCC_INTEGRATION_POST_TYPE_OPTION_KEY, 'post'),
+				'post_status' => 'publish',
+				'posts_per_page' => 1,
+				'orderby' => 'date',
+				'order' => 'ASC',
+				'fields' => 'ids'
+			]);
+
+			$url = $pcc->preparePreviewingURL($documentId, $query[0] ?? 0);
 
 			wp_redirect($url);
 			exit;
@@ -196,7 +208,6 @@ class Settings
 		if (
 			isset($_GET['preview'], $_GET['document_id'], $_GET['publishing_level']) &&
 			'google_document' === $_GET['preview'] &&
-			$_GET['document_id'] === $documentId &&
 			$_GET['publishing_level'] === PublishingLevel::REALTIME->value
 		) {
 			// phpcs:enable
@@ -365,7 +376,6 @@ class Settings
 	 */
 	public function enqueueFrontAssets(): void
 	{
-
 		if (
 			// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			isset($_GET['preview']) && $_GET['preview'] === 'google_document' && isset($_GET['document_id'])

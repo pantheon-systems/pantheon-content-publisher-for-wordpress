@@ -2,9 +2,9 @@
 
 namespace PCC;
 
+use PccPhpSdk\api\ArticlesApi;
 use PccPhpSdk\api\Query\Enums\PublishingLevel;
 use PccPhpSdk\api\Response\Article;
-use PccPhpSdk\api\ArticlesApi;
 use PccPhpSdk\core\PccClient;
 use PccPhpSdk\core\PccClientConfig;
 
@@ -20,21 +20,6 @@ class PccSyncManager
 	{
 		$this->siteId = get_option(PCC_SITE_ID_OPTION_KEY);
 		$this->apiKey = get_option(PCC_API_KEY_OPTION_KEY);
-	}
-
-	/**
-	 * Get PccClient instance.
-	 *
-	 * @return PccClient
-	 */
-	public function pccClient(string $pccGrant = null): PccClient
-	{
-		$args = [$this->siteId, $this->apiKey];
-		if ($pccGrant) {
-			$args = [$this->siteId, '', null, $pccGrant];
-		}
-
-		return new PccClient(new PccClientConfig(...$args));
 	}
 
 	/**
@@ -55,19 +40,19 @@ class PccSyncManager
 	}
 
 	/**
-	 * Store articles from PCC to WordPress.
+	 * Get PccClient instance.
+	 *
+	 * @param string|null $pccGrant
+	 * @return PccClient
 	 */
-	public function storeArticles()
+	public function pccClient(string $pccGrant = null): PccClient
 	{
-		if (!$this->getIntegrationPostType()) {
-			return;
+		$args = [$this->siteId, $this->apiKey];
+		if ($pccGrant) {
+			$args = [$this->siteId, '', null, $pccGrant];
 		}
-		$articlesApi = new \PccPhpSdk\api\ArticlesApi($this->pccClient());
-		$articles = $articlesApi->getAllArticles();
-		/** @var Article $article */
-		foreach ($articles->articles as $article) {
-			$this->storeArticle($article);
-		}
+
+		return new PccClient(new PccClientConfig(...$args));
 	}
 
 	/**
@@ -82,6 +67,23 @@ class PccSyncManager
 		$postId = $this->findExistingConnectedPost($article->id);
 
 		return $this->createOrUpdatePost($postId, $article, $isDraft);
+	}
+
+	/**
+	 * @param $value
+	 * @return int|null
+	 */
+	public function findExistingConnectedPost($value): ?int
+	{
+		global $wpdb;
+
+		$post_id = $wpdb->get_var($wpdb->prepare(
+			"SELECT post_id FROM $wpdb->postmeta WHERE meta_key = %s AND meta_value = %s LIMIT 1",
+			PCC_CONTENT_META_KEY,
+			$value
+		));
+
+		return $post_id ? (int)$post_id : null;
 	}
 
 	/**
@@ -113,23 +115,6 @@ class PccSyncManager
 	}
 
 	/**
-	 * @param $value
-	 * @return int|null
-	 */
-	public function findExistingConnectedPost($value)
-	{
-		global $wpdb;
-
-		$post_id = $wpdb->get_var($wpdb->prepare(
-			"SELECT post_id FROM $wpdb->postmeta WHERE meta_key = %s AND meta_value = %s LIMIT 1",
-			PCC_CONTENT_META_KEY,
-			$value
-		));
-
-		return $post_id ? (int)$post_id : null;
-	}
-
-	/**
 	 * Get selected integration post type.
 	 *
 	 * @return false|mixed|null
@@ -158,7 +143,13 @@ class PccSyncManager
 		]);
 	}
 
-	public function preaprePreviewingURL(string $documentId, $postId = null)
+	/**
+	 * Get preview link.
+	 * @param string $documentId
+	 * @param $postId
+	 * @return string
+	 */
+	public function preparePreviewingURL(string $documentId, $postId = null): string
 	{
 		$postId = $postId ?: $this->findExistingConnectedPost($documentId);
 		return add_query_arg(
@@ -169,19 +160,5 @@ class PccSyncManager
 			],
 			get_permalink($postId)
 		);
-	}
-
-	/**
-	 * Get preview content from PCC.
-	 *
-	 * @param string $documentId
-	 * @param string $pccGrant
-	 * @return Article
-	 */
-	public function getPreviewContent(string $documentId, string $pccGrant)
-	{
-		$articleApi = new ArticlesApi($this->pccClient($pccGrant));
-
-		return $articleApi->getArticleById($documentId, [], PublishingLevel::REALTIME);
 	}
 }
