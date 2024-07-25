@@ -20,7 +20,7 @@
 <div align="center">
 
 [![Style Lint](https://github.com/pantheon-systems/pcc-for-wordpress/actions/workflows/php-style-lint.yml/badge.svg)](https://github.com/pantheon-systems/pcc-for-wordpress/actions/workflows/php-style-lint.yml)
-[![PHP Compatibility 8.*](https://github.com/pantheon-systems/pcc-for-wordpress/actions/workflows/php-version-compatibility.yml/badge.svg)](https://github.com/pantheon-systems/pcc-for-wordpress/actions/workflows/php-version-compatibility.yml)
+[![PHP Compatibility 7.4-](https://github.com/pantheon-systems/pcc-for-wordpress/actions/workflows/php-version-compatibility.yml/badge.svg)](https://github.com/pantheon-systems/pcc-for-wordpress/actions/workflows/php-version-compatibility.yml)
 
 </div>
 
@@ -87,7 +87,7 @@ Examples: _(read the config files for full configuration)_
 
 Pantheon Content Publisher is dependent on:
 
-- Minimum **PHP** version **8.2**
+- Minimum **PHP** version **7.4**
 - Minimum **WordPress** version **5.7**
 
 ## Bugs and feature requests

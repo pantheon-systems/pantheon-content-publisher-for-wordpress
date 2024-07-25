@@ -4,7 +4,7 @@ Tags: pantheon
 Requires at least: 5.7
 Tested up to: 6.6.1
 Stable tag: 1.0.0
-Requires PHP: 8.2.0
+Requires PHP: 7.4.0
 
 Publish WordPress content from Google Docs with Pantheon Content Cloud.
 
