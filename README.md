@@ -14,7 +14,7 @@
   ·
   <a href="https://github.com/pantheon-systems/pcc-for-wordpress/issues/new?template=feature_request.md&labels=feature">Request feature</a>
   ·
-  <a href="https://pcc.pantheon.io/docs">Check out PCC Docs</a>
+  <a href="https://pcc.pantheon.io/docs" target="_blank">Check out PCC Docs</a>
 </p>
 
 <div align="center">
