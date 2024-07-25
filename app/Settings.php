@@ -28,6 +28,12 @@ use const PCC_PLUGIN_DIR_URL;
 class Settings
 {
 	/**
+	 * Pantheon menu icon in base64
+	 */
+	// phpcs:ignore Generic.Files.LineLength.TooLong
+	private const PCC_ICON_BASE64 = 'PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICAgIDxwYXRoIGQ9Ik00LjcxNjkxIDFMNi4xNTA3MSA0LjQ1NDE4SDQuMzI1ODdMNC45MTI0MiA1Ljk1MzE2SDguNjI3MjlMNC43MTY5MSAxWiIgZmlsbD0id2hpdGUiLz4KICAgIDxwYXRoIGQ9Ik05LjU3MjI5IDEzLjU0NThMOC45NTMxNCAxMi4wNDY5SDguMTA1ODlMNi4zNDYyMiA3Ljc3ODAySDUuNTk2NzNMNy4zNTY0IDEyLjA0NjlINS4yMDU2OUw5LjE4MTI1IDE3TDcuNzQ3NDQgMTMuNTQ1OEg5LjU3MjI5WiIKICAgICAgICAgIGZpbGw9IndoaXRlIi8+CiAgICA8cGF0aCBkPSJNMTAuMDYxMSAxMC41MTUzSDcuNzQ3NDRMOC4yMzYyNCAxMS42ODg0SDEwLjA2MTFDMTAuMDkzNyAxMS42ODg0IDEwLjIyNCAxMS42MjMyIDEwLjIyNCAxMS4xMDE4QzEwLjE5MTQgMTAuNTgwNCAxMC4wOTM3IDEwLjUxNTMgMTAuMDYxMSAxMC41MTUzWiIKICAgICAgICAgIGZpbGw9IndoaXRlIi8+CiAgICA8cGF0aCBkPSJNMTAuMjg5MiA5LjExNDA0SDcuMTkzNDhMNy42ODIyOCAxMC4yODcySDEwLjI4OTJDMTAuMzIxOCAxMC4yODcyIDEwLjQ1MjEgMTAuMjIyIDEwLjQ1MjEgOS43MDA2QzEwLjQxOTYgOS4xNzkyMiAxMC4zMjE4IDkuMTE0MDQgMTAuMjg5MiA5LjExNDA0WiIKICAgICAgICAgIGZpbGw9IndoaXRlIi8+CiAgICA8cGF0aCBkPSJNMTAuMDYxMSA3LjQ4NDczQzEwLjA5MzcgNy40ODQ3MyAxMC4yMjQgNy40MTk1NiAxMC4yMjQgNi44OTgxN0MxMC4yMjQgNi4zNzY3OSAxMC4xMjYzIDYuMzExNjEgMTAuMDYxMSA2LjMxMTYxSDcuNTE5MzVMOC4wMDgxNSA3LjQ4NDczSDEwLjA2MTFaIgogICAgICAgICAgZmlsbD0id2hpdGUiLz4KICAgIDxwYXRoIGQ9Ik04LjU2MjEgOC44ODU5NUgxMC4yNTY2QzEwLjI4OTIgOC44ODU5NSAxMC40MTk1IDguODIwNzcgMTAuNDE5NSA4LjI5OTM5QzEwLjQxOTUgNy43NzggMTAuMzIxOCA3LjcxMjgzIDEwLjI1NjYgNy43MTI4M0g4LjA3MzNMOC41NjIxIDguODg1OTVaIgogICAgICAgICAgZmlsbD0id2hpdGUiLz4KICAgIDxwYXRoIGQ9Ik01Ljc1OTY3IDguODg1OTVMNS4yMDU3IDcuNDg0NzNINi40NzY1OEw3LjA2MzE0IDguODg1OTVIOC4yNjg4NEw3LjE5MzQ4IDYuMzExNjFINC41NTM5N0M0LjM1ODQ1IDYuMzExNjEgNC4yMjgxMSA2LjMxMTYxIDQuMTMwMzUgNi42MDQ4OUM0LjAzMjU5IDYuOTYzMzUgNCA3LjY0NzY2IDQgOC45ODM3MUM0IDEwLjMxOTggNCAxMS4wMDQxIDQuMTMwMzUgMTEuMzYyNUM0LjIyODExIDExLjY1NTggNC4zMjU4NyAxMS42NTU4IDQuNTUzOTcgMTEuNjU1OEg2Ljg2NzYyTDUuNzU5NjcgOC44ODU5NVoiCiAgICAgICAgICBmaWxsPSJ3aGl0ZSIvPgo8L3N2Zz4=';
+
+	/**
 	 * Pantheon Cloud Status endpoint required by PCC
 	 */
 	private const PCC_STATUS_ENDPOINT = 'api/pantheoncloud/status';
@@ -43,10 +49,10 @@ class Settings
 	private const PCC_DOCUMENT_EDIT_URL = 'https://docs.google.com/document/d/%s/edit';
 
 	private $pages = [
-		'connected-collection'    => PCC_PLUGIN_DIR . 'admin/templates/partials/connected-collection.php',
-		'create-collection'       => PCC_PLUGIN_DIR . 'admin/templates/partials/create-collection.php',
+		'connected-collection' => PCC_PLUGIN_DIR . 'admin/templates/partials/connected-collection.php',
+		'create-collection' => PCC_PLUGIN_DIR . 'admin/templates/partials/create-collection.php',
 		'disconnect-confirmation' => PCC_PLUGIN_DIR . 'admin/templates/partials/disconnect-confirmation.php',
-		'setup'                   => PCC_PLUGIN_DIR . 'admin/templates/partials/setup.php',
+		'setup' => PCC_PLUGIN_DIR . 'admin/templates/partials/setup.php',
 	];
 
 	public function __construct()
@@ -75,8 +81,8 @@ class Settings
 		add_action('admin_menu', [$this, 'pluginAdminNotice']);
 		add_filter('post_row_actions', [$this, 'addRowActions'], 10, 2);
 		add_filter('page_row_actions', [$this, 'addRowActions'], 10, 2);
-		add_action('admin_init', [$this,'preventPostEditing']);
-		add_filter('wp_list_table_class_name', [ $this, 'overrideAdminWPPostsTable' ]);
+		add_action('admin_init', [$this, 'preventPostEditing']);
+		add_filter('wp_list_table_class_name', [$this, 'overrideAdminWPPostsTable']);
 	}
 
 	/**
@@ -91,7 +97,7 @@ class Settings
 		}
 
 		// Publish document
-        // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		if (isset($_GET['publishingLevel']) && PublishingLevel::PRODUCTION->value === $_GET['publishingLevel']) {
 			$parts = explode('/', $wp->request);
 			$documentId = end($parts);
@@ -104,7 +110,7 @@ class Settings
 
 		// Preview document
 		if (
-            // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			isset($_GET['pccGrant']) && isset($_GET['publishingLevel']) &&
 			PublishingLevel::REALTIME->value === $_GET['publishingLevel'] // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		) {
@@ -139,17 +145,6 @@ class Settings
 	}
 
 	/**
-	 * Build the Google Docs edit URL.
-	 *
-	 * @param string $documentId
-	 * @return string
-	 */
-	private function buildEditDocumentURL($documentId)
-	{
-		return sprintf(self::PCC_DOCUMENT_EDIT_URL, $documentId);
-	}
-
-	/**
 	 * Prevent editing of PCC posts.
 	 *
 	 * @return void
@@ -158,17 +153,28 @@ class Settings
 	{
 		global $pagenow;
 		// Check if the current page is the post/page edit page
-        // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		if ($pagenow == 'post.php' && isset($_GET['post']) && 'edit' === strtolower($_GET['action'])) {
-            // phpcs:ignore
+			// phpcs:ignore
 			$documentId = get_post_meta(intval($_GET['post']), PCC_CONTENT_META_KEY, true);
-			if (! $documentId) {
-				return ;
+			if (!$documentId) {
+				return;
 			}
 
 			wp_redirect($this->buildEditDocumentURL($documentId));
 			die(200);
 		}
+	}
+
+	/**
+	 * Build the Google Docs edit URL.
+	 *
+	 * @param string $documentId
+	 * @return string
+	 */
+	private function buildEditDocumentURL($documentId)
+	{
+		return sprintf(self::PCC_DOCUMENT_EDIT_URL, $documentId);
 	}
 
 	/**
@@ -181,7 +187,7 @@ class Settings
 	public function addRowActions($actions, $post)
 	{
 		$documentId = get_post_meta($post->ID, PCC_CONTENT_META_KEY, true);
-		if (! $documentId) {
+		if (!$documentId) {
 			return $actions;
 		}
 
@@ -226,9 +232,18 @@ class Settings
 			'manage_options',
 			PCC_HANDLE,
 			[$this, 'renderSettingsPage'],
-			'dashicons-format-aside',
+			$this->pccMenuIcon(),
 			20
 		);
+	}
+
+	/**
+	 * Build menu icon url.
+	 * @return string
+	 */
+	public function pccMenuIcon(): string
+	{
+		return 'data:image/svg+xml;base64,' . self::PCC_ICON_BASE64;
 	}
 
 	/**
@@ -238,8 +253,8 @@ class Settings
 	 */
 	public function renderSettingsPage(): void
 	{
-        // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-		$view = isset($_GET['view']) ? $_GET['view'] : null;
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$view = $_GET['view'] ?? null;
 		if ($view && isset($this->pages[$view])) {
 			require $this->pages[$view];
 
@@ -306,10 +321,10 @@ class Settings
 			PCC_HANDLE,
 			'PCCAdmin',
 			[
-				'rest_url'         => get_rest_url(get_current_blog_id(), PCC_API_NAMESPACE),
-				'nonce'            => wp_create_nonce('wp_rest'),
+				'rest_url' => get_rest_url(get_current_blog_id(), PCC_API_NAMESPACE),
+				'nonce' => wp_create_nonce('wp_rest'),
 				'plugin_main_page' => menu_page_url(PCC_HANDLE, false),
-				'site_url'         => site_url(),
+				'site_url' => site_url(),
 			]
 		);
 	}
@@ -323,7 +338,7 @@ class Settings
 	{
 
 		if (
-            // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			isset($_GET['preview']) && $_GET['preview'] === 'google_document' && isset($_GET['document_id'])
 			&& $_GET['document_id'] && isset($_GET['publishing_level']) && // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			$_GET['publishing_level'] === PublishingLevel::REALTIME->value // phpcs:ignore WordPress.Security.NonceVerification.Recommended
@@ -340,7 +355,7 @@ class Settings
 				PCC_HANDLE,
 				'PCCFront',
 				[
-                    // phpcs:ignore
+					// phpcs:ignore
 					'preview_document_id' => sanitize_text_field($_GET['document_id']),
 					'site_id' => sanitize_text_field($this->getSiteId()),
 					'token' => get_option(PCC_API_KEY_OPTION_KEY),
@@ -360,7 +375,7 @@ class Settings
 		}
 
 		// Show notification when authentication details are not set or collection not created
-		if (! $this->getAccessToken() || ! $this->getSiteId()) {
+		if (!$this->getAccessToken() || !$this->getSiteId()) {
 			add_action('admin_notices', [$this, 'pluginNotification']);
 		}
 	}
@@ -376,7 +391,7 @@ class Settings
 	/**
 	 * Replace WP_Posts_List_Table with Custom_Posts_List_Table.
 	 *
-	 * @param   string  $className  The list table class to use.
+	 * @param string $className The list table class to use.
 	 *
 	 * @return string The custom list table class.
 	 */
