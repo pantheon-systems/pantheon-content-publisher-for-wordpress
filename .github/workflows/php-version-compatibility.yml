@@ -6,7 +6,7 @@ on:
 
 jobs:
   php8-compatibility:
-    name: PHP 7.4- Compatibility
+    name: PHP 8.x Compatibility
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
