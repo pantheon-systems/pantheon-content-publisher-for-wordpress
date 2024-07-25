@@ -36,56 +36,56 @@ class RestController
 	{
 		$endpoints = [
 			[
-				'route'    => '/oauth/access-token',
-				'method'   => 'POST',
+				'route' => '/oauth/access-token',
+				'method' => 'POST',
 				'callback' => [$this, 'saveAccessToken'],
 			],
 			[
-				'route'    => '/collection',
-				'method'   => 'POST',
+				'route' => '/collection',
+				'method' => 'POST',
 				'callback' => [$this, 'createCollection'],
 			],
 			[
-				'route'    => '/site',
-				'method'   => 'POST',
-				'callback' => [$this, 'createSite'],
+				'route' => '/site',
+				'method' => 'POST',
+				'callback' => [$this, 'createOrUpdateSite'],
 			],
 			[
-				'route'    => '/api-key',
-				'method'   => 'POST',
+				'route' => '/api-key',
+				'method' => 'POST',
 				'callback' => [$this, 'createApiKey'],
 			],
 			[
-				'route'    => '/collection',
-				'method'   => 'PUT',
+				'route' => '/collection',
+				'method' => 'PUT',
 				'callback' => [$this, 'updateCollection'],
 			],
 			[
-				'route'    => '/webhook',
-				'method'   => 'POST',
+				'route' => '/webhook',
+				'method' => 'POST',
 				'callback' => [$this, 'handleWebhook'],
 			],
 			[
-				'route'    => '/webhook',
-				'method'   => 'PUT',
+				'route' => '/webhook',
+				'method' => 'PUT',
 				'callback' => [$this, 'registerWebhook'],
 			],
 			[
-				'route'    => '/disconnect',
-				'method'   => 'DELETE',
+				'route' => '/disconnect',
+				'method' => 'DELETE',
 				'callback' => [$this, 'disconnect'],
 			],
 			[
-				'route'    => 'api/pantheoncloud/status',
-				'method'   => 'GET',
+				'route' => 'api/pantheoncloud/status',
+				'method' => 'GET',
 				'callback' => [$this, 'pantheonCloudStatusCheck'],
 			],
 		];
 
 		foreach ($endpoints as $endpoint) {
 			register_rest_route(PCC_API_NAMESPACE, $endpoint['route'], [
-				'methods'             => $endpoint['method'],
-				'callback'            => $endpoint['callback'],
+				'methods' => $endpoint['method'],
+				'callback' => $endpoint['callback'],
 				'permission_callback' => [$this, 'permissionCallback'],
 			]);
 		}
@@ -157,14 +157,14 @@ class RestController
 	public function createCollection(WP_REST_Request $request): WP_REST_Response
 	{
 		$siteId = sanitize_text_field($request->get_param('site_id') ?: '');
-		if (! $siteId) {
+		if (!$siteId) {
 			return new WP_REST_Response([
 				'message' => esc_html__('Missing site id', PCC_HANDLE),
 			], 400);
 		}
 
 		$postType = sanitize_text_field($request->get_param('post_type') ?: '');
-		if (! $postType) {
+		if (!$postType) {
 			return new WP_REST_Response([
 				'message' => esc_html__('Missing integration post type', PCC_HANDLE),
 			], 400);
@@ -180,19 +180,19 @@ class RestController
 	 * @param WP_REST_Request $request
 	 * @return WP_REST_Response
 	 */
-	public function createSite(WP_REST_Request $request): WP_REST_Response
+	public function createOrUpdateSite(WP_REST_Request $request): WP_REST_Response
 	{
 		// Check if you are authorized
-		if (! current_user_can('manage_options')) {
+		if (!current_user_can('manage_options')) {
 			return new WP_REST_Response(esc_html__('You are not authorized to perform this action.', PCC_HANDLE), 401);
 		}
 		// Check access token is set
-		if (! get_option(PCC_ACCESS_TOKEN_OPTION_KEY)) {
+		if (!get_option(PCC_ACCESS_TOKEN_OPTION_KEY)) {
 			return new WP_REST_Response(esc_html__('Access token is not set yet', PCC_HANDLE), 401);
 		}
 
 		$siteManager = new PccSiteManager();
-		$response = $siteManager->createSite($request->get_param('site'));
+		$response = $siteManager->getSiteID($request->get_param('site'));
 		if (is_wp_error($response)) {
 			return new WP_REST_Response($response->get_error_message(), $response->get_error_code());
 		}
@@ -210,17 +210,17 @@ class RestController
 	public function registerWebhook(): WP_REST_Response
 	{
 		// Check access token is set
-		if (! get_option(PCC_ACCESS_TOKEN_OPTION_KEY)) {
+		if (!get_option(PCC_ACCESS_TOKEN_OPTION_KEY)) {
 			return new WP_REST_Response(esc_html__('Access token is not set yet', PCC_HANDLE), 400);
 		}
 
 		// Check site id is set
-		if (! get_option(PCC_SITE_ID_OPTION_KEY)) {
+		if (!get_option(PCC_SITE_ID_OPTION_KEY)) {
 			return new WP_REST_Response(esc_html__('Site is not created yet', PCC_HANDLE), 400);
 		}
 
 		// Check if you are authorized
-		if (! current_user_can('manage_options')) {
+		if (!current_user_can('manage_options')) {
 			return new WP_REST_Response(esc_html__('You are not authorized to perform this action.', PCC_HANDLE), 401);
 		}
 
@@ -241,12 +241,12 @@ class RestController
 	public function createApiKey(): WP_REST_Response
 	{
 		// Check site id is set
-		if (! get_option(PCC_SITE_ID_OPTION_KEY)) {
+		if (!get_option(PCC_SITE_ID_OPTION_KEY)) {
 			return new WP_REST_Response(esc_html__('Site is not created yet', PCC_HANDLE), 400);
 		}
 
 		// Check if you are authorized
-		if (! current_user_can('manage_options')) {
+		if (!current_user_can('manage_options')) {
 			return new WP_REST_Response(esc_html__('You are not authorized to perform this action.', PCC_HANDLE), 401);
 		}
 
@@ -290,7 +290,7 @@ class RestController
 	 */
 	public function saveAccessToken(WP_REST_Request $request): WP_REST_Response
 	{
-		if (! current_user_can('manage_options')) {
+		if (!current_user_can('manage_options')) {
 			return new WP_REST_Response(esc_html__('You are not authorized to perform this action.', PCC_HANDLE), 401);
 		}
 
@@ -318,7 +318,7 @@ class RestController
 	 */
 	public function disconnect()
 	{
-		if (! current_user_can('manage_options')) {
+		if (!current_user_can('manage_options')) {
 			return new WP_REST_Response(esc_html__('You are not authorized to perform this action.', PCC_HANDLE), 401);
 		}
 

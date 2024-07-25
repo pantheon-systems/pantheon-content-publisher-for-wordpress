@@ -3,6 +3,7 @@
 namespace PCC;
 
 use WP_Error;
+use WP_HTTP_Requests_Response;
 
 class PccSiteManager
 {
@@ -31,7 +32,7 @@ class PccSiteManager
 			]),
 		];
 		$response = wp_remote_request($endpoint, $args);
-		/** @var \WP_HTTP_Requests_Response $response */
+		/** @var WP_HTTP_Requests_Response $response */
 		$statusCode = $response['http_response']->get_status();
 		if (204 === intval($statusCode)) {
 			update_option(PCC_WEBHOOK_SECRET_OPTION_KEY, $webhookSecret);
@@ -42,73 +43,11 @@ class PccSiteManager
 	}
 
 	/**
-	 * @param string|null $url
-	 * @return mixed|WP_Error
+	 * @return string
 	 */
-	public function createSite(string $url = null)
+	private function generateWebhookSecret(): string
 	{
-		$siteURL = trim($url) ?: site_url();
-		$args = [
-			'headers' => $this->getHeaders(),
-			'body' => json_encode([
-				'url' => $siteURL,
-				'name' => get_bloginfo('name') ?: $siteURL,
-			]),
-		];
-		$response = wp_remote_post($this->endpoints['create_site'], $args);
-		$content = $this->parseResponse($response);
-
-		if (isset($content['id']) && !empty($content['id'])) {
-			return $content['id'];
-		}
-
-		if (isset($content['code']) && isset($content['message'])) {
-			return new WP_Error($content['code'], $content['message']);
-		}
-
-		return new WP_Error(400, 'Error while creating your site. Please try again.');
-	}
-
-	/**
-	 * Create Site API Key for article management
-	 *
-	 * @return mixed|WP_Error
-	 */
-	public function createSiteApiKey()
-	{
-		$args = [
-			'headers' => $this->getHeaders(),
-			'body' => json_encode([
-				'siteId' => get_option(PCC_SITE_ID_OPTION_KEY),
-				'isManagementKey' => false,
-			]),
-		];
-		$response = wp_remote_post($this->endpoints['api_key'], $args);
-		$content = $this->parseResponse($response);
-
-		if (isset($content['apiKey']) && !empty($content['apiKey'])) {
-			return $content['apiKey'];
-		}
-
-		if (isset($content['code']) && isset($content['message'])) {
-			return new WP_Error($content['code'], $content['message']);
-		}
-
-		return new WP_Error(400, 'Error while creating your API key. Please try again.');
-	}
-
-	/**
-	 * @param $response
-	 * @return mixed|WP_Error
-	 */
-	private function parseResponse($response)
-	{
-		if (is_wp_error($response)) {
-			return $response;
-		}
-
-		// Handle HTTP 200 [PCC always returns 200]
-		return json_decode(wp_remote_retrieve_body($response), true);
+		return wp_generate_password(32, false);
 	}
 
 	/**
@@ -139,10 +78,78 @@ class PccSiteManager
 	}
 
 	/**
-	 * @return string
+	 * @param string|null $url
+	 * @return mixed|WP_Error
 	 */
-	public function generateWebhookSecret(): string
+	public function getSiteID(string $url = null): mixed
 	{
-		return wp_generate_password(32, false);
+		$siteURL = $url ? trim($url) : site_url();
+		$sites = wp_remote_get($this->endpoints['create_site'], ['headers' => $this->getHeaders()]);
+		foreach ($this->parseResponse($sites) as $site) {
+			if ($siteURL === $site['url']) {
+				return $site['id'];
+			}
+		}
+		$args = [
+			'headers' => $this->getHeaders(),
+			'body' => json_encode([
+				'url' => $siteURL,
+				'name' => get_bloginfo('name') ?: $siteURL,
+			]),
+		];
+		$response = wp_remote_post($this->endpoints['create_site'], $args);
+		$content = $this->parseResponse($response);
+
+		if (isset($content['id']) && !empty($content['id'])) {
+			return $content['id'];
+		}
+
+		if (isset($content['code']) && isset($content['message'])) {
+			return new WP_Error($content['code'], $content['message']);
+		}
+
+		return new WP_Error(400, 'Error while creating your site. Please try again.');
+	}
+
+	/**
+	 * @param $response
+	 * @return mixed|WP_Error
+	 */
+	private function parseResponse($response)
+	{
+		if (is_wp_error($response)) {
+			return $response;
+		}
+
+		// Handle HTTP 200 [PCC always returns 200]
+		return json_decode(wp_remote_retrieve_body($response), true);
+	}
+
+	/**
+	 * Create Site API Key for article management
+	 *
+	 * @return mixed|WP_Error
+	 */
+	public function createSiteApiKey()
+	{
+		$args = [
+			'headers' => $this->getHeaders(),
+			'body' => json_encode([
+				'siteId' => get_option(PCC_SITE_ID_OPTION_KEY),
+				'isManagementKey' => false,
+			]),
+		];
+		$response = wp_remote_post($this->endpoints['api_key'], $args);
+		$content = $this->parseResponse($response);
+
+		if (isset($content['apiKey']) && !empty($content['apiKey'])) {
+			return $content['apiKey'];
+		}
+
+		if (isset($content['code']) && isset($content['message'])) {
+			return new WP_Error($content['code'], $content['message']);
+		}
+
+		return new WP_Error(400, 'Error while creating your API key. Please try again.');
 	}
 }
