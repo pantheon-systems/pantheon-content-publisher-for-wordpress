@@ -49,10 +49,10 @@ class Settings
 	private const PCC_DOCUMENT_EDIT_URL = 'https://docs.google.com/document/d/%s/edit';
 
 	private $pages = [
-		'connected-collection'    => PCC_PLUGIN_DIR . 'admin/templates/partials/connected-collection.php',
-		'create-collection'       => PCC_PLUGIN_DIR . 'admin/templates/partials/create-collection.php',
+		'connected-collection' => PCC_PLUGIN_DIR . 'admin/templates/partials/connected-collection.php',
+		'create-collection' => PCC_PLUGIN_DIR . 'admin/templates/partials/create-collection.php',
 		'disconnect-confirmation' => PCC_PLUGIN_DIR . 'admin/templates/partials/disconnect-confirmation.php',
-		'setup'                   => PCC_PLUGIN_DIR . 'admin/templates/partials/setup.php',
+		'setup' => PCC_PLUGIN_DIR . 'admin/templates/partials/setup.php',
 	];
 
 	public function __construct()
@@ -81,9 +81,9 @@ class Settings
 		add_action('admin_menu', [$this, 'pluginAdminNotice']);
 		add_filter('post_row_actions', [$this, 'addRowActions'], 10, 2);
 		add_filter('page_row_actions', [$this, 'addRowActions'], 10, 2);
-		add_action('admin_init', [$this,'preventPostEditing']);
-		add_filter('wp_list_table_class_name', [ $this, 'overrideAdminWPPostsTable' ]);
-		add_filter('the_content', [ $this, 'addPreviewContainer' ]);
+		add_action('admin_init', [$this, 'preventPostEditing']);
+		add_filter('wp_list_table_class_name', [$this, 'overrideAdminWPPostsTable']);
+		add_filter('the_content', [$this, 'addPreviewContainer']);
 	}
 
 	/**
@@ -92,8 +92,7 @@ class Settings
 	public function publishDocuments()
 	{
 		global $wp;
-		$strLen = strlen(static::PCC_PUBLISH_DOCUMENT_ENDPOINT);
-		if (substr($wp->request, 0, $strLen) !== static::PCC_PUBLISH_DOCUMENT_ENDPOINT) {
+		if (!str_starts_with($wp->request, static::PCC_PUBLISH_DOCUMENT_ENDPOINT)) {
 			return;
 		}
 
@@ -146,22 +145,11 @@ class Settings
 	}
 
 	/**
-	 * Build the Google Docs edit URL.
-	 *
-	 * @param string $documentId
-	 * @return string
-	 */
-	private function buildEditDocumentURL($documentId)
-	{
-		return sprintf(self::PCC_DOCUMENT_EDIT_URL, $documentId);
-	}
-
-	/**
 	 * Prevent editing of PCC posts.
 	 *
 	 * @return void
 	 */
-	public function preventPostEditing()
+	public function preventPostEditing(): void
 	{
 		global $pagenow;
 		// Check if the current page is the post/page edit page
@@ -169,13 +157,24 @@ class Settings
 		if ($pagenow == 'post.php' && isset($_GET['post']) && 'edit' === strtolower($_GET['action'])) {
 			// phpcs:ignore
 			$documentId = get_post_meta(intval($_GET['post']), PCC_CONTENT_META_KEY, true);
-			if (! $documentId) {
-				return ;
+			if (!$documentId) {
+				return;
 			}
 
 			wp_redirect($this->buildEditDocumentURL($documentId));
 			die(200);
 		}
+	}
+
+	/**
+	 * Build the Google Docs edit URL.
+	 *
+	 * @param string $documentId
+	 * @return string
+	 */
+	private function buildEditDocumentURL(string $documentId): string
+	{
+		return sprintf(self::PCC_DOCUMENT_EDIT_URL, $documentId);
 	}
 
 	/**
@@ -189,15 +188,16 @@ class Settings
 	 * @param string $content The original post content.
 	 * @return string The modified post content with PCC content container if conditions are met.
 	 */
-	public function addPreviewContainer($content)
+	public function addPreviewContainer(string $content): string
 	{
 		global $post;
 		$documentId = get_post_meta($post->ID, PCC_CONTENT_META_KEY, true);
 		// phpcs:disable
 		if (
-			isset($_GET['preview']) && 'google_document' === $_GET['preview']
-			&& isset($_GET['document_id']) && $_GET['document_id'] == $documentId
-			&& isset($_GET['publishing_level']) && $_GET['publishing_level'] === PublishingLevel::REALTIME->value
+			isset($_GET['preview'], $_GET['document_id'], $_GET['publishing_level']) &&
+			'google_document' === $_GET['preview'] &&
+			$_GET['document_id'] === $documentId &&
+			$_GET['publishing_level'] === PublishingLevel::REALTIME->value
 		) {
 			// phpcs:enable
 			$content = '<div id="pcc-content-preview"></div>';
@@ -213,10 +213,10 @@ class Settings
 	 * @param $post
 	 * @return array|mixed
 	 */
-	public function addRowActions($actions, $post)
+	public function addRowActions($actions, $post): mixed
 	{
 		$documentId = get_post_meta($post->ID, PCC_CONTENT_META_KEY, true);
-		if (! $documentId) {
+		if (!$documentId) {
 			return $actions;
 		}
 
@@ -270,7 +270,7 @@ class Settings
 	 * Build menu icon url.
 	 * @return string
 	 */
-	private function pccMenuIcon()
+	public function pccMenuIcon(): string
 	{
 		return 'data:image/svg+xml;base64,' . self::PCC_ICON_BASE64;
 	}
@@ -283,7 +283,7 @@ class Settings
 	public function renderSettingsPage(): void
 	{
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
-		$view = isset($_GET['view']) ? $_GET['view'] : null;
+		$view = $_GET['view'] ?? null;
 		if ($view && isset($this->pages[$view])) {
 			require $this->pages[$view];
 
@@ -307,7 +307,7 @@ class Settings
 	/**
 	 * @return false|mixed|null
 	 */
-	private function getSiteId()
+	private function getSiteId(): mixed
 	{
 		return get_option(PCC_SITE_ID_OPTION_KEY);
 	}
@@ -317,7 +317,7 @@ class Settings
 	 *
 	 * @return array|mixed
 	 */
-	private function getAccessToken()
+	private function getAccessToken(): mixed
 	{
 		$pccToken = get_option(PCC_ACCESS_TOKEN_OPTION_KEY);
 
@@ -350,10 +350,10 @@ class Settings
 			PCC_HANDLE,
 			'PCCAdmin',
 			[
-				'rest_url'         => get_rest_url(get_current_blog_id(), PCC_API_NAMESPACE),
-				'nonce'            => wp_create_nonce('wp_rest'),
+				'rest_url' => get_rest_url(get_current_blog_id(), PCC_API_NAMESPACE),
+				'nonce' => wp_create_nonce('wp_rest'),
 				'plugin_main_page' => menu_page_url(PCC_HANDLE, false),
-				'site_url'         => site_url(),
+				'site_url' => site_url(),
 			]
 		);
 	}
@@ -404,7 +404,7 @@ class Settings
 		}
 
 		// Show notification when authentication details are not set or collection not created
-		if (! $this->getAccessToken() || ! $this->getSiteId()) {
+		if (!$this->getAccessToken() || !$this->getSiteId()) {
 			add_action('admin_notices', [$this, 'pluginNotification']);
 		}
 	}
@@ -420,7 +420,7 @@ class Settings
 	/**
 	 * Replace WP_Posts_List_Table with Custom_Posts_List_Table.
 	 *
-	 * @param   string  $className  The list table class to use.
+	 * @param string $className The list table class to use.
 	 *
 	 * @return string The custom list table class.
 	 */

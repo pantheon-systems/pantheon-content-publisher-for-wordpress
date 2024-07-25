@@ -1,0 +1,35 @@
+name: "PHP Style Linting"
+
+on:
+  pull_request:
+  merge_group:
+
+jobs:
+  build_app:
+    name: "PHPCS"
+    runs-on: ubuntu-latest
+
+    env:
+      GH_TOKEN: ${{ github.token }}
+
+    steps:
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          tools: cs2pr, phpcs
+
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Add Composer dependency credentials
+        run: echo '${{ secrets.COMPOSER_AUTH_JSON }}' > $GITHUB_WORKSPACE/auth.json
+      - name: Install Composer dependencies
+        run: composer install
+      - name: Run PHPCS
+        # Get the changed files from the PR via Github CLI.
+        # `grep` to only PHP files then remove deleted files via `find`.
+        # Run `phpcs` on the remaining files and pass output to `cs2pr`.
+        run: |
+          echo "Files for this PR:"
+          gh pr diff ${{ github.event.number }} --name-only | grep .php | xargs find 2> /dev/null | cat
+          gh pr diff ${{ github.event.number }} --name-only | grep .php | xargs find 2> /dev/null | xargs vendor/bin/phpcs -nq --report=checkstyle | cs2pr

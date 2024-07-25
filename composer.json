@@ -1,48 +1,48 @@
 {
-  "name": "pantheon/pcc-for-wordpress",
+  "name": "pantheon-systems/pcc-for-wordpress",
   "type": "wordpress-plugin",
   "description": "Publish WordPress content from Google Docs with Pantheon Content Cloud.",
   "keywords": [
-	"wordpress",
-	"plugin"
+    "wordpress",
+    "plugin"
   ],
   "support": {
-	"email": "contact@pantheon.io"
+    "email": "contact@pantheon.io"
   },
   "authors": [
-	{
-	  "name": "Pantheon",
-	  "email": "contact@pantheon.io",
-	  "homepage": "https://pantheon.io"
-	}
+    {
+      "name": "Pantheon",
+      "email": "contact@pantheon.io",
+      "homepage": "https://pantheon.io"
+    }
   ],
   "autoload": {
-	"psr-4": {
-	  "PCC\\": "app/"
-	}
+    "psr-4": {
+      "PCC\\": "app/"
+    }
   },
   "require": {
-	"php": ">=8.2",
-	"digitalpolygon/pcc-php-sdk": "dev-main"
+    "php": ">=8",
+    "digitalpolygon/pcc-php-sdk": "dev-main"
   },
   "require-dev": {
-	"wp-coding-standards/wpcs": "^3.1",
+    "wp-coding-standards/wpcs": "^3.1",
     "phpcompatibility/php-compatibility": "^9.3"
   },
   "repositories": [
-	{
-	  "type": "vcs",
-	  "url": "git@github.com:digitalpolygon/pcc-php-sdk.git"
-	}
+    {
+      "type": "vcs",
+      "url": "git@github.com:pantheon-systems/pcc-php-sdk.git"
+    }
   ],
   "scripts": {
-	"php:lint:autofix": "vendor/bin/phpcbf --ignore=*/vendor/ --standard=./phpcs.xml ",
-	"php:lint:report": "vendor/bin/phpcs --ignore=*/vendor/ --standard=./phpcs.xml; phpcs --ignore=*/vendor/ --standard=./phpcs.xml --extensions=php --report=source",
-	"php-compatibility": "vendor/bin/phpcs -ps * --ignore=*/vendor/ --extensions=php --standard=PHPCompatibility --runtime-set testVersion 8.0-8.2"
+    "php:lint:autofix": "vendor/bin/phpcbf --ignore=*/vendor/ --standard=./phpcs.xml ",
+    "php:lint:report": "vendor/bin/phpcs --ignore=*/vendor/ --standard=./phpcs.xml; phpcs --ignore=*/vendor/ --standard=./phpcs.xml --extensions=php --report=source",
+    "php-compatibility": "vendor/bin/phpcs -ps * --ignore=*/vendor/ --extensions=php --standard=PHPCompatibility --runtime-set testVersion 8.0-"
   },
   "config": {
-	"allow-plugins": {
-	  "dealerdirect/phpcodesniffer-composer-installer": true
-	}
+    "allow-plugins": {
+      "dealerdirect/phpcodesniffer-composer-installer": true
+    }
   }
 }
