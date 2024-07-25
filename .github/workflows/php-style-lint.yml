@@ -20,6 +20,8 @@ jobs:
 
       - name: Checkout code
         uses: actions/checkout@v4
+      - name: Add Composer dependency credentials
+        run: echo '${{ secrets.COMPOSER_AUTH_JSON }}' > $GITHUB_WORKSPACE/auth.json
       - name: Install Composer dependencies
         run: composer install
       - name: Run PHPCS
