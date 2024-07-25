@@ -14,5 +14,5 @@ jobs:
       - name: PHP Compatibility
         uses: pantheon-systems/phpcompatibility-action@dev
         with:
-          test-versions: 7.4-
+          test-versions: 8.0-
           paths: ${{ github.workspace }}/*.php ${{ github.workspace }}/app/*.php ${{ github.workspace }}/admin/templates/partials/*.php
