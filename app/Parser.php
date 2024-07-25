@@ -2,7 +2,7 @@
 
 namespace PCC;
 
-class PCCJsonToHtmlParser
+class Parser
 {
 	/**
 	 * Generates HTML from a JSON string and wraps it in a parent element if provided.

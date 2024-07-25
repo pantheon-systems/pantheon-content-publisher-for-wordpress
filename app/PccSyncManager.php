@@ -50,10 +50,13 @@ class PccSyncManager
 		$articlesApi = new ArticlesApi($this->pccClient());
 		// If publishing level is not provided, it will default to production.
 		$article = $articlesApi->getArticleById(
-			$documentId, [], $publishingLevel, $contentType
+			$documentId,
+			[],
+			$publishingLevel,
+			$contentType
 		);
 		if (ContentType::TREE_PANTHEON_V2 == $contentType) {
-			$parser = new PCCJsonToHtmlParser();
+			$parser = new Parser();
 			$article->content = $parser->generateHtmlFromJson($article->content);
 		}
 
