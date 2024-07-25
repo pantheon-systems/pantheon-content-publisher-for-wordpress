@@ -83,6 +83,7 @@ class Settings
 		add_filter('page_row_actions', [$this, 'addRowActions'], 10, 2);
 		add_action('admin_init', [$this, 'preventPostEditing']);
 		add_filter('wp_list_table_class_name', [$this, 'overrideAdminWPPostsTable']);
+		add_filter('the_content', [$this, 'addPreviewContainer']);
 	}
 
 	/**
@@ -91,8 +92,7 @@ class Settings
 	public function publishDocuments()
 	{
 		global $wp;
-		$strLen = strlen(static::PCC_PUBLISH_DOCUMENT_ENDPOINT);
-		if (substr($wp->request, 0, $strLen) !== static::PCC_PUBLISH_DOCUMENT_ENDPOINT) {
+		if (!str_starts_with($wp->request, static::PCC_PUBLISH_DOCUMENT_ENDPOINT)) {
 			return;
 		}
 
@@ -149,7 +149,7 @@ class Settings
 	 *
 	 * @return void
 	 */
-	public function preventPostEditing()
+	public function preventPostEditing(): void
 	{
 		global $pagenow;
 		// Check if the current page is the post/page edit page
@@ -172,9 +172,38 @@ class Settings
 	 * @param string $documentId
 	 * @return string
 	 */
-	private function buildEditDocumentURL($documentId)
+	private function buildEditDocumentURL(string $documentId): string
 	{
 		return sprintf(self::PCC_DOCUMENT_EDIT_URL, $documentId);
+	}
+
+	/**
+	 * Adds a PCC content container if the conditions are met.
+	 *
+	 * This function checks if the current post preview is for a Google document and
+	 * if the document ID and publishing level match the expected values. If the
+	 * conditions are met, it returns a div container for PCC content preview.
+	 * Otherwise, it returns the original content.
+	 *
+	 * @param string $content The original post content.
+	 * @return string The modified post content with PCC content container if conditions are met.
+	 */
+	public function addPreviewContainer(string $content): string
+	{
+		global $post;
+		$documentId = get_post_meta($post->ID, PCC_CONTENT_META_KEY, true);
+		// phpcs:disable
+		if (
+			isset($_GET['preview'], $_GET['document_id'], $_GET['publishing_level']) &&
+			'google_document' === $_GET['preview'] &&
+			$_GET['document_id'] === $documentId &&
+			$_GET['publishing_level'] === PublishingLevel::REALTIME->value
+		) {
+			// phpcs:enable
+			$content = '<div id="pcc-content-preview"></div>';
+		}
+
+		return $content;
 	}
 
 	/**
@@ -184,7 +213,7 @@ class Settings
 	 * @param $post
 	 * @return array|mixed
 	 */
-	public function addRowActions($actions, $post)
+	public function addRowActions($actions, $post): mixed
 	{
 		$documentId = get_post_meta($post->ID, PCC_CONTENT_META_KEY, true);
 		if (!$documentId) {
@@ -278,7 +307,7 @@ class Settings
 	/**
 	 * @return false|mixed|null
 	 */
-	private function getSiteId()
+	private function getSiteId(): mixed
 	{
 		return get_option(PCC_SITE_ID_OPTION_KEY);
 	}
@@ -288,7 +317,7 @@ class Settings
 	 *
 	 * @return array|mixed
 	 */
-	private function getAccessToken()
+	private function getAccessToken(): mixed
 	{
 		$pccToken = get_option(PCC_ACCESS_TOKEN_OPTION_KEY);
 
