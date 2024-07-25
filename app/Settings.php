@@ -113,7 +113,7 @@ class Settings
 			$pcc = new PccSyncManager();
 			$postId = $pcc->findExistingConnectedPost($documentId);
 			if (!$postId) {
-				$postId = $pcc->fetchAndStoreDocument($documentId, true);
+				$postId = $pcc->fetchAndStoreDocument($documentId, true, PublishingLevel::REALTIME);
 			}
 
 			$url = $pcc->preaprePreviewingURL($documentId, $postId);
