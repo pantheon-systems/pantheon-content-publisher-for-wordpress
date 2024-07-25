@@ -1,6 +1,6 @@
 ---
 name: Feature request
-about: Suggest an idea for a new feature in Speed Daemon by Crowd Favorite.
+about: Suggest an idea for a new feature in Pantheon Content Publisher.
 labels: feature
 ---
 
