@@ -376,7 +376,7 @@ class Settings
 				PCC_HANDLE,
 				PCC_PLUGIN_DIR_URL . 'dist/pcc-front.js',
 				[],
-				filemtime(PCC_PLUGIN_DIR . 'assets/js/pcc-front.js'),
+				filemtime(PCC_PLUGIN_DIR . 'dist/pcc-front.js'),
 				true
 			);
 
