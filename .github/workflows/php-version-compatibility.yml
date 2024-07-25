@@ -2,6 +2,7 @@ name: PHP Compatibility Checks
 
 on:
   pull_request:
+  merge_group:
 
 jobs:
   php8-compatibility:

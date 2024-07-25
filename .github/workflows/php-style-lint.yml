@@ -2,6 +2,7 @@ name: "PHP Style Linting"
 
 on:
   pull_request:
+  merge_group:
 
 jobs:
   build_app:
