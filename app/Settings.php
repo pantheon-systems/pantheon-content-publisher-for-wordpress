@@ -102,7 +102,7 @@ class Settings
 			$parts = explode('/', $wp->request);
 			$documentId = end($parts);
 			$pcc = new PccSyncManager();
-			$postId = $pcc->fetchAndStoreDocument($documentId);
+			$postId = $pcc->fetchAndStorePublishedDocument($documentId);
 
 			wp_redirect(get_permalink($postId));
 			exit;

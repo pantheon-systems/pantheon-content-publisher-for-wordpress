@@ -2,6 +2,7 @@
 
 namespace PCC;
 
+use PccPhpSdk\api\Query\Enums\ContentType;
 use PccPhpSdk\api\Query\Enums\PublishingLevel;
 use PccPhpSdk\api\Response\Article;
 use PccPhpSdk\api\ArticlesApi;
@@ -44,14 +45,30 @@ class PccSyncManager
 	 * @param bool $isDraft
 	 * @return int
 	 */
-	public function fetchAndStoreDocument($documentId, $isDraft = false, PublishingLevel $publishingLevel = null)
+	public function fetchAndStoreDocument($documentId, $isDraft = false, PublishingLevel $publishingLevel = null, ContentType $contentType = ContentType::TEXT_MARKDOWN)
 	{
 		$articlesApi = new ArticlesApi($this->pccClient());
 		// If publishing level is not provided, it will default to production.
-		$args = $publishingLevel ? [$documentId, [], $publishingLevel] : [$documentId];
-		$article = $articlesApi->getArticleById(...$args);
+		$article = $articlesApi->getArticleById(
+			$documentId, [], $publishingLevel, $contentType
+		);
+		if (ContentType::TREE_PANTHEON_V2 == $contentType) {
+			$parser = new PCCJsonToHtmlParser();
+			$article->content = $parser->generateHtmlFromJson($article->content);
+		}
 
 		return $this->storeArticle($article, $isDraft);
+	}
+
+	/**
+	 * Fetch and store published document.
+	 *
+	 * @param $documentId
+	 * @return int
+	 */
+	public function fetchAndStorePublishedDocument($documentId)
+	{
+		return $this->fetchAndStoreDocument($documentId, false, PublishingLevel::PRODUCTION, ContentType::TREE_PANTHEON_V2);
 	}
 
 	/**
