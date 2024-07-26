@@ -105,7 +105,7 @@ class Settings
 			$parts = explode('/', $wp->request);
 			$documentId = end($parts);
 			$pcc = new PccSyncManager();
-			$postId = $pcc->fetchAndStoreDocument($documentId);
+			$postId = $pcc->fetchAndStoreDocument($documentId, PublishingLevel::PRODUCTION);
 
 			wp_redirect(get_permalink($postId));
 			exit;
@@ -121,8 +121,10 @@ class Settings
 			$parts = explode('/', $wp->request);
 			$documentId = end($parts);
 			$pcc = new PccSyncManager();
-			if (!$pcc->findExistingConnectedPost($documentId)) {
-				$pcc->fetchAndStoreDocument($documentId, true, PublishingLevel::REALTIME);
+
+			$postId = $pcc->findExistingConnectedPost($documentId);
+			if (!$postId) {
+				$postId = $pcc->fetchAndStoreDocument($documentId, PublishingLevel::REALTIME, true);
 			}
 
 			$query = get_posts([

@@ -3,6 +3,7 @@
 namespace PCC;
 
 use PccPhpSdk\api\ArticlesApi;
+use PccPhpSdk\api\Query\Enums\ContentType;
 use PccPhpSdk\api\Query\Enums\PublishingLevel;
 use PccPhpSdk\api\Response\Article;
 use PccPhpSdk\core\PccClient;
@@ -26,15 +27,22 @@ class PccSyncManager
 	 * Fetch and store document.
 	 *
 	 * @param $documentId
+	 * @param PublishingLevel $publishingLevel
 	 * @param bool $isDraft
 	 * @return int
 	 */
-	public function fetchAndStoreDocument($documentId, $isDraft = false, PublishingLevel $publishingLevel = null)
-	{
+	public function fetchAndStoreDocument(
+		$documentId,
+		PublishingLevel $publishingLevel,
+		bool $isDraft = false,
+	): int {
 		$articlesApi = new ArticlesApi($this->pccClient());
-		// If publishing level is not provided, it will default to production.
-		$args = $publishingLevel ? [$documentId, [], $publishingLevel] : [$documentId];
-		$article = $articlesApi->getArticleById(...$args);
+		$article = $articlesApi->getArticleById(
+			$documentId,
+			[],
+			$publishingLevel,
+			ContentType::TREE_PANTHEON_V2
+		);
 
 		return $this->storeArticle($article, $isDraft);
 	}
@@ -73,15 +81,17 @@ class PccSyncManager
 	 * @param $value
 	 * @return int|null
 	 */
-	public function findExistingConnectedPost($value): ?int
+	public function findExistingConnectedPost($value)
 	{
 		global $wpdb;
 
-		$post_id = $wpdb->get_var($wpdb->prepare(
-			"SELECT post_id FROM $wpdb->postmeta WHERE meta_key = %s AND meta_value = %s LIMIT 1",
-			PCC_CONTENT_META_KEY,
-			$value
-		));
+		$post_id = $wpdb->get_var(
+			$wpdb->prepare(
+				"SELECT post_id FROM $wpdb->postmeta WHERE meta_key = %s AND meta_value = %s LIMIT 1",
+				PCC_CONTENT_META_KEY,
+				$value
+			)
+		);
 
 		return $post_id ? (int)$post_id : null;
 	}
@@ -91,6 +101,7 @@ class PccSyncManager
 	 *
 	 * @param $postId
 	 * @param Article $article
+	 * @param bool $isDraft
 	 * @return int post id
 	 */
 	private function createOrUpdatePost($postId, Article $article, bool $isDraft = false)
@@ -103,7 +114,6 @@ class PccSyncManager
 			'post_type' => $this->getIntegrationPostType(),
 		];
 		if (!$postId) {
-			$data['ID'] = $postId;
 			$postId = wp_insert_post($data);
 			update_post_meta($postId, PCC_CONTENT_META_KEY, $article->id);
 			return $postId;
@@ -122,6 +132,22 @@ class PccSyncManager
 	private function getIntegrationPostType()
 	{
 		return get_option(PCC_INTEGRATION_POST_TYPE_OPTION_KEY);
+	}
+
+	/**
+	 * Store articles from PCC to WordPress.
+	 */
+	public function storeArticles()
+	{
+		if (!$this->getIntegrationPostType()) {
+			return;
+		}
+		$articlesApi = new ArticlesApi($this->pccClient());
+		$articles = $articlesApi->getAllArticles();
+		/** @var Article $article */
+		foreach ($articles->articles as $article) {
+			$this->storeArticle($article);
+		}
 	}
 
 	/**
