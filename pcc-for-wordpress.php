@@ -8,7 +8,7 @@
  * Plugin URI: https://pantheon.io
  * Author: Pantheon
  * Author URI: https://pantheon.io
- * Version: 0.10.0
+ * Version: 1.0.0
  *
  * @package pantheon\pcc-for-wordpress
  */
