@@ -50,6 +50,7 @@ class PccSyncManager
 	/**
 	 * Get PccClient instance.
 	 *
+	 * @param string|null $pccGrant
 	 * @return PccClient
 	 */
 	public function pccClient(string $pccGrant = null): PccClient
@@ -168,7 +169,13 @@ class PccSyncManager
 		]);
 	}
 
-	public function preaprePreviewingURL(string $documentId, $postId = null)
+	/**
+	 * Get preview link.
+	 * @param string $documentId
+	 * @param $postId
+	 * @return string
+	 */
+	public function preparePreviewingURL(string $documentId, $postId = null): string
 	{
 		$postId = $postId ?: $this->findExistingConnectedPost($documentId);
 		return add_query_arg(
@@ -179,19 +186,5 @@ class PccSyncManager
 			],
 			get_permalink($postId)
 		);
-	}
-
-	/**
-	 * Get preview content from PCC.
-	 *
-	 * @param string $documentId
-	 * @param string $pccGrant
-	 * @return Article
-	 */
-	public function getPreviewContent(string $documentId, string $pccGrant)
-	{
-		$articleApi = new ArticlesApi($this->pccClient($pccGrant));
-
-		return $articleApi->getArticleById($documentId, [], PublishingLevel::REALTIME);
 	}
 }
