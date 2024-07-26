@@ -65,12 +65,12 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:pantheon-systems/pcc-php-sdk.git",
-                "reference": "d3011e5c49378c797de4d4d80046ed2705a07461"
+                "reference": "fc5141ff83764dc881e002dd25977dadb1d25c21"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/pantheon-systems/pcc-php-sdk/zipball/d3011e5c49378c797de4d4d80046ed2705a07461",
-                "reference": "d3011e5c49378c797de4d4d80046ed2705a07461",
+                "url": "https://api.github.com/repos/pantheon-systems/pcc-php-sdk/zipball/fc5141ff83764dc881e002dd25977dadb1d25c21",
+                "reference": "fc5141ff83764dc881e002dd25977dadb1d25c21",
                 "shasum": ""
             },
             "require": {
@@ -94,7 +94,7 @@
                 "source": "https://github.com/pantheon-systems/pcc-php-sdk/tree/main",
                 "issues": "https://github.com/pantheon-systems/pcc-php-sdk/issues"
             },
-            "time": "2024-07-26T09:00:34+00:00"
+            "time": "2024-07-26T12:57:07+00:00"
         },
         {
             "name": "erusev/parsedown",
