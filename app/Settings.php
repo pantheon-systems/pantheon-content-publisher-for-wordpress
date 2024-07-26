@@ -87,6 +87,19 @@ class Settings
 	}
 
 	/**
+	 * Allow style tags in the content.
+	 *
+	 * @param $allowedTags
+	 * @return mixed
+	 */
+	public function allowStyleTags($allowedTags)
+	{
+		$allowedTags['style'] = [];
+
+		return $allowedTags;
+	}
+
+	/**
 	 * Publish documents from Google Docs.
 	 */
 	public function publishDocuments()
@@ -99,6 +112,8 @@ class Settings
 		// Publish document
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		if (isset($_GET['publishingLevel']) && PublishingLevel::PRODUCTION->value === $_GET['publishingLevel']) {
+			// Allow Style tags if content is coming from Google Docs
+			add_filter('wp_kses_allowed_html', [$this, 'allowStyleTags']);
 			$parts = explode('/', $wp->request);
 			$documentId = end($parts);
 			$pcc = new PccSyncManager();
