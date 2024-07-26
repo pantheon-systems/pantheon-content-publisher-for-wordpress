@@ -102,7 +102,7 @@ class Settings
 			$parts = explode('/', $wp->request);
 			$documentId = end($parts);
 			$pcc = new PccSyncManager();
-			$postId = $pcc->fetchAndStorePublishedDocument($documentId);
+			$postId = $pcc->fetchAndStoreDocument($documentId, PublishingLevel::PRODUCTION);
 
 			wp_redirect(get_permalink($postId));
 			exit;
@@ -119,7 +119,7 @@ class Settings
 			$pcc = new PccSyncManager();
 			$postId = $pcc->findExistingConnectedPost($documentId);
 			if (!$postId) {
-				$postId = $pcc->fetchAndStoreDocument($documentId, true, PublishingLevel::REALTIME);
+				$postId = $pcc->fetchAndStoreDocument($documentId, PublishingLevel::REALTIME, true);
 			}
 
 			$url = $pcc->preaprePreviewingURL($documentId, $postId);
@@ -365,7 +365,6 @@ class Settings
 	 */
 	public function enqueueFrontAssets(): void
 	{
-
 		if (
 			// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			isset($_GET['preview']) && $_GET['preview'] === 'google_document' && isset($_GET['document_id'])

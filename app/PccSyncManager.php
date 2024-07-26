@@ -2,10 +2,10 @@
 
 namespace PCC;
 
+use PccPhpSdk\api\ArticlesApi;
 use PccPhpSdk\api\Query\Enums\ContentType;
 use PccPhpSdk\api\Query\Enums\PublishingLevel;
 use PccPhpSdk\api\Response\Article;
-use PccPhpSdk\api\ArticlesApi;
 use PccPhpSdk\core\PccClient;
 use PccPhpSdk\core\PccClientConfig;
 
@@ -24,6 +24,30 @@ class PccSyncManager
 	}
 
 	/**
+	 * Fetch and store document.
+	 *
+	 * @param $documentId
+	 * @param PublishingLevel $publishingLevel
+	 * @param bool $isDraft
+	 * @return int
+	 */
+	public function fetchAndStoreDocument(
+		$documentId,
+		PublishingLevel $publishingLevel,
+		bool $isDraft = false,
+	): int {
+		$articlesApi = new ArticlesApi($this->pccClient());
+		$article = $articlesApi->getArticleById(
+			$documentId,
+			[],
+			$publishingLevel,
+			ContentType::TREE_PANTHEON_V2
+		);
+
+		return $this->storeArticle($article, $isDraft);
+	}
+
+	/**
 	 * Get PccClient instance.
 	 *
 	 * @return PccClient
@@ -36,58 +60,6 @@ class PccSyncManager
 		}
 
 		return new PccClient(new PccClientConfig(...$args));
-	}
-
-	/**
-	 * Fetch and store document.
-	 *
-	 * @param $documentId
-	 * @param bool $isDraft
-	 * @return int
-	 */
-	public function fetchAndStoreDocument($documentId, $isDraft = false, PublishingLevel $publishingLevel = null, ContentType $contentType = ContentType::TEXT_MARKDOWN)
-	{
-		$articlesApi = new ArticlesApi($this->pccClient());
-		// If publishing level is not provided, it will default to production.
-		$article = $articlesApi->getArticleById(
-			$documentId,
-			[],
-			$publishingLevel,
-			$contentType
-		);
-		if (ContentType::TREE_PANTHEON_V2 == $contentType) {
-			$parser = new Parser();
-			$article->content = $parser->generateHtmlFromJson($article->content);
-		}
-
-		return $this->storeArticle($article, $isDraft);
-	}
-
-	/**
-	 * Fetch and store published document.
-	 *
-	 * @param $documentId
-	 * @return int
-	 */
-	public function fetchAndStorePublishedDocument($documentId)
-	{
-		return $this->fetchAndStoreDocument($documentId, false, PublishingLevel::PRODUCTION, ContentType::TREE_PANTHEON_V2);
-	}
-
-	/**
-	 * Store articles from PCC to WordPress.
-	 */
-	public function storeArticles()
-	{
-		if (!$this->getIntegrationPostType()) {
-			return;
-		}
-		$articlesApi = new \PccPhpSdk\api\ArticlesApi($this->pccClient());
-		$articles = $articlesApi->getAllArticles();
-		/** @var Article $article */
-		foreach ($articles->articles as $article) {
-			$this->storeArticle($article);
-		}
 	}
 
 	/**
@@ -105,10 +77,30 @@ class PccSyncManager
 	}
 
 	/**
+	 * @param $value
+	 * @return int|null
+	 */
+	public function findExistingConnectedPost($value)
+	{
+		global $wpdb;
+
+		$post_id = $wpdb->get_var(
+			$wpdb->prepare(
+				"SELECT post_id FROM $wpdb->postmeta WHERE meta_key = %s AND meta_value = %s LIMIT 1",
+				PCC_CONTENT_META_KEY,
+				$value
+			)
+		);
+
+		return $post_id ? (int)$post_id : null;
+	}
+
+	/**
 	 * Create or update post.
 	 *
 	 * @param $postId
 	 * @param Article $article
+	 * @param bool $isDraft
 	 * @return int post id
 	 */
 	private function createOrUpdatePost($postId, Article $article, bool $isDraft = false)
@@ -121,7 +113,6 @@ class PccSyncManager
 			'post_type' => $this->getIntegrationPostType(),
 		];
 		if (!$postId) {
-			$data['ID'] = $postId;
 			$postId = wp_insert_post($data);
 			update_post_meta($postId, PCC_CONTENT_META_KEY, $article->id);
 			return $postId;
@@ -133,23 +124,6 @@ class PccSyncManager
 	}
 
 	/**
-	 * @param $value
-	 * @return int|null
-	 */
-	public function findExistingConnectedPost($value)
-	{
-		global $wpdb;
-
-		$post_id = $wpdb->get_var($wpdb->prepare(
-			"SELECT post_id FROM $wpdb->postmeta WHERE meta_key = %s AND meta_value = %s LIMIT 1",
-			PCC_CONTENT_META_KEY,
-			$value
-		));
-
-		return $post_id ? (int)$post_id : null;
-	}
-
-	/**
 	 * Get selected integration post type.
 	 *
 	 * @return false|mixed|null
@@ -157,6 +131,22 @@ class PccSyncManager
 	private function getIntegrationPostType()
 	{
 		return get_option(PCC_INTEGRATION_POST_TYPE_OPTION_KEY);
+	}
+
+	/**
+	 * Store articles from PCC to WordPress.
+	 */
+	public function storeArticles()
+	{
+		if (!$this->getIntegrationPostType()) {
+			return;
+		}
+		$articlesApi = new ArticlesApi($this->pccClient());
+		$articles = $articlesApi->getAllArticles();
+		/** @var Article $article */
+		foreach ($articles->articles as $article) {
+			$this->storeArticle($article);
+		}
 	}
 
 	/**
