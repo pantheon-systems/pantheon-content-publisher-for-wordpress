@@ -122,9 +122,8 @@ class Settings
 			$documentId = end($parts);
 			$pcc = new PccSyncManager();
 
-			$postId = $pcc->findExistingConnectedPost($documentId);
-			if (!$postId) {
-				$postId = $pcc->fetchAndStoreDocument($documentId, PublishingLevel::REALTIME, true);
+			if (!$pcc->findExistingConnectedPost($documentId)) {
+				$pcc->fetchAndStoreDocument($documentId, PublishingLevel::REALTIME, true);
 			}
 
 			$query = get_posts([
@@ -204,8 +203,6 @@ class Settings
 	 */
 	public function addPreviewContainer(string $content): string
 	{
-		global $post;
-		$documentId = get_post_meta($post->ID, PCC_CONTENT_META_KEY, true);
 		// phpcs:disable
 		if (
 			isset($_GET['preview'], $_GET['document_id'], $_GET['publishing_level']) &&
@@ -213,7 +210,7 @@ class Settings
 			$_GET['publishing_level'] === PublishingLevel::REALTIME->value
 		) {
 			// phpcs:enable
-			$content = '<div id="pcc-content-preview"></div>';
+			return '<div id="pcc-content-preview"></div>';
 		}
 
 		return $content;
