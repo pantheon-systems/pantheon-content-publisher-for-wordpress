@@ -432,9 +432,10 @@ class Settings
 	{
 		if (
 			// phpcs:ignore WordPress.Security.NonceVerification.Recommended
-			isset($_GET['preview']) && $_GET['preview'] === 'google_document' && isset($_GET['document_id'])
-			&& $_GET['document_id'] && isset($_GET['publishing_level']) && // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-			$_GET['publishing_level'] === PublishingLevel::REALTIME->value // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			isset($_GET['preview']) && $_GET['preview'] === 'google_document' && isset($_GET['document_id']) &&
+			$_GET['document_id'] && isset($_GET['publishing_level']) && // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			$_GET['publishing_level'] === PublishingLevel::REALTIME->value && // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			(new PccSyncManager())->isPCCConfigured()
 		) {
 			wp_enqueue_script(
 				PCC_HANDLE,
