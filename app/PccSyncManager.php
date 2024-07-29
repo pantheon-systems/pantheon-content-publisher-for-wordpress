@@ -219,4 +219,28 @@ class PccSyncManager
 			)
 		);
 	}
+
+	/**
+	 * Check if PCC is configured.
+	 *
+	 * @return bool
+	 */
+	public function isPCCConfigured(): bool
+	{
+		$accessToken = get_option(PCC_ACCESS_TOKEN_OPTION_KEY);
+		$siteId = get_option(PCC_SITE_ID_OPTION_KEY);
+		$encodedSiteURL = get_option(PCC_ENCODED_SITE_URL_OPTION_KEY);
+		$apiKey = get_option(PCC_API_KEY_OPTION_KEY);
+
+		if (!$accessToken || !$siteId || !$apiKey || !$encodedSiteURL) {
+			return false;
+		}
+
+		$currentHashedSiteURL = md5(wp_parse_url(site_url())['host']);
+		if ($encodedSiteURL === $currentHashedSiteURL) {
+			return true;
+		}
+
+		return false;
+	}
 }

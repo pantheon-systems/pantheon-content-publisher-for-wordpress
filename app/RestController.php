@@ -116,12 +116,12 @@ class RestController
 
 		$event = $request->get_param('event');
 		$payload = $request->get_param('payload');
-		$siteId = get_option(PCC_SITE_ID_OPTION_KEY);
+		$isPCCConfiguredCorrectly = (new PccSyncManager())->isPCCConfigured();
 
-		// Bail if site id is not set
-		if (!$siteId) {
+		// Bail if current website id is not correctly configured
+		if (!$isPCCConfiguredCorrectly) {
 			return new WP_REST_Response(
-				esc_html__('Site configuration is pending completion.', PCC_HANDLE),
+				esc_html__('Website is not correctly configured', PCC_HANDLE),
 				200
 			);
 		}
