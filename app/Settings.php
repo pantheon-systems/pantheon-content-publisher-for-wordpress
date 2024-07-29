@@ -137,52 +137,56 @@ class Settings
 			return;
 		}
 
-		$PCCManager = new PccSyncManager();
-		// Publish document
-		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
-		if (
-			isset($_GET['publishingLevel']) &&
-			PublishingLevel::PRODUCTION->value === $_GET['publishingLevel'] &&
-			$PCCManager->isPCCConfigured()
-		) {
-			$parts = explode('/', $wp->request);
-			$documentId = end($parts);
-			$pcc = new PccSyncManager();
-			$postId = $pcc->fetchAndStoreDocument($documentId, PublishingLevel::PRODUCTION);
-
-			wp_redirect(get_permalink($postId));
-			exit;
-		}
-
-		// Preview document
-		if (
+		try {
+			$PCCManager = new PccSyncManager();
+			// Publish document
 			// phpcs:ignore WordPress.Security.NonceVerification.Recommended
-			isset($_GET['pccGrant']) && isset($_GET['publishingLevel']) &&
-			// phpcs:ignore WordPress.Security.NonceVerification.Recommended
-			PublishingLevel::REALTIME->value === $_GET['publishingLevel'] &&
-			$PCCManager->isPCCConfigured()
-		) {
-			$parts = explode('/', $wp->request);
-			$documentId = end($parts);
-			$pcc = new PccSyncManager();
+			if (
+				isset($_GET['publishingLevel']) &&
+				PublishingLevel::PRODUCTION->value === $_GET['publishingLevel'] &&
+				$PCCManager->isPCCConfigured()
+			) {
+				$parts = explode('/', $wp->request);
+				$documentId = end($parts);
+				$pcc = new PccSyncManager();
+				$postId = $pcc->fetchAndStoreDocument($documentId, PublishingLevel::PRODUCTION);
 
-			if (!$pcc->findExistingConnectedPost($documentId)) {
-				$pcc->fetchAndStoreDocument($documentId, PublishingLevel::REALTIME, true);
+				wp_redirect(get_permalink($postId));
+				exit;
 			}
 
-			$query = get_posts([
-				'post_type' => get_option(PCC_INTEGRATION_POST_TYPE_OPTION_KEY, 'post'),
-				'post_status' => 'publish',
-				'posts_per_page' => 1,
-				'orderby' => 'date',
-				'order' => 'ASC',
-				'fields' => 'ids'
-			]);
+			// Preview document
+			if (
+				// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+				isset($_GET['pccGrant']) && isset($_GET['publishingLevel']) &&
+				// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+				PublishingLevel::REALTIME->value === $_GET['publishingLevel'] &&
+				$PCCManager->isPCCConfigured()
+			) {
+				$parts = explode('/', $wp->request);
+				$documentId = end($parts);
+				$pcc = new PccSyncManager();
 
-			$url = $pcc->preparePreviewingURL($documentId, $query[0] ?? 0);
+				if (!$pcc->findExistingConnectedPost($documentId)) {
+					$pcc->fetchAndStoreDocument($documentId, PublishingLevel::REALTIME, true);
+				}
 
-			wp_redirect($url);
-			exit;
+				$query = get_posts([
+					'post_type' => get_option(PCC_INTEGRATION_POST_TYPE_OPTION_KEY, 'post'),
+					'post_status' => 'publish',
+					'posts_per_page' => 1,
+					'orderby' => 'date',
+					'order' => 'ASC',
+					'fields' => 'ids'
+				]);
+
+				$url = $pcc->preparePreviewingURL($documentId, $query[0] ?? 0);
+
+				wp_redirect($url);
+				exit;
+			}
+		} catch (\Exception $ex) {
+			// No Action needed for safe exit
 		}
 	}
 
