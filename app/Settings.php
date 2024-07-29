@@ -96,9 +96,19 @@ class Settings
 	 */
 	public function verifyCollectionUrl()
 	{
-		$manager = new PccSyncManager();
-		if (!$manager->isPCCConfigured()) {
-			$manager->disconnect();
+		$accessToken = $this->getAccessToken();
+		$siteId = $this->getSiteId();
+		$encodedSiteURL = get_option(PCC_ENCODED_SITE_URL_OPTION_KEY);
+		$apiKey = $this->getAPIAccessKey();
+
+		if (!$accessToken || !$siteId || !$apiKey || !$encodedSiteURL) {
+			return;
+		}
+
+		$currentHashedSiteURL = md5(wp_parse_url(site_url())['host']);
+		// if both are not equal then disconnect
+		if ($encodedSiteURL !== $currentHashedSiteURL) {
+			(new PccSyncManager())->disconnect();
 		}
 	}
 
