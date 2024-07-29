@@ -85,6 +85,21 @@ class Settings
 		add_action('admin_init', [$this, 'preventPostEditing']);
 		add_filter('wp_list_table_class_name', [$this, 'overrideAdminWPPostsTable']);
 		add_filter('the_content', [$this, 'addPreviewContainer']);
+		add_filter('admin_init', [$this, 'verifyCollectionUrl']);
+	}
+
+	public function verifyCollectionUrl()
+	{
+		if (!$this->getAccessToken() || !$this->getSiteId() || !$this->getAPIAccessKey() || !$this->getEncodedSiteURL()) {
+			return;
+		}
+
+		$currentHashedSiteURL = md5(wp_parse_url(site_url())['host']);
+		if ($this->getEncodedSiteURL() === $currentHashedSiteURL) {
+			return;
+		}
+		// Disconnect the site
+		(new PccSyncManager())->disconnect();
 	}
 
 	/**
@@ -338,6 +353,14 @@ class Settings
 	}
 
 	/**
+	 * @return false|mixed|null
+	 */
+	private function getEncodedSiteURL(): mixed
+	{
+		return get_option(PCC_ENCODED_SITE_URL_OPTION_KEY);
+	}
+
+	/**
 	 * Get access token from the database.
 	 *
 	 * @return array|mixed
@@ -347,6 +370,18 @@ class Settings
 		$pccToken = get_option(PCC_ACCESS_TOKEN_OPTION_KEY);
 
 		return $pccToken ?: [];
+	}
+
+	/**
+	 * Get access token from the database.
+	 *
+	 * @return array|mixed
+	 */
+	private function getAPIAccessKey(): mixed
+	{
+		$apiKey = get_option(PCC_API_KEY_OPTION_KEY);
+
+		return $apiKey ?: [];
 	}
 
 	/**

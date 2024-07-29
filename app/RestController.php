@@ -192,13 +192,14 @@ class RestController
 		}
 
 		$siteManager = new PccSiteManager();
-		$response = $siteManager->getSiteID($request->get_param('site'));
+		$response = $siteManager->getSiteID();
 		if (is_wp_error($response)) {
 			return new WP_REST_Response($response->get_error_message(), $response->get_error_code());
 		}
 
 		// Update with the site id
 		update_option(PCC_SITE_ID_OPTION_KEY, $response);
+		update_option(PCC_ENCODED_SITE_URL_OPTION_KEY, md5(wp_parse_url(site_url())['host']));
 		return new WP_REST_Response($response);
 	}
 
@@ -322,33 +323,13 @@ class RestController
 			return new WP_REST_Response(esc_html__('You are not authorized to perform this action.', PCC_HANDLE), 401);
 		}
 
-		delete_option(PCC_ACCESS_TOKEN_OPTION_KEY);
-		delete_option(PCC_SITE_ID_OPTION_KEY);
-		delete_option(PCC_INTEGRATION_POST_TYPE_OPTION_KEY);
-		delete_option(PCC_WEBHOOK_SECRET_OPTION_KEY);
-		delete_option(PCC_API_KEY_OPTION_KEY);
-		$this->removeMetaDataFromPosts();
+		// Disconnect the site
+		$manager = new PccSyncManager();
+		$manager->disconnect();
 
 		return new WP_REST_Response(
 			esc_html__('Saved Data deleted.', PCC_HANDLE),
 			200
-		);
-	}
-
-	/**
-	 * Remove all saved meta from posts
-	 *
-	 * @return void
-	 */
-	private function removeMetaDataFromPosts()
-	{
-		global $wpdb;
-		// Delete all post meta entries with the key 'terminate'
-		$wpdb->query(
-			$wpdb->prepare(
-				"DELETE FROM {$wpdb->postmeta} WHERE meta_key = %s",
-				PCC_CONTENT_META_KEY
-			)
 		);
 	}
 }

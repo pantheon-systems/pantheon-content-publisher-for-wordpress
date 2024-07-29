@@ -78,12 +78,11 @@ class PccSiteManager
 	}
 
 	/**
-	 * @param string|null $url
 	 * @return mixed|WP_Error
 	 */
-	public function getSiteID(string $url = null): mixed
+	public function getSiteID(): mixed
 	{
-		$siteURL = $url ? trim($url) : site_url();
+		$siteURL = site_url();
 		$sites = wp_remote_get($this->endpoints['create_site'], ['headers' => $this->getHeaders()]);
 		foreach ($this->parseResponse($sites) as $site) {
 			if ($siteURL === $site['url']) {
