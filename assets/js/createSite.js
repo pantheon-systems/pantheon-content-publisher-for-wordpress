@@ -5,18 +5,17 @@ export default function createSite() {
 	return new Promise(
 		async (resolve, reject) => {
 			try {
-				const siteUrl = window.PCCAdmin.site_url;
 				const selectedPostType = getSelectedPostType();
 				if (!selectedPostType) {
 					return reject(new Error('Post type not selected'));
 				}
 
 				updateSpinnerText('Creating your site...');
-				let siteId = (await createSiteId(siteUrl)).data;
+				let siteId = (await createSiteId()).data;
 				updateSpinnerText('Creating Api key...');
 				await createApiKey();
 				updateSpinnerText('Register webhook...');
-				await registerWebhook(siteUrl);
+				await registerWebhook();
 				updateSpinnerText('Creating your collection...');
 				await createCollection(siteId, selectedPostType);
 				resolve();
@@ -44,11 +43,9 @@ async function createCollection(siteId, postType) {
 	});
 }
 
-async function createSiteId(url) {
+async function createSiteId() {
 	const { rest_url, nonce } = window.PCCAdmin;
-	return await axios.post(`${rest_url}/site`, {
-		url: url,
-	}, {
+	return await axios.post(`${rest_url}/site`, {}, {
 		headers: { 'X-WP-Nonce': nonce }
 	});
 }
