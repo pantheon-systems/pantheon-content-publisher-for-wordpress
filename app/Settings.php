@@ -8,6 +8,7 @@
 
 namespace PCC;
 
+use Exception;
 use PccPhpSdk\api\Query\Enums\PublishingLevel;
 
 use function add_action;
@@ -113,6 +114,38 @@ class Settings
 	}
 
 	/**
+	 * Get access token from the database.
+	 *
+	 * @return array|mixed
+	 */
+	private function getAccessToken(): mixed
+	{
+		$pccToken = get_option(PCC_ACCESS_TOKEN_OPTION_KEY);
+
+		return $pccToken ?: [];
+	}
+
+	/**
+	 * @return false|mixed|null
+	 */
+	private function getSiteId(): mixed
+	{
+		return get_option(PCC_SITE_ID_OPTION_KEY);
+	}
+
+	/**
+	 * Get access token from the database.
+	 *
+	 * @return array|mixed
+	 */
+	private function getAPIAccessKey(): mixed
+	{
+		$apiKey = get_option(PCC_API_KEY_OPTION_KEY);
+
+		return $apiKey ?: [];
+	}
+
+	/**
 	 * Allow style tags in the content.
 	 *
 	 * @param $allowedTags
@@ -151,7 +184,7 @@ class Settings
 				$pcc = new PccSyncManager();
 				$postId = $pcc->fetchAndStoreDocument($documentId, PublishingLevel::PRODUCTION);
 
-				wp_redirect(get_permalink($postId));
+				wp_redirect(add_query_arg('nocache', 'true', get_permalink($postId)));
 				exit;
 			}
 
@@ -185,7 +218,7 @@ class Settings
 				wp_redirect($url);
 				exit;
 			}
-		} catch (\Exception $ex) {
+		} catch (Exception $ex) {
 			// No Action needed for safe exit
 		}
 	}
@@ -363,26 +396,6 @@ class Settings
 	}
 
 	/**
-	 * @return false|mixed|null
-	 */
-	private function getSiteId(): mixed
-	{
-		return get_option(PCC_SITE_ID_OPTION_KEY);
-	}
-
-	/**
-	 * Get access token from the database.
-	 *
-	 * @return array|mixed
-	 */
-	private function getAccessToken(): mixed
-	{
-		$pccToken = get_option(PCC_ACCESS_TOKEN_OPTION_KEY);
-
-		return $pccToken ?: [];
-	}
-
-	/**
 	 * Enqueue plugin assets on the WP Admin Dashboard.
 	 *
 	 * @return void
@@ -497,17 +510,5 @@ class Settings
 	private function getEncodedSiteURL(): mixed
 	{
 		return get_option(PCC_ENCODED_SITE_URL_OPTION_KEY);
-	}
-
-	/**
-	 * Get access token from the database.
-	 *
-	 * @return array|mixed
-	 */
-	private function getAPIAccessKey(): mixed
-	{
-		$apiKey = get_option(PCC_API_KEY_OPTION_KEY);
-
-		return $apiKey ?: [];
 	}
 }
