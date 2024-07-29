@@ -88,18 +88,17 @@ class Settings
 		add_filter('admin_init', [$this, 'verifyCollectionUrl']);
 	}
 
+	/**
+	 * Verify collection URL.
+	 *
+	 * @return true
+	 */
 	public function verifyCollectionUrl()
 	{
-		if (!$this->getAccessToken() || !$this->getSiteId() || !$this->getAPIAccessKey() || !$this->getEncodedSiteURL()) {
-			return;
+		$manager = new PccSyncManager();
+		if (!$manager->isPCCConfigured()) {
+			$manager->disconnect();
 		}
-
-		$currentHashedSiteURL = md5(wp_parse_url(site_url())['host']);
-		if ($this->getEncodedSiteURL() === $currentHashedSiteURL) {
-			return;
-		}
-		// Disconnect the site
-		(new PccSyncManager())->disconnect();
 	}
 
 	/**
@@ -127,9 +126,14 @@ class Settings
 			return;
 		}
 
+		$PCCManager = new PccSyncManager();
 		// Publish document
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
-		if (isset($_GET['publishingLevel']) && PublishingLevel::PRODUCTION->value === $_GET['publishingLevel']) {
+		if (
+			isset($_GET['publishingLevel']) &&
+			PublishingLevel::PRODUCTION->value === $_GET['publishingLevel'] &&
+			$PCCManager->isPCCConfigured()
+		) {
 			// Allow Style tags if content is coming from Google Docs
 			add_filter('wp_kses_allowed_html', [$this, 'allowStyleTags']);
 			$parts = explode('/', $wp->request);
@@ -146,7 +150,8 @@ class Settings
 			// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			isset($_GET['pccGrant']) && isset($_GET['publishingLevel']) &&
 			// phpcs:ignore WordPress.Security.NonceVerification.Recommended
-			PublishingLevel::REALTIME->value === $_GET['publishingLevel']
+			PublishingLevel::REALTIME->value === $_GET['publishingLevel'] &&
+			$PCCManager->isPCCConfigured()
 		) {
 			$parts = explode('/', $wp->request);
 			$documentId = end($parts);
@@ -427,9 +432,10 @@ class Settings
 	{
 		if (
 			// phpcs:ignore WordPress.Security.NonceVerification.Recommended
-			isset($_GET['preview']) && $_GET['preview'] === 'google_document' && isset($_GET['document_id'])
-			&& $_GET['document_id'] && isset($_GET['publishing_level']) && // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-			$_GET['publishing_level'] === PublishingLevel::REALTIME->value // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			isset($_GET['preview']) && $_GET['preview'] === 'google_document' && isset($_GET['document_id']) &&
+			$_GET['document_id'] && isset($_GET['publishing_level']) && // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			$_GET['publishing_level'] === PublishingLevel::REALTIME->value && // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			(new PccSyncManager())->isPCCConfigured()
 		) {
 			wp_enqueue_script(
 				PCC_HANDLE,
