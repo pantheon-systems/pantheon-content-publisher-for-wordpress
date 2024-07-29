@@ -85,18 +85,17 @@ class Settings
 		add_action('admin_init', [$this, 'preventPostEditing']);
 		add_filter('wp_list_table_class_name', [$this, 'overrideAdminWPPostsTable']);
 		add_filter('the_content', [$this, 'addPreviewContainer']);
-		add_filter('admin_init', [$this, 'testing']);
+		add_filter('admin_init', [$this, 'verifyCollectionUrl']);
 	}
 
-	public function testing()
+	public function verifyCollectionUrl()
 	{
 		if (!$this->getAccessToken() || !$this->getSiteId() || !$this->getAPIAccessKey() || !$this->getEncodedSiteURL()) {
 			return;
 		}
 
-		$hashedSiteURL = md5(wp_parse_url($this->getEncodedSiteURL())['host']);
 		$currentHashedSiteURL = md5(wp_parse_url(site_url())['host']);
-		if ($hashedSiteURL === $currentHashedSiteURL) {
+		if ($this->getEncodedSiteURL() === $currentHashedSiteURL) {
 			return;
 		}
 		// Disconnect the site

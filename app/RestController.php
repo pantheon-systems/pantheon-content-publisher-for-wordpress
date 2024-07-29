@@ -199,7 +199,7 @@ class RestController
 
 		// Update with the site id
 		update_option(PCC_SITE_ID_OPTION_KEY, $response);
-		update_option(PCC_ENCODED_SITE_URL_OPTION_KEY, site_url());
+		update_option(PCC_ENCODED_SITE_URL_OPTION_KEY, md5(wp_parse_url(site_url())['host']));
 		return new WP_REST_Response($response);
 	}
 
