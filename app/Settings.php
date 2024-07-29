@@ -86,6 +86,7 @@ class Settings
 		add_filter('wp_list_table_class_name', [$this, 'overrideAdminWPPostsTable']);
 		add_filter('the_content', [$this, 'addPreviewContainer']);
 		add_filter('admin_init', [$this, 'verifyCollectionUrl']);
+		add_filter('wp_kses_allowed_html', [$this, 'allowStyleTags'], PHP_INT_MAX);
 	}
 
 	/**
@@ -134,8 +135,6 @@ class Settings
 			PublishingLevel::PRODUCTION->value === $_GET['publishingLevel'] &&
 			$PCCManager->isPCCConfigured()
 		) {
-			// Allow Style tags if content is coming from Google Docs
-			add_filter('wp_kses_allowed_html', [$this, 'allowStyleTags']);
 			$parts = explode('/', $wp->request);
 			$documentId = end($parts);
 			$pcc = new PccSyncManager();
@@ -358,14 +357,6 @@ class Settings
 	}
 
 	/**
-	 * @return false|mixed|null
-	 */
-	private function getEncodedSiteURL(): mixed
-	{
-		return get_option(PCC_ENCODED_SITE_URL_OPTION_KEY);
-	}
-
-	/**
 	 * Get access token from the database.
 	 *
 	 * @return array|mixed
@@ -375,18 +366,6 @@ class Settings
 		$pccToken = get_option(PCC_ACCESS_TOKEN_OPTION_KEY);
 
 		return $pccToken ?: [];
-	}
-
-	/**
-	 * Get access token from the database.
-	 *
-	 * @return array|mixed
-	 */
-	private function getAPIAccessKey(): mixed
-	{
-		$apiKey = get_option(PCC_API_KEY_OPTION_KEY);
-
-		return $apiKey ?: [];
 	}
 
 	/**
@@ -496,5 +475,25 @@ class Settings
 		}
 
 		return $className;
+	}
+
+	/**
+	 * @return false|mixed|null
+	 */
+	private function getEncodedSiteURL(): mixed
+	{
+		return get_option(PCC_ENCODED_SITE_URL_OPTION_KEY);
+	}
+
+	/**
+	 * Get access token from the database.
+	 *
+	 * @return array|mixed
+	 */
+	private function getAPIAccessKey(): mixed
+	{
+		$apiKey = get_option(PCC_API_KEY_OPTION_KEY);
+
+		return $apiKey ?: [];
 	}
 }
