@@ -103,7 +103,7 @@ class RestController
 
 	/**
 	 * Handle incoming webhook requests.
-	 * @return void
+	 * @return void|WP_REST_Response
 	 */
 	public function handleWebhook(WP_REST_Request $request)
 	{
@@ -122,7 +122,7 @@ class RestController
 		if (!$isPCCConfiguredCorrectly) {
 			return new WP_REST_Response(
 				esc_html__('Website is not correctly configured', PCC_HANDLE),
-				200
+				500
 			);
 		}
 
