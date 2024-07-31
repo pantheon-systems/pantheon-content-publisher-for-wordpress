@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      GH_TOKEN: ${{ github.token }}
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     steps:
       - name: Setup PHP
@@ -31,5 +31,8 @@ jobs:
         # Run `phpcs` on the remaining files and pass output to `cs2pr`.
         run: |
           echo "Files for this PR:"
-          gh pr diff ${{ github.event.number }} --name-only | grep .php | xargs find 2> /dev/null | cat
-          gh pr diff ${{ github.event.number }} --name-only | grep .php | xargs find 2> /dev/null | xargs vendor/bin/phpcs -nq --report=checkstyle | cs2pr
+          gh pr diff $PR --name-only | grep .php | xargs find 2> /dev/null | cat
+          gh pr diff $PR --name-only | grep .php | xargs find 2> /dev/null | xargs vendor/bin/phpcs -nq --report=checkstyle | cs2pr
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR: ${{ github.event.pull_request.number }}
