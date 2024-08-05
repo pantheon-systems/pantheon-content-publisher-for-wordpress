@@ -22,6 +22,9 @@
 .secondary-button{
     @apply h-[2.25rem] flex items-center inline-block text-primary font-semibold border border-solid border-primary text-base rounded-[0.1875rem] py-[0.625rem] px-[0.8125rem] transition-all /*done*/
 }
+.create-collection-page .secondary-button{
+    @apply inline
+}
 
 .secondary-button:hover,.secondary-button:active,.secondary-button:focus{
     @apply duration-500 text-secondary bg-secondary  border-secondary  outline-0 bg-opacity-10; /*done*/
