@@ -38,6 +38,11 @@
 						<a class="primary-button" id="pcc-create-site" href="#">
 							<?php esc_html_e('Create collection', PCC_HANDLE) ?>
 						</a>
+						<div class="mb-10">
+							<a class="secondary-button self-start justify-self-end" id="pcc-disconnect" href="#">
+								<?php esc_html_e('Reset your Google Workspace authentication', PCC_HANDLE) ?>
+							</a>
+						</div>
 					</div>
 					<div class="col-span-5 justify-self-end">
 						<img src="<?php echo esc_url(PCC_PLUGIN_DIR_URL . 'assets/images/collection-image.png') ?>"
