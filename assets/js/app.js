@@ -1,4 +1,4 @@
-import {deleteConfigDetails, redirectToMainPage} from "./helper";
+import {deleteConfigDetails, PccDisconnect, redirectToMainPage} from "./helper";
 import createSite from "./createSite";
 import {hideErrorMessage, hideSpinner, showErrorMessage, showSpinner, updateSpinnerText} from "./helper";
 import updatePostType from "./updatePostType";
@@ -24,7 +24,10 @@ if (document.getElementById('pcc-create-site') != undefined) {
 			await createSite();
 			redirectToMainPage();
 		} catch (error) {
-			showErrorMessage(`Error while creating site: ${error.message}`)
+			showErrorMessage([
+				`Error while creating site: ${error.response.data}`,
+				'Your management token might be restricted or you might have to tried to authenticate with a gmail.com account'
+			], true)
 			hideSpinner();
 		}
 	});
@@ -36,24 +39,14 @@ if (document.getElementById('pcc-update-collection') != undefined) {
 			await updatePostType();
 			redirectToMainPage();
 		} catch (error) {
-			showErrorMessage(`Error while creating site: ${error.message}`)
+			showErrorMessage(`Error while creating site: ${error.response.data}`)
 		} finally {
 		}
 	});
 }
 
 if (document.getElementById('pcc-disconnect') != undefined) {
-	document.getElementById('pcc-disconnect').addEventListener('click', async function () {
-		try {
-			showSpinner();
-			updateSpinnerText('Disconnecting your collection...')
-			await deleteConfigDetails();
-			redirectToMainPage();
-		} catch (error) {
-			showErrorMessage(`Error while disconnecting: ${error.message}`)
-			hideSpinner();
-		}
-	});
+	document.getElementById('pcc-disconnect').addEventListener('click', PccDisconnect);
 }
 
 if (document.getElementById('pcc-error-close-button') != undefined) {
