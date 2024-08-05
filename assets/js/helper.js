@@ -48,11 +48,32 @@ export function getAccessToken() {
  * Show error message
  * @param message
  */
-export function showErrorMessage(message) {
+export function showErrorMessage(messages, showResetLink = false) {
 	const errorMessageContainer = document.getElementById('pcc-error-message');
 	const errorText = document.getElementById('pcc-error-text');
+	if(typeof messages === 'string') {
+		messages = [messages];
+	}
 	if (errorMessageContainer && errorText) {
-		errorText.textContent = message || 'Error:please try again later';
+		errorText.innerHTML = '';
+		for (let index in messages) {
+			if (index !== "0") {
+				errorText.appendChild(document.createElement("br"));
+			}
+			let pTag = document.createElement("p");
+			pTag.className = "text-sm text-black";
+			pTag.textContent = messages[index];
+			errorText.appendChild(pTag);
+		}
+		if (showResetLink) {
+			let resetLink = document.createElement("a");
+			resetLink.className = "text-red-600 font-semibold";
+			resetLink.textContent = 'Click here to reset Google Workspace authentication.';
+			resetLink.id = 'pcc-disconnect';
+			resetLink.href = '#';
+			resetLink.onclick = PccDisconnect;
+			errorText.appendChild(resetLink);
+		}
 		errorMessageContainer.classList.remove('hidden');
 	}
 }
@@ -87,3 +108,15 @@ export const deleteConfigDetails = async () => {
 
 	return resp
 };
+
+export const PccDisconnect = async () => {
+	try {
+		showSpinner();
+		updateSpinnerText('Disconnecting your collection...')
+		await deleteConfigDetails();
+		redirectToMainPage();
+	} catch (error) {
+		showErrorMessage(`Error while disconnecting: ${error.response.data}`)
+		hideSpinner();
+	}
+}
