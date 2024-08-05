@@ -3,7 +3,7 @@
 /**
  * The plugin singleton class.
  *
- * @package pantheon\pcc-for-wordpress
+ * @package pantheon\pantheon-content-publisher-for-wordpress
  */
 
 namespace PCC;

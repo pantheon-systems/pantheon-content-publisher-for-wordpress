@@ -10,7 +10,7 @@
  * Author URI: https://pantheon.io
  * Version: 1.1.1
  *
- * @package pantheon\pcc-for-wordpress
+ * @package pantheon\pantheon-content-publisher-for-wordpress
  */
 
 namespace PCC;
