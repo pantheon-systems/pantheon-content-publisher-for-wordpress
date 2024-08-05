@@ -3,7 +3,7 @@ Contributors: getpantheon
 Tags: pantheon
 Requires at least: 5.7
 Tested up to: 6.6.1
-Stable tag: 1.1.1
+Stable tag: 1.1.2
 Requires PHP: 8.0.0
 
 Publish WordPress content from Google Docs with Pantheon Content Cloud.
@@ -20,6 +20,8 @@ Trying to directly edit a page built with Pantheon Content Publisher will redire
 All posts/pages created with Pantheon Content Publisher will remain on your WordPress site. However, you will no longer be able to edit them from Google Docs.
 
 == Changelog ==
+= 1.1.2 =
+* Feature: Add disconnect button on intermediary screens of auth/config flow
 = 1.1.1 =
 * Fix: Verify collection URL logic
 = 1.1.0 =

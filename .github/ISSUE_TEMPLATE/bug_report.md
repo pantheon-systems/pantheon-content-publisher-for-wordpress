@@ -6,11 +6,13 @@ labels: bug
 
 Before opening:
 
-- [Search for duplicate or closed issues](https://github.com/pantheon-systems/pcc-for-wordpress/issues?utf8=%E2%9C%93&q=is%3Aissue)
-- Validate and [lint](https://github.com/pantheon-systems/pcc-for-wordpress/blob/master/phpcs.xml) any PHP code to avoid
+- [Search for duplicate or closed issues](https://github.com/pantheon-systems/pantheon-content-publisher-for-wordpress/issues?utf8=%E2%9C%93&q=is%3Aissue)
+- Validate
+  and [lint](https://github.com/pantheon-systems/pantheon-content-publisher-for-wordpress/blob/master/phpcs.xml) any PHP
+  code to avoid
   common problems
 - Read
-  the [contributing guidelines](https://github.com/pantheon-systems/pcc-for-wordpress/blob/primary/.github/CONTRIBUTING.md)
+  the [contributing guidelines](https://github.com/pantheon-systems/pantheon-content-publisher-for-wordpress/blob/primary/.github/CONTRIBUTING.md)
 
 Bug reports must include:
 
