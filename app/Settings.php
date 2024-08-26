@@ -83,7 +83,6 @@ class Settings
 		add_action('admin_menu', [$this, 'pluginAdminNotice']);
 		add_filter('post_row_actions', [$this, 'addRowActions'], 10, 2);
 		add_filter('page_row_actions', [$this, 'addRowActions'], 10, 2);
-		add_action('admin_init', [$this, 'preventPostEditing']);
 		add_filter('wp_list_table_class_name', [$this, 'overrideAdminWPPostsTable']);
 		add_filter('the_content', [$this, 'addPreviewContainer']);
 		add_filter('admin_init', [$this, 'verifyCollectionUrl']);
@@ -239,28 +238,6 @@ class Settings
 	}
 
 	/**
-	 * Prevent editing of PCC posts.
-	 *
-	 * @return void
-	 */
-	public function preventPostEditing(): void
-	{
-		global $pagenow;
-		// Check if the current page is the post/page edit page
-		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
-		if ($pagenow == 'post.php' && isset($_GET['post']) && 'edit' === strtolower($_GET['action'])) {
-			// phpcs:ignore
-			$documentId = get_post_meta(intval($_GET['post']), PCC_CONTENT_META_KEY, true);
-			if (!$documentId) {
-				return;
-			}
-
-			wp_redirect($this->buildEditDocumentURL($documentId));
-			die(200);
-		}
-	}
-
-	/**
 	 * Build the Google Docs edit URL.
 	 *
 	 * @param string $documentId
@@ -327,10 +304,6 @@ class Settings
 		);
 
 		$actions = array_merge($customActions, $actions);
-
-		if (isset($actions['edit'])) {
-			unset($actions['edit']);
-		}
 
 		if (isset($actions['inline hide-if-no-js'])) {
 			unset($actions['inline hide-if-no-js']);
