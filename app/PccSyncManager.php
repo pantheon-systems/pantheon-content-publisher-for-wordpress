@@ -116,12 +116,27 @@ class PccSyncManager
 		if (!$postId) {
 			$postId = wp_insert_post($data);
 			update_post_meta($postId, PCC_CONTENT_META_KEY, $article->id);
+			$this->updatePostTags($postId, $article);
 			return $postId;
 		}
 
 		$data['ID'] = $postId;
 		wp_update_post($data);
+		$this->updatePostTags($postId, $article);
 		return $postId;
+	}
+
+	/**
+	 * Update post tags.
+	 *
+	 * @param $postId
+	 * @param Article $article
+	 */
+	private function updatePostTags($postId, Article $article): void
+	{
+		if (isset($article->tags) && is_array($article->tags)) {
+			wp_set_post_terms($postId, $article->tags, 'post_tag', false);
+		}
 	}
 
 	/**
