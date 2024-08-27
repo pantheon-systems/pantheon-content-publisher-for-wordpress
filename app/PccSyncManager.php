@@ -39,7 +39,16 @@ class PccSyncManager
 		$articlesApi = new ArticlesApi($this->pccClient());
 		$article = $articlesApi->getArticleById(
 			$documentId,
-			[],
+			[
+				'id',
+				'slug',
+				'title',
+				'siteId',
+				'tags',
+				'content',
+				'snippet',
+				'metadata',
+			],
 			$publishingLevel,
 			ContentType::TREE_PANTHEON_V2
 		);
@@ -116,13 +125,13 @@ class PccSyncManager
 		if (!$postId) {
 			$postId = wp_insert_post($data);
 			update_post_meta($postId, PCC_CONTENT_META_KEY, $article->id);
-			$this->updatePostTags($postId, $article);
+			$this->syncPostMetaAndTags($postId, $article);
 			return $postId;
 		}
 
 		$data['ID'] = $postId;
 		wp_update_post($data);
-		$this->updatePostTags($postId, $article);
+		$this->syncPostMetaAndTags($postId, $article);
 		return $postId;
 	}
 
@@ -132,12 +141,118 @@ class PccSyncManager
 	 * @param $postId
 	 * @param Article $article
 	 */
-	private function updatePostTags($postId, Article $article): void
+	private function syncPostMetaAndTags($postId, Article $article): void
 	{
 		if (isset($article->tags) && is_array($article->tags)) {
 			wp_set_post_terms($postId, $article->tags, 'post_tag', false);
 		}
+
+		if (!isset($article->metadata)) {
+			return;
+		}
+
+		$this->setPostFeatureImage($postId, $article);
+		wp_set_post_categories($postId, $this->findArticleCategories($article));
+
+		// Check if Yoast SEO is installed and active.
+		if (in_array('wordpress-seo/wp-seo.php', apply_filters('active_plugins', get_option('active_plugins')))) {
+			$yoastMetaDesc = get_post_meta($postId, '_yoast_wpseo_metadesc', true);
+			if (!$yoastMetaDesc) {
+				update_post_meta($postId, '_yoast_wpseo_metadesc', $article->metadata['description']);
+			}
+		}
 	}
+
+
+	/**
+	 * Set the post feature image.
+	 *
+	 * @param $postId
+	 * @param Article $article
+	 */
+	private function setPostFeatureImage($postId, Article $article)
+	{
+		if (!isset($article->metadata['FeaturedImage'])) {
+			return;
+		}
+
+		// If the feature image is empty, delete the existing thumbnail.
+		$featuredImageURL = $article->metadata['FeaturedImage'] ?: '';
+		if ('' === $featuredImageURL) {
+			delete_post_thumbnail($postId);
+			return;
+		}
+
+		// Check if there was an existing image.
+		// @TODO refactor this condition to search for Post id using the feature image URL
+		if ($existingImageId = get_post_thumbnail_id($postId)) {
+			$existingUrl = get_post_meta($existingImageId, 'pcc_feature_image_url', true);
+			if ($existingUrl === $featuredImageURL) {
+				return;
+			}
+		}
+
+		// Ensure media_sideload_image function is available.
+		if (!function_exists('media_sideload_image')) {
+			require_once(ABSPATH . 'wp-admin/includes/media.php');
+			require_once(ABSPATH . 'wp-admin/includes/file.php');
+			require_once(ABSPATH . 'wp-admin/includes/image.php');
+		}
+
+		// Download and attach the new image.
+		$imageId = \media_sideload_image($featuredImageURL, $postId, null, 'id');
+
+		if (is_int($imageId)) {
+			update_post_meta($imageId, 'pcc_feature_image_url', $featuredImageURL);
+			// Set as the featured image.
+			set_post_thumbnail($postId, $imageId);
+		}
+
+		return;
+	}
+
+	private function findArticleCategories(Article $article): array
+	{
+		$categories = isset($article->metadata['Categories']) ? explode(',', (string) $article->metadata['Categories']) : [];
+		if (!$categories) {
+			return [];
+		}
+
+		return $this->findOrCreateCategories($categories);
+	}
+
+	/**
+	 * Check if a category exists by name.
+	 * If the category does not exist, create it.
+	 *
+	 * @param array $categories array of categories names to check or create.
+	 *
+	 * @return array The categories IDs.
+	 */
+	private function findOrCreateCategories($categories): array
+	{
+		$ids = [];
+		if (!function_exists('wp_insert_category')) {
+			require_once(ABSPATH . 'wp-admin/includes/taxonomy.php');
+		}
+
+		foreach ($categories as $category) {
+			$categoryId = (int) get_cat_ID($category);
+			if (0 === $categoryId) {
+				$newCategory = wp_insert_category([
+					'cat_name' => $category,
+				]);
+
+				if (!is_wp_error($newCategory)) {
+					$categoryId = $newCategory;
+				}
+			}
+			$ids[] = $categoryId;
+		}
+
+		return $ids;
+	}
+
 
 	/**
 	 * Get selected integration post type.
