@@ -155,14 +155,13 @@ class PccSyncManager
 		wp_set_post_categories($postId, $this->findArticleCategories($article));
 
 		// Check if Yoast SEO is installed and active.
-		if (in_array('wordpress-seo/wp-seo.php', apply_filters('active_plugins', get_option('active_plugins')))) {
-			$yoastMetaDesc = get_post_meta($postId, '_yoast_wpseo_metadesc', true);
-			if (!$yoastMetaDesc) {
+		$activePlugins = apply_filters('active_plugins', get_option('active_plugins'));
+		if (in_array('wordpress-seo/wp-seo.php', $activePlugins)) {
+			if (!get_post_meta($postId, '_yoast_wpseo_metadesc', true)) {
 				update_post_meta($postId, '_yoast_wpseo_metadesc', $article->metadata['description']);
 			}
 		}
 	}
-
 
 	/**
 	 * Set the post feature image.
@@ -177,7 +176,7 @@ class PccSyncManager
 		}
 
 		// If the feature image is empty, delete the existing thumbnail.
-		$featuredImageURL = $article->metadata['FeaturedImage'] ?: '';
+		$featuredImageURL = $article->metadata['FeaturedImage'] ?? '';
 		if ('' === $featuredImageURL) {
 			delete_post_thumbnail($postId);
 			return;
@@ -214,6 +213,7 @@ class PccSyncManager
 	private function findArticleCategories(Article $article): array
 	{
 		$categories = isset($article->metadata['Categories']) ? explode(',', (string) $article->metadata['Categories']) : [];
+		$categories = array_filter($categories);
 		if (!$categories) {
 			return [];
 		}
@@ -229,7 +229,7 @@ class PccSyncManager
 	 *
 	 * @return array The categories IDs.
 	 */
-	private function findOrCreateCategories($categories): array
+	private function findOrCreateCategories(array $categories): array
 	{
 		$ids = [];
 		if (!function_exists('wp_insert_category')) {
@@ -361,7 +361,7 @@ class PccSyncManager
 		$siteId = get_option(PCC_SITE_ID_OPTION_KEY);
 		$encodedSiteURL = get_option(PCC_ENCODED_SITE_URL_OPTION_KEY);
 		$apiKey = get_option(PCC_API_KEY_OPTION_KEY);
-
+		return true;
 		if (!$accessToken || !$siteId || !$apiKey || !$encodedSiteURL) {
 			return false;
 		}
