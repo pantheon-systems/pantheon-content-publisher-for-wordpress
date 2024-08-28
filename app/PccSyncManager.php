@@ -237,6 +237,12 @@ class PccSyncManager
 	}
 
 
+	/**
+	 * Find or create categories.
+	 *
+	 * @param Article $article
+	 * @return array
+	 */
 	private function findArticleCategories(Article $article): array
 	{
 		$categories = isset($article->metadata['Categories']) ? explode(',', (string) $article->metadata['Categories']) : [];
