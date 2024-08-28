@@ -122,6 +122,11 @@ class PccSyncManager
 			'post_name' => $article->slug,
 			'post_type' => $this->getIntegrationPostType(),
 		];
+		// Set post excerpt if description is available.
+		if (isset($article->metadata['description'])) {
+			$data['post_excerpt'] = $article->metadata['description'];
+		}
+
 		if (!$postId) {
 			$postId = wp_insert_post($data);
 			update_post_meta($postId, PCC_CONTENT_META_KEY, $article->id);
@@ -157,10 +162,10 @@ class PccSyncManager
 		// Check if Yoast SEO is installed and active.
 		$activePlugins = apply_filters('active_plugins', get_option('active_plugins'));
 		if (in_array('wordpress-seo/wp-seo.php', $activePlugins)) {
-			if (!empty($article->metadata['title'])) {
+			if (!isset($article->metadata['title'])) {
 				update_post_meta($postId, '_yoast_wpseo_title', $article->metadata['title']);
 			}
-			if (!empty($article->metadata['description'])) {
+			if (!isset($article->metadata['description'])) {
 				update_post_meta($postId, '_yoast_wpseo_metadesc', $article->metadata['description']);
 			}
 		}
