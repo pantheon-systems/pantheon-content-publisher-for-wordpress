@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "d7aba901d8b37456f5b9bd3298645254",
+    "content-hash": "f10e15641b763a4252a1f77e7f5d5e63",
     "packages": [
         {
             "name": "cfpinto/graphql",
