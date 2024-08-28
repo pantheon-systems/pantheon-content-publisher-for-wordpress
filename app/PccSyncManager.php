@@ -162,10 +162,10 @@ class PccSyncManager
 		// Check if Yoast SEO is installed and active.
 		$activePlugins = apply_filters('active_plugins', get_option('active_plugins'));
 		if (in_array('wordpress-seo/wp-seo.php', $activePlugins)) {
-			if (!isset($article->metadata['title'])) {
+			if (isset($article->metadata['title'])) {
 				update_post_meta($postId, '_yoast_wpseo_title', $article->metadata['title']);
 			}
-			if (!isset($article->metadata['description'])) {
+			if (isset($article->metadata['description'])) {
 				update_post_meta($postId, '_yoast_wpseo_metadesc', $article->metadata['description']);
 			}
 		}
