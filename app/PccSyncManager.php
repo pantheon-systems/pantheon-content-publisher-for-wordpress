@@ -39,7 +39,14 @@ class PccSyncManager
 		$articlesApi = new ArticlesApi($this->pccClient());
 		$article = $articlesApi->getArticleById(
 			$documentId,
-			[],
+			[
+				'id',
+				'slug',
+				'title',
+				'tags',
+				'content',
+				'metadata',
+			],
 			$publishingLevel,
 			ContentType::TREE_PANTHEON_V2
 		);
@@ -113,16 +120,177 @@ class PccSyncManager
 			'post_name' => $article->slug,
 			'post_type' => $this->getIntegrationPostType(),
 		];
+		// Set post excerpt if description is available.
+		if (isset($article->metadata['description'])) {
+			$data['post_excerpt'] = $article->metadata['description'];
+		}
+
+		// Set post title if available.
+		if (isset($article->metadata['title']) && $article->metadata['title']) {
+			$data['post_title'] = $article->metadata['title'];
+		}
+
 		if (!$postId) {
 			$postId = wp_insert_post($data);
 			update_post_meta($postId, PCC_CONTENT_META_KEY, $article->id);
+			$this->syncPostMetaAndTags($postId, $article);
 			return $postId;
 		}
 
 		$data['ID'] = $postId;
 		wp_update_post($data);
+		$this->syncPostMetaAndTags($postId, $article);
 		return $postId;
 	}
+
+	/**
+	 * Update post tags.
+	 *
+	 * @param $postId
+	 * @param Article $article
+	 */
+	private function syncPostMetaAndTags($postId, Article $article): void
+	{
+		if (isset($article->tags) && is_array($article->tags)) {
+			wp_set_post_terms($postId, $article->tags, 'post_tag', false);
+		}
+
+		if (!isset($article->metadata)) {
+			return;
+		}
+
+		$this->setPostFeatureImage($postId, $article);
+		if (isset($article->metadata['Categories'])) {
+			wp_set_post_categories($postId, $this->findArticleCategories($article));
+		}
+
+		// Check if Yoast SEO is installed and active.
+		$activePlugins = apply_filters('active_plugins', get_option('active_plugins'));
+		if (in_array('wordpress-seo/wp-seo.php', $activePlugins)) {
+			if (isset($article->metadata['title'])) {
+				update_post_meta($postId, '_yoast_wpseo_title', $article->metadata['title']);
+			}
+			if (isset($article->metadata['description'])) {
+				update_post_meta($postId, '_yoast_wpseo_metadesc', $article->metadata['description']);
+			}
+		}
+	}
+
+	/**
+	 * Set the post feature image.
+	 *
+	 * @param $postId
+	 * @param Article $article
+	 */
+	private function setPostFeatureImage($postId, Article $article)
+	{
+		if (!isset($article->metadata['FeaturedImage'])) {
+			return;
+		}
+		// If the feature image is empty, delete the existing thumbnail.
+		$featuredImageURL = $article->metadata['FeaturedImage'];
+		if (!$featuredImageURL) {
+			delete_post_thumbnail($postId);
+			return;
+		}
+
+		// Check if there was an existing image.
+		$existingImageId = $this->getImageIdByUrl($featuredImageURL);
+		if ($existingImageId) {
+			set_post_thumbnail($postId, $existingImageId);
+			return;
+		}
+
+		// Ensure media_sideload_image function is available.
+		if (!function_exists('media_sideload_image')) {
+			require_once(ABSPATH . 'wp-admin/includes/media.php');
+			require_once(ABSPATH . 'wp-admin/includes/file.php');
+			require_once(ABSPATH . 'wp-admin/includes/image.php');
+		}
+
+		// Download and attach the new image.
+		$imageId = \media_sideload_image($featuredImageURL, $postId, null, 'id');
+
+		if (is_int($imageId)) {
+			update_post_meta($imageId, 'pcc_feature_image_url', $featuredImageURL);
+			// Set as the featured image.
+			set_post_thumbnail($postId, $imageId);
+		}
+	}
+
+	/**
+	 * Retrieves an image ID by searching for the URL in the image post meta.
+	 *
+	 * @param string $imageUrl The URL of the image to search for.
+	 * @return int|false The image ID if found, or false if not found.
+	 */
+	private function getImageIdByUrl($imageUrl)
+	{
+		global $wpdb;
+
+		// Query to find the image ID by meta value.
+		$query = $wpdb->prepare(
+			"SELECT post_id FROM $wpdb->postmeta WHERE meta_key = %s AND meta_value = %s LIMIT 1",
+			'pcc_feature_image_url',
+			$imageUrl
+		);
+
+		// Retrieve the image ID.
+		$imageId = $wpdb->get_var($query);
+
+		return $imageId ? intval($imageId) : false;
+	}
+
+
+	/**
+	 * Find or create categories.
+	 *
+	 * @param Article $article
+	 * @return array
+	 */
+	private function findArticleCategories(Article $article): array
+	{
+		$categories = $article->metadata['Categories'] ? explode(',', (string) $article->metadata['Categories']) : [];
+		$categories = array_filter($categories);
+		if (!$categories) {
+			return [];
+		}
+
+		return $this->findOrCreateCategories($categories);
+	}
+
+	/**
+	 * Check if a category exists by name.
+	 * If the category does not exist, create it.
+	 *
+	 * @param array $categories array of categories names to check or create.
+	 *
+	 * @return array The categories IDs.
+	 */
+	private function findOrCreateCategories(array $categories): array
+	{
+		$ids = [];
+		if (!function_exists('wp_insert_category')) {
+			require_once(ABSPATH . 'wp-admin/includes/taxonomy.php');
+		}
+
+		foreach ($categories as $category) {
+			$categoryId = (int) get_cat_ID($category);
+			if (0 === $categoryId) {
+				$newCategory = wp_insert_category([
+					'cat_name' => $category,
+				]);
+
+				if (!is_wp_error($newCategory)) {
+					$categoryId = $newCategory;
+				}
+			}
+			$ids[] = $categoryId;
+		}
+
+		return $ids;
+	}
+
 
 	/**
 	 * Get selected integration post type.
