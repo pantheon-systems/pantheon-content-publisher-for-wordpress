@@ -1,8 +1,8 @@
 name: Build release artifact
 
-on:
-  release:
-    types: [ released ]
+#on:
+#  release:
+#    types: [ released ]
 
 env:
   EXCLUDES: ${{ '"**/node_modules/*" "**/assets/js/*" "**/assets/css/*" "**/*.md" "**/.git/*" "**/.github/*" "**/.gitignore" "**/composer.lock" "**/composer.json" "**/package.json" "**/package-lock.json" "**/phpcs.xml" "**/tailwind.config.js" "**/webpack.mix.js" "**/.eslintrc" "**/phpunit.xml.dist" "**/bin/*" "**/tests/*" "**/dist/*.txt"' }}
