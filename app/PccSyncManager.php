@@ -157,7 +157,10 @@ class PccSyncManager
 		// Check if Yoast SEO is installed and active.
 		$activePlugins = apply_filters('active_plugins', get_option('active_plugins'));
 		if (in_array('wordpress-seo/wp-seo.php', $activePlugins)) {
-			if (!get_post_meta($postId, '_yoast_wpseo_metadesc', true)) {
+			if (!empty($article->metadata['title'])) {
+				update_post_meta($postId, '_yoast_wpseo_title', $article->metadata['title']);
+			}
+			if (!empty($article->metadata['description'])) {
 				update_post_meta($postId, '_yoast_wpseo_metadesc', $article->metadata['description']);
 			}
 		}
@@ -174,7 +177,6 @@ class PccSyncManager
 		if (!isset($article->metadata['FeaturedImage'])) {
 			return;
 		}
-
 		// If the feature image is empty, delete the existing thumbnail.
 		$featuredImageURL = $article->metadata['FeaturedImage'] ?? '';
 		if ('' === $featuredImageURL) {
@@ -183,12 +185,10 @@ class PccSyncManager
 		}
 
 		// Check if there was an existing image.
-		// @TODO refactor this condition to search for Post id using the feature image URL
-		if ($existingImageId = get_post_thumbnail_id($postId)) {
-			$existingUrl = get_post_meta($existingImageId, 'pcc_feature_image_url', true);
-			if ($existingUrl === $featuredImageURL) {
-				return;
-			}
+		$existingImageId = $this->getImageIdByUrl($featuredImageURL);
+		if ($existingImageId) {
+			set_post_thumbnail($postId, $existingImageId);
+			return;
 		}
 
 		// Ensure media_sideload_image function is available.
@@ -206,9 +206,31 @@ class PccSyncManager
 			// Set as the featured image.
 			set_post_thumbnail($postId, $imageId);
 		}
-
-		return;
 	}
+
+	/**
+	 * Retrieves an image ID by searching for the URL in the image post meta.
+	 *
+	 * @param string $imageUrl The URL of the image to search for.
+	 * @return int|false The image ID if found, or false if not found.
+	 */
+	private function getImageIdByUrl($imageUrl)
+	{
+		global $wpdb;
+
+		// Query to find the image ID by meta value.
+		$query = $wpdb->prepare(
+			"SELECT post_id FROM $wpdb->postmeta WHERE meta_key = %s AND meta_value = %s LIMIT 1",
+			'pcc_feature_image_url',
+			$imageUrl
+		);
+
+		// Retrieve the image ID.
+		$imageId = $wpdb->get_var($query);
+
+		return $imageId ? intval($imageId) : false;
+	}
+
 
 	private function findArticleCategories(Article $article): array
 	{
@@ -361,7 +383,7 @@ class PccSyncManager
 		$siteId = get_option(PCC_SITE_ID_OPTION_KEY);
 		$encodedSiteURL = get_option(PCC_ENCODED_SITE_URL_OPTION_KEY);
 		$apiKey = get_option(PCC_API_KEY_OPTION_KEY);
-		return true;
+
 		if (!$accessToken || !$siteId || !$apiKey || !$encodedSiteURL) {
 			return false;
 		}
