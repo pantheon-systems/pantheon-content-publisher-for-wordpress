@@ -125,6 +125,11 @@ class PccSyncManager
 			$data['post_excerpt'] = $article->metadata['description'];
 		}
 
+		// Set post title if available.
+		if (isset($article->metadata['title']) && $article->metadata['title']) {
+			$data['post_title'] = $article->metadata['title'];
+		}
+
 		if (!$postId) {
 			$postId = wp_insert_post($data);
 			update_post_meta($postId, PCC_CONTENT_META_KEY, $article->id);
