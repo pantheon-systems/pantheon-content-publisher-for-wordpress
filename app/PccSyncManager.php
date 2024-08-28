@@ -157,7 +157,9 @@ class PccSyncManager
 		}
 
 		$this->setPostFeatureImage($postId, $article);
-		wp_set_post_categories($postId, $this->findArticleCategories($article));
+		if (isset($article->metadata['Categories'])) {
+			wp_set_post_categories($postId, $this->findArticleCategories($article));
+		}
 
 		// Check if Yoast SEO is installed and active.
 		$activePlugins = apply_filters('active_plugins', get_option('active_plugins'));
@@ -245,7 +247,7 @@ class PccSyncManager
 	 */
 	private function findArticleCategories(Article $article): array
 	{
-		$categories = isset($article->metadata['Categories']) ? explode(',', (string) $article->metadata['Categories']) : [];
+		$categories = $article->metadata['Categories'] ? explode(',', (string) $article->metadata['Categories']) : [];
 		$categories = array_filter($categories);
 		if (!$categories) {
 			return [];
