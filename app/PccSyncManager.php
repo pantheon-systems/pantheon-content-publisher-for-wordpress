@@ -191,12 +191,12 @@ class PccSyncManager
 			return;
 		}
 		// If the feature image is empty, delete the existing thumbnail.
-		$featuredImageURL = $article->metadata['FeaturedImage'] . '#image.jpg';
-		if (!$featuredImageURL) {
+		if (!$article->metadata['FeaturedImage']) {
 			delete_post_thumbnail($postId);
 			return;
 		}
 
+		$featuredImageURL = $article->metadata['FeaturedImage'] . '#image.jpg';
 		// Check if there was an existing image.
 		$existingImageId = $this->getImageIdByUrl($featuredImageURL);
 		if ($existingImageId) {
