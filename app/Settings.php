@@ -13,8 +13,11 @@ use PccPhpSdk\api\Query\Enums\PublishingLevel;
 
 use function add_action;
 use function filemtime;
+use function get_post_meta;
 use function wp_enqueue_script;
+use function wp_strip_all_tags;
 
+use const PCC_CONTENT_META_KEY;
 use const PCC_HANDLE;
 use const PCC_INTEGRATION_POST_TYPE_OPTION_KEY;
 use const PCC_PLUGIN_DIR;
@@ -87,6 +90,22 @@ class Settings
 		add_filter('the_content', [$this, 'addPreviewContainer']);
 		add_filter('admin_init', [$this, 'verifyCollectionUrl']);
 		add_filter('wp_kses_allowed_html', [$this, 'allowStyleTags'], PHP_INT_MAX);
+		add_filter('get_the_excerpt', [$this, 'stripExcerptTags'], -PHP_INT_MAX);
+	}
+
+	/**
+	 * Strip excerpt tags.
+	 *
+	 * @param string $content
+	 * @return string
+	 */
+	public function stripExcerptTags(string $content): string
+	{
+		if (get_post_meta(get_the_ID(), PCC_CONTENT_META_KEY, true)) {
+			return wp_strip_all_tags($content);
+		}
+
+		return $content;
 	}
 
 	/**
@@ -152,7 +171,9 @@ class Settings
 	 */
 	public function allowStyleTags($allowedTags)
 	{
-		$allowedTags['style'] = [];
+		if (get_post_meta(get_the_ID(), PCC_CONTENT_META_KEY, true)) {
+				$allowedTags['style'] = [];
+		}
 
 		return $allowedTags;
 	}

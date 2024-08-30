@@ -8,7 +8,7 @@
  * Plugin URI: https://pantheon.io
  * Author: Pantheon
  * Author URI: https://pantheon.io
- * Version: 1.2.0
+ * Version: 1.2.1
  *
  * @package pantheon\pantheon-content-publisher-for-wordpress
  */

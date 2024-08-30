@@ -9,6 +9,9 @@ use PccPhpSdk\api\Response\Article;
 use PccPhpSdk\core\PccClient;
 use PccPhpSdk\core\PccClientConfig;
 
+use function media_sideload_image;
+use function wp_trim_excerpt;
+
 class PccSyncManager
 {
 	/**
@@ -188,7 +191,7 @@ class PccSyncManager
 			return;
 		}
 		// If the feature image is empty, delete the existing thumbnail.
-		$featuredImageURL = $article->metadata['FeaturedImage'];
+		$featuredImageURL = $article->metadata['FeaturedImage'] . '#image.jpg';
 		if (!$featuredImageURL) {
 			delete_post_thumbnail($postId);
 			return;
@@ -209,7 +212,7 @@ class PccSyncManager
 		}
 
 		// Download and attach the new image.
-		$imageId = \media_sideload_image($featuredImageURL, $postId, null, 'id');
+		$imageId = media_sideload_image($featuredImageURL, $postId, null, 'id');
 
 		if (is_int($imageId)) {
 			update_post_meta($imageId, 'pcc_feature_image_url', $featuredImageURL);
