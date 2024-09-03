@@ -204,7 +204,7 @@ class Settings
 				$pcc = new PccSyncManager();
 				$postId = $pcc->fetchAndStoreDocument($documentId, PublishingLevel::PRODUCTION);
 
-				wp_redirect(add_query_arg('nocache', 'true', get_permalink($postId)));
+				wp_redirect(add_query_arg('nocache', 'true', get_permalink($postId) ?: site_url()));
 				exit;
 			}
 
