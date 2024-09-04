@@ -20,6 +20,9 @@ Trying to directly edit a page built with Pantheon Content Publisher will redire
 All posts/pages created with Pantheon Content Publisher will remain on your WordPress site. However, you will no longer be able to edit them from Google Docs.
 
 == Changelog ==
+= 1.2.2 =
+* Compatibility: Save <style> tag at the end of post content
+* Stability: Improve edge case handling for PCC articles
 = 1.2.1 =
 * Fix: Ensure clean excerpts for PCC articles
 * Compatibility: Improve image upload compatibility
