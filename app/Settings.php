@@ -193,7 +193,7 @@ class Settings
 		try {
 			$PCCManager = new PccSyncManager();
 			// Publish document
-			// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+
 			if (
 				isset($_GET['publishingLevel']) &&
 				PublishingLevel::PRODUCTION->value === $_GET['publishingLevel'] &&
@@ -210,9 +210,9 @@ class Settings
 
 			// Preview document
 			if (
-				// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+
 				isset($_GET['pccGrant']) && isset($_GET['publishingLevel']) &&
-				// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+
 				PublishingLevel::REALTIME->value === $_GET['publishingLevel'] &&
 				$PCCManager->isPCCConfigured()
 			) {
@@ -367,8 +367,8 @@ class Settings
 	 */
 	public function renderSettingsPage(): void
 	{
-		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
-		$view = $_GET['view'] ?? null;
+
+		$view = sanitize_key($_GET['view'] ?? '');
 		if ($view && isset($this->pages[$view])) {
 			require $this->pages[$view];
 
@@ -431,10 +431,9 @@ class Settings
 	public function enqueueFrontAssets(): void
 	{
 		if (
-			// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			isset($_GET['preview']) && $_GET['preview'] === 'google_document' && isset($_GET['document_id']) &&
-			$_GET['document_id'] && isset($_GET['publishing_level']) && // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-			$_GET['publishing_level'] === PublishingLevel::REALTIME->value && // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			$_GET['document_id'] && isset($_GET['publishing_level']) &&
+			$_GET['publishing_level'] === PublishingLevel::REALTIME->value &&
 			(new PccSyncManager())->isPCCConfigured()
 		) {
 			wp_enqueue_script(
