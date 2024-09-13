@@ -7,7 +7,7 @@
 					 alt="Pantheon Logo">
 				<span class="header-title">
 					<?php
-					esc_html_e('Content Publisher', PCC_HANDLE) ?>
+					esc_html_e('Content Publisher', 'pantheon-content-publisher-for-wordpress') ?>
 				</span>
 			</div>
 			<div class="">
@@ -16,13 +16,13 @@
 					esc_html_e(
 						'Plugin installed! To create and publish content,
 					complete the setup by connecting Google Workspace to your WordPress site.',
-						PCC_HANDLE
+						'pantheon-content-publisher-for-wordpress'
 					) ?>
 				</p>
 				<a href="<?php
-				echo esc_url(add_query_arg(['page' => PCC_HANDLE], admin_url('admin.php'))) ?>"
+				echo esc_url(add_query_arg(['page' => 'pantheon-content-publisher-for-wordpress'], admin_url('admin.php'))) ?>"
 				   class="primary-button me-auto"><?php
-					esc_html_e('Complete setup', PCC_HANDLE) ?>
+					esc_html_e('Complete setup', 'pantheon-content-publisher-for-wordpress') ?>
 				</a>
 			</div>
 		</div>

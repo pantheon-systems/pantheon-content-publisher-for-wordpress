@@ -11,19 +11,19 @@
 					<div class="col-span-8">
 						<div class="w-[80%]">
 							<h1 class="page-header">
-								<?php esc_html_e('Connect Google Workspace to your WordPress site', PCC_HANDLE) ?>
+								<?php esc_html_e('Connect Google Workspace to your WordPress site', 'pantheon-content-publisher-for-wordpress') ?>
 							</h1>
 							<p class="page-description">
 								<?php
 								esc_html_e(
 									'Effortlessly publish content from Google Docs to your WordPress site using 
 									Pantheon Content Publisher.',
-									PCC_HANDLE
+									'pantheon-content-publisher-for-wordpress'
 								) ?>
 							</p>
 							<div class="mt-8 mb-0.5">
 							<span class="font-semibold text-[0.83rem]">
-								<?php esc_html_e('Access token', PCC_HANDLE) ?>
+								<?php esc_html_e('Access token', 'pantheon-content-publisher-for-wordpress') ?>
 							</span>
 								<img class="scale-110 ms-1 pb-2.5 inline"
 									 src="<?php echo esc_url(PCC_PLUGIN_DIR_URL . 'assets/images/red-dot.svg') ?>"
@@ -36,7 +36,7 @@
 									<span class="tooltip-text">
 									<?php
 									esc_html_e('Enter the digit access token generated from
-                                    the Pantheon Content Publisher authentication dashboard', PCC_HANDLE) ?>
+                                    the Pantheon Content Publisher authentication dashboard', 'pantheon-content-publisher-for-wordpress') ?>
 								</span>
 								</div>
 
@@ -46,7 +46,7 @@
 								   id="access-token"
 								   name="access_token" class="input-with-border mb-2" required/>
 							<button id="pcc-app-authenticate" class="primary-button">
-								<?php esc_html_e('Connect', PCC_HANDLE) ?>
+								<?php esc_html_e('Connect', 'pantheon-content-publisher-for-wordpress') ?>
 							</button>
 						</div>
 						<p class="text-base mt-8 mb-10">
@@ -58,7 +58,7 @@
                                         target="_blank" href="https://pcc.pantheon.io/auth">
                                             Pantheon Content Publisher dashboard
                                         </a>to generate one.',
-									PCC_HANDLE
+									'pantheon-content-publisher-for-wordpress'
 								)
 							);
 							?>
@@ -76,6 +76,3 @@
 		</div>
 	</div>
 </div>
-
-
-

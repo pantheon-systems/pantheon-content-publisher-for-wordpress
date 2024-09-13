@@ -18,7 +18,7 @@ use function wp_enqueue_script;
 use function wp_strip_all_tags;
 
 use const PCC_CONTENT_META_KEY;
-use const PCC_HANDLE;
+use const 'pantheon-content-publisher-for-wordpress';
 use const PCC_INTEGRATION_POST_TYPE_OPTION_KEY;
 use const PCC_PLUGIN_DIR;
 use const PCC_PLUGIN_DIR_URL;
@@ -316,7 +316,7 @@ class Settings
 				$post->ID,
 				esc_html__(
 					'Edit in Google Docs',
-					PCC_HANDLE
+					'pantheon-content-publisher-for-wordpress'
 				) . '<svg width="12px" height="12px" viewBox="0 0 24 24" style="display:inline">
                     <g stroke-width="2.1" stroke="#666" fill="none" stroke-linecap="round" stroke-linejoin="round">
                     <polyline points="17 13.5 17 19.5 5 19.5 5 7.5 11 7.5"></polyline>
@@ -341,10 +341,10 @@ class Settings
 	public function addMenu(): void
 	{
 		add_menu_page(
-			esc_html__('Pantheon Content Publisher', PCC_HANDLE),
-			esc_html__('Pantheon Content Publisher', PCC_HANDLE),
+			esc_html__('Pantheon Content Publisher', 'pantheon-content-publisher-for-wordpress'),
+			esc_html__('Pantheon Content Publisher', 'pantheon-content-publisher-for-wordpress'),
 			'manage_options',
-			PCC_HANDLE,
+			'pantheon-content-publisher-for-wordpress',
 			[$this, 'renderSettingsPage'],
 			$this->pccMenuIcon(),
 			20
@@ -397,7 +397,7 @@ class Settings
 	public function enqueueAdminAssets(): void
 	{
 		wp_enqueue_script(
-			PCC_HANDLE,
+			'pantheon-content-publisher-for-wordpress',
 			PCC_PLUGIN_DIR_URL . 'dist/app.js',
 			[],
 			filemtime(PCC_PLUGIN_DIR . 'dist/app.js'),
@@ -405,19 +405,19 @@ class Settings
 		);
 
 		wp_enqueue_style(
-			PCC_HANDLE,
+			'pantheon-content-publisher-for-wordpress',
 			PCC_PLUGIN_DIR_URL . 'dist/app.css',
 			[],
 			filemtime(PCC_PLUGIN_DIR . 'dist/app.css')
 		);
 
 		wp_localize_script(
-			PCC_HANDLE,
+			'pantheon-content-publisher-for-wordpress',
 			'PCCAdmin',
 			[
 				'rest_url' => get_rest_url(get_current_blog_id(), PCC_API_NAMESPACE),
 				'nonce' => wp_create_nonce('wp_rest'),
-				'plugin_main_page' => menu_page_url(PCC_HANDLE, false),
+				'plugin_main_page' => menu_page_url('pantheon-content-publisher-for-wordpress', false),
 				'site_url' => site_url(),
 			]
 		);
@@ -438,7 +438,7 @@ class Settings
 			(new PccSyncManager())->isPCCConfigured()
 		) {
 			wp_enqueue_script(
-				PCC_HANDLE,
+				'pantheon-content-publisher-for-wordpress',
 				PCC_PLUGIN_DIR_URL . 'dist/pcc-front.js',
 				[],
 				filemtime(PCC_PLUGIN_DIR . 'dist/pcc-front.js'),
@@ -446,7 +446,7 @@ class Settings
 			);
 
 			wp_localize_script(
-				PCC_HANDLE,
+				'pantheon-content-publisher-for-wordpress',
 				'PCCFront',
 				[
 					// phpcs:ignore

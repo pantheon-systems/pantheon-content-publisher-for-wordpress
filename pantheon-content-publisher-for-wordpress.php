@@ -24,7 +24,6 @@ define('PCC_PLUGIN_FILE', __FILE__);
 define('PCC_PLUGIN_DIR', plugin_dir_path(PCC_PLUGIN_FILE));
 define('PCC_BASENAME', plugin_basename(PCC_PLUGIN_FILE));
 define('PCC_PLUGIN_DIR_URL', plugin_dir_url(PCC_PLUGIN_FILE));
-define('PCC_HANDLE', 'pcc');
 define('PCC_ACCESS_TOKEN_OPTION_KEY', 'pcc_access_token');
 define('PCC_SITE_ID_OPTION_KEY', 'pcc_site_id');
 define('PCC_ENCODED_SITE_URL_OPTION_KEY', 'pcc_encoded_site_url');

@@ -13,7 +13,7 @@
 							<?php
 							esc_html_e(
 								'Are you sure you want to disconnect the content collection?',
-								PCC_HANDLE
+								'pantheon-content-publisher-for-wordpress'
 							)
 							?>
 						</h1>
@@ -21,24 +21,24 @@
 							<?php esc_html_e(
 								'All Google Docs in the collection will be disconnected from your site
                             , and you wont be able to update site content in Google Docs anymore.',
-								PCC_HANDLE
+								'pantheon-content-publisher-for-wordpress'
 							) ?>
 						</p>
 						<p class="page-description">
 							<?php esc_html_e(
 								'The content will remain on the site, manageable using the WordPress admin interface.',
-								PCC_HANDLE
+								'pantheon-content-publisher-for-wordpress'
 							) ?>
 						</p>
 						<div class="flex gap-4 mt-[1.875rem]">
 							<a class="secondary-button"
 							   href="<?php echo esc_url(add_query_arg([
-								   'page' => PCC_HANDLE,
+								   'page' => 'pantheon-content-publisher-for-wordpress',
 								   'view' => 'connected-collection'], admin_url('admin.php'))) ?>">
-								<?php esc_html_e('Stay connected', PCC_HANDLE) ?>
+								<?php esc_html_e('Stay connected', 'pantheon-content-publisher-for-wordpress') ?>
 							</a>
 							<a class="danger-button" id="pcc-disconnect" href="#">
-								<?php esc_html_e('Disconnect', PCC_HANDLE) ?>
+								<?php esc_html_e('Disconnect', 'pantheon-content-publisher-for-wordpress') ?>
 							</a>
 						</div>
 					</div>
