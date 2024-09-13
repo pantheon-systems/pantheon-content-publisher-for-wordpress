@@ -4,7 +4,7 @@
  * REST controller class exposing endpoints for OAuth2 authorization and credentials saving.
  */
 
-namespace PCC;
+namespace Pantheon\ContentPublisher;
 
 use WP_REST_Request;
 use WP_REST_Response;
@@ -12,7 +12,6 @@ use WP_REST_Response;
 use function esc_html__;
 
 use const PCC_ACCESS_TOKEN_OPTION_KEY;
-use const PCC_HANDLE;
 
 /**
  * REST controller class.
@@ -109,7 +108,7 @@ class RestController
 	{
 		if (get_option(PCC_WEBHOOK_SECRET_OPTION_KEY) !== $request->get_header('x-pcc-webhook-secret')) {
 			return new WP_REST_Response(
-				esc_html__('You are not authorized to perform this action', PCC_HANDLE),
+				esc_html__('You are not authorized to perform this action', 'pantheon-content-publisher-for-wordpress'),
 				401
 			);
 		}
@@ -121,13 +120,13 @@ class RestController
 		// Bail if current website id is not correctly configured
 		if (!$isPCCConfiguredCorrectly) {
 			return new WP_REST_Response(
-				esc_html__('Website is not correctly configured', PCC_HANDLE),
+				esc_html__('Website is not correctly configured', 'pantheon-content-publisher-for-wordpress'),
 				500
 			);
 		}
 
 		if (!is_array($payload) || !isset($payload['articleId']) || empty($payload['articleId'])) {
-			return new WP_REST_Response(esc_html__('Invalid article ID in payload', PCC_HANDLE), 400);
+			return new WP_REST_Response(esc_html__('Invalid article ID in payload', 'pantheon-content-publisher-for-wordpress'), 400);
 		}
 
 		$articleId = sanitize_text_field($payload['articleId']);
@@ -138,7 +137,7 @@ class RestController
 				break;
 			default:
 				return new WP_REST_Response(
-					esc_html__('Event type is currently unsupported', PCC_HANDLE),
+					esc_html__('Event type is currently unsupported', 'pantheon-content-publisher-for-wordpress'),
 					200
 				);
 		}
@@ -159,21 +158,21 @@ class RestController
 		$siteId = sanitize_text_field($request->get_param('site_id') ?: '');
 		if (!$siteId) {
 			return new WP_REST_Response([
-				'message' => esc_html__('Missing site id', PCC_HANDLE),
+				'message' => esc_html__('Missing site id', 'pantheon-content-publisher-for-wordpress'),
 			], 400);
 		}
 
 		$postType = sanitize_text_field($request->get_param('post_type') ?: '');
 		if (!$postType) {
 			return new WP_REST_Response([
-				'message' => esc_html__('Missing integration post type', PCC_HANDLE),
+				'message' => esc_html__('Missing integration post type', 'pantheon-content-publisher-for-wordpress'),
 			], 400);
 		}
 
 		update_option(PCC_SITE_ID_OPTION_KEY, $siteId);
 		update_option(PCC_INTEGRATION_POST_TYPE_OPTION_KEY, $postType);
 
-		return new WP_REST_Response(esc_html__('Saved!', PCC_HANDLE));
+		return new WP_REST_Response(esc_html__('Saved!', 'pantheon-content-publisher-for-wordpress'));
 	}
 
 	/**
@@ -184,11 +183,11 @@ class RestController
 	{
 		// Check if you are authorized
 		if (!current_user_can('manage_options')) {
-			return new WP_REST_Response(esc_html__('You are not authorized to perform this action.', PCC_HANDLE), 401);
+			return new WP_REST_Response(esc_html__('You are not authorized to perform this action.', 'pantheon-content-publisher-for-wordpress'), 401);
 		}
 		// Check access token is set
 		if (!get_option(PCC_ACCESS_TOKEN_OPTION_KEY)) {
-			return new WP_REST_Response(esc_html__('Access token is not set yet', PCC_HANDLE), 401);
+			return new WP_REST_Response(esc_html__('Access token is not set yet', 'pantheon-content-publisher-for-wordpress'), 401);
 		}
 
 		$siteManager = new PccSiteManager();
@@ -212,25 +211,25 @@ class RestController
 	{
 		// Check access token is set
 		if (!get_option(PCC_ACCESS_TOKEN_OPTION_KEY)) {
-			return new WP_REST_Response(esc_html__('Access token is not set yet', PCC_HANDLE), 400);
+			return new WP_REST_Response(esc_html__('Access token is not set yet', 'pantheon-content-publisher-for-wordpress'), 400);
 		}
 
 		// Check site id is set
 		if (!get_option(PCC_SITE_ID_OPTION_KEY)) {
-			return new WP_REST_Response(esc_html__('Site is not created yet', PCC_HANDLE), 400);
+			return new WP_REST_Response(esc_html__('Site is not created yet', 'pantheon-content-publisher-for-wordpress'), 400);
 		}
 
 		// Check if you are authorized
 		if (!current_user_can('manage_options')) {
-			return new WP_REST_Response(esc_html__('You are not authorized to perform this action.', PCC_HANDLE), 401);
+			return new WP_REST_Response(esc_html__('You are not authorized to perform this action.', 'pantheon-content-publisher-for-wordpress'), 401);
 		}
 
 		$siteManager = new PccSiteManager();
 		if ($siteManager->registerWebhook()) {
-			return new WP_REST_Response(esc_html__('Webhook registered', PCC_HANDLE));
+			return new WP_REST_Response(esc_html__('Webhook registered', 'pantheon-content-publisher-for-wordpress'));
 		}
 
-		return new WP_REST_Response(esc_html__('Error while register webhook', PCC_HANDLE), 400);
+		return new WP_REST_Response(esc_html__('Error while register webhook', 'pantheon-content-publisher-for-wordpress'), 400);
 	}
 
 	/**
@@ -243,22 +242,22 @@ class RestController
 	{
 		// Check site id is set
 		if (!get_option(PCC_SITE_ID_OPTION_KEY)) {
-			return new WP_REST_Response(esc_html__('Site is not created yet', PCC_HANDLE), 400);
+			return new WP_REST_Response(esc_html__('Site is not created yet', 'pantheon-content-publisher-for-wordpress'), 400);
 		}
 
 		// Check if you are authorized
 		if (!current_user_can('manage_options')) {
-			return new WP_REST_Response(esc_html__('You are not authorized to perform this action.', PCC_HANDLE), 401);
+			return new WP_REST_Response(esc_html__('You are not authorized to perform this action.', 'pantheon-content-publisher-for-wordpress'), 401);
 		}
 
 		$siteManager = new PccSiteManager();
 		$apiKey = $siteManager->createSiteApiKey();
 		if ($apiKey) {
 			update_option(PCC_API_KEY_OPTION_KEY, $apiKey);
-			return new WP_REST_Response(esc_html__('API created', PCC_HANDLE));
+			return new WP_REST_Response(esc_html__('API created', 'pantheon-content-publisher-for-wordpress'));
 		}
 
-		return new WP_REST_Response(esc_html__('Error while creating API key', PCC_HANDLE), 400);
+		return new WP_REST_Response(esc_html__('Error while creating API key', 'pantheon-content-publisher-for-wordpress'), 400);
 	}
 
 	/**
@@ -279,7 +278,7 @@ class RestController
 			update_option(PCC_INTEGRATION_POST_TYPE_OPTION_KEY, $postType);
 		}
 
-		return new WP_REST_Response(esc_html__('Saved!', PCC_HANDLE));
+		return new WP_REST_Response(esc_html__('Saved!', 'pantheon-content-publisher-for-wordpress'));
 	}
 
 	/**
@@ -292,7 +291,7 @@ class RestController
 	public function saveAccessToken(WP_REST_Request $request): WP_REST_Response
 	{
 		if (!current_user_can('manage_options')) {
-			return new WP_REST_Response(esc_html__('You are not authorized to perform this action.', PCC_HANDLE), 401);
+			return new WP_REST_Response(esc_html__('You are not authorized to perform this action.', 'pantheon-content-publisher-for-wordpress'), 401);
 		}
 
 		$accessToken = sanitize_text_field($request->get_param('access_token'));
@@ -300,14 +299,14 @@ class RestController
 		// Validate input field
 		if (empty($accessToken)) {
 			return new WP_REST_Response(
-				esc_html__('Access Token cannot be empty.', PCC_HANDLE),
+				esc_html__('Access Token cannot be empty.', 'pantheon-content-publisher-for-wordpress'),
 				400
 			);
 		}
 
 		update_option(PCC_ACCESS_TOKEN_OPTION_KEY, $accessToken);
 		return new WP_REST_Response(
-			esc_html__('Access Token saved.', PCC_HANDLE),
+			esc_html__('Access Token saved.', 'pantheon-content-publisher-for-wordpress'),
 			200
 		);
 	}
@@ -320,7 +319,7 @@ class RestController
 	public function disconnect()
 	{
 		if (!current_user_can('manage_options')) {
-			return new WP_REST_Response(esc_html__('You are not authorized to perform this action.', PCC_HANDLE), 401);
+			return new WP_REST_Response(esc_html__('You are not authorized to perform this action.', 'pantheon-content-publisher-for-wordpress'), 401);
 		}
 
 		// Disconnect the site
@@ -328,7 +327,7 @@ class RestController
 		$manager->disconnect();
 
 		return new WP_REST_Response(
-			esc_html__('Saved Data deleted.', PCC_HANDLE),
+			esc_html__('Saved Data deleted.', 'pantheon-content-publisher-for-wordpress'),
 			200
 		);
 	}

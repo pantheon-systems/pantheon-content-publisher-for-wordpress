@@ -3,10 +3,9 @@
 /**
  * Configure Admin Dashboard Settings UI, logic and assets.
  *
- * @package PCC
  */
 
-namespace PCC;
+namespace Pantheon\ContentPublisher;
 
 use Exception;
 use PccPhpSdk\api\Query\Enums\PublishingLevel;
@@ -18,7 +17,6 @@ use function wp_enqueue_script;
 use function wp_strip_all_tags;
 
 use const PCC_CONTENT_META_KEY;
-use const PCC_HANDLE;
 use const PCC_INTEGRATION_POST_TYPE_OPTION_KEY;
 use const PCC_PLUGIN_DIR;
 use const PCC_PLUGIN_DIR_URL;
@@ -28,7 +26,6 @@ use const PCC_PLUGIN_DIR_URL;
 /**
  * Class Settings
  *
- * @package PCC
  */
 class Settings
 {
@@ -193,14 +190,14 @@ class Settings
 		try {
 			$PCCManager = new PccSyncManager();
 			// Publish document
-			// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+
 			if (
 				isset($_GET['publishingLevel']) &&
 				PublishingLevel::PRODUCTION->value === $_GET['publishingLevel'] &&
 				$PCCManager->isPCCConfigured()
 			) {
 				$parts = explode('/', $wp->request);
-				$documentId = end($parts);
+				$documentId = sanitize_text_field(wp_unslash(end($parts)));
 				$pcc = new PccSyncManager();
 				$postId = $pcc->fetchAndStoreDocument($documentId, PublishingLevel::PRODUCTION);
 
@@ -210,14 +207,12 @@ class Settings
 
 			// Preview document
 			if (
-				// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 				isset($_GET['pccGrant']) && isset($_GET['publishingLevel']) &&
-				// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 				PublishingLevel::REALTIME->value === $_GET['publishingLevel'] &&
 				$PCCManager->isPCCConfigured()
 			) {
 				$parts = explode('/', $wp->request);
-				$documentId = end($parts);
+				$documentId = sanitize_text_field(wp_unslash(end($parts)));
 				$pcc = new PccSyncManager();
 
 				if (!$pcc->findExistingConnectedPost($documentId)) {
@@ -316,7 +311,7 @@ class Settings
 				$post->ID,
 				esc_html__(
 					'Edit in Google Docs',
-					PCC_HANDLE
+					'pantheon-content-publisher-for-wordpress'
 				) . '<svg width="12px" height="12px" viewBox="0 0 24 24" style="display:inline">
                     <g stroke-width="2.1" stroke="#666" fill="none" stroke-linecap="round" stroke-linejoin="round">
                     <polyline points="17 13.5 17 19.5 5 19.5 5 7.5 11 7.5"></polyline>
@@ -341,10 +336,10 @@ class Settings
 	public function addMenu(): void
 	{
 		add_menu_page(
-			esc_html__('Pantheon Content Publisher', PCC_HANDLE),
-			esc_html__('Pantheon Content Publisher', PCC_HANDLE),
+			esc_html__('Pantheon Content Publisher', 'pantheon-content-publisher-for-wordpress'),
+			esc_html__('Pantheon Content Publisher', 'pantheon-content-publisher-for-wordpress'),
 			'manage_options',
-			PCC_HANDLE,
+			'pantheon-content-publisher-for-wordpress',
 			[$this, 'renderSettingsPage'],
 			$this->pccMenuIcon(),
 			20
@@ -367,8 +362,8 @@ class Settings
 	 */
 	public function renderSettingsPage(): void
 	{
-		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
-		$view = $_GET['view'] ?? null;
+
+		$view = sanitize_key($_GET['view'] ?? '');
 		if ($view && isset($this->pages[$view])) {
 			require $this->pages[$view];
 
@@ -397,7 +392,7 @@ class Settings
 	public function enqueueAdminAssets(): void
 	{
 		wp_enqueue_script(
-			PCC_HANDLE,
+			'pantheon-content-publisher-for-wordpress',
 			PCC_PLUGIN_DIR_URL . 'dist/app.js',
 			[],
 			filemtime(PCC_PLUGIN_DIR . 'dist/app.js'),
@@ -405,19 +400,19 @@ class Settings
 		);
 
 		wp_enqueue_style(
-			PCC_HANDLE,
+			'pantheon-content-publisher-for-wordpress',
 			PCC_PLUGIN_DIR_URL . 'dist/app.css',
 			[],
 			filemtime(PCC_PLUGIN_DIR . 'dist/app.css')
 		);
 
 		wp_localize_script(
-			PCC_HANDLE,
+			'pantheon-content-publisher-for-wordpress',
 			'PCCAdmin',
 			[
 				'rest_url' => get_rest_url(get_current_blog_id(), PCC_API_NAMESPACE),
 				'nonce' => wp_create_nonce('wp_rest'),
-				'plugin_main_page' => menu_page_url(PCC_HANDLE, false),
+				'plugin_main_page' => menu_page_url('pantheon-content-publisher-for-wordpress', false),
 				'site_url' => site_url(),
 			]
 		);
@@ -430,32 +425,37 @@ class Settings
 	 */
 	public function enqueueFrontAssets(): void
 	{
-		if (
-			// phpcs:ignore WordPress.Security.NonceVerification.Recommended
-			isset($_GET['preview']) && $_GET['preview'] === 'google_document' && isset($_GET['document_id']) &&
-			$_GET['document_id'] && isset($_GET['publishing_level']) && // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-			$_GET['publishing_level'] === PublishingLevel::REALTIME->value && // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-			(new PccSyncManager())->isPCCConfigured()
-		) {
-			wp_enqueue_script(
-				PCC_HANDLE,
-				PCC_PLUGIN_DIR_URL . 'dist/pcc-front.js',
-				[],
-				filemtime(PCC_PLUGIN_DIR . 'dist/pcc-front.js'),
-				true
-			);
-
-			wp_localize_script(
-				PCC_HANDLE,
-				'PCCFront',
-				[
-					// phpcs:ignore
-					'preview_document_id' => sanitize_text_field($_GET['document_id']),
-					'site_id' => sanitize_text_field($this->getSiteId()),
-					'token' => get_option(PCC_API_KEY_OPTION_KEY),
-				]
-			);
+		if (!(new PccSyncManager())->isPCCConfigured()) {
+			return;
 		}
+		if (!isset($_GET['document_id'])) {
+			return;
+		}
+		if (!isset($_GET['publishing_level']) || PublishingLevel::REALTIME->value !== $_GET['publishing_level']) {
+			return;
+		}
+		if (!isset($_GET['preview']) || 'google_document' !== $_GET['preview']) {
+			return;
+		}
+
+		wp_enqueue_script(
+			'pantheon-content-publisher-for-wordpress',
+			PCC_PLUGIN_DIR_URL . 'dist/pcc-front.js',
+			[],
+			filemtime(PCC_PLUGIN_DIR . 'dist/pcc-front.js'),
+			true
+		);
+
+		wp_localize_script(
+			'pantheon-content-publisher-for-wordpress',
+			'PCCFront',
+			[
+				// phpcs:ignore
+				'preview_document_id' => sanitize_text_field(wp_unslash($_GET['document_id'])),
+				'site_id' => sanitize_text_field(wp_unslash($this->getSiteId())),
+				'token' => get_option(PCC_API_KEY_OPTION_KEY),
+			]
+		);
 	}
 
 	/**
@@ -464,7 +464,7 @@ class Settings
 	public function pluginAdminNotice()
 	{
 		global $pagenow;
-		if ($pagenow !== 'plugins.php') {
+		if ('plugins.php' !== $pagenow) {
 			return;
 		}
 

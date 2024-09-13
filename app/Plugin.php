@@ -3,10 +3,9 @@
 /**
  * The plugin singleton class.
  *
- * @package pantheon\pantheon-content-publisher-for-wordpress
  */
 
-namespace PCC;
+namespace Pantheon\ContentPublisher;
 
 /**
  * The main class

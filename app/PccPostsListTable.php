@@ -1,6 +1,6 @@
 <?php
 
-namespace PCC;
+namespace Pantheon\ContentPublisher;
 
 use WP_Post;
 
@@ -19,8 +19,22 @@ class PccPostsListTable extends \WP_Posts_List_Table
 		// Check if the post is linked
 		if ($this->isLinkedPost($post)) {
 			// Output the PCC logo HTML
-			echo $this->pccLogo();
-			echo "<div class='pcc-post-title-container'>";
+			$allowed_tags = [
+				'svg' => [
+					'class'    => true,
+					'width'    => true,
+					'height'   => true,
+					'viewBox'  => true,
+					'fill'     => true,
+					'xmlns'    => true,
+				],
+				'path' => [
+					'd'    => true,
+					'fill' => true,
+				],
+			];
+			echo wp_kses($this->pccLogo(), $allowed_tags);
+			echo '<div class="pcc-post-title-container">';
 		}
 
 		// Call the parent method to output the post title
@@ -28,7 +42,7 @@ class PccPostsListTable extends \WP_Posts_List_Table
 
 		// Close the div container if it was opened
 		if ($this->isLinkedPost($post)) {
-			echo "</div>";
+			echo '</div>';
 		}
 	}
 

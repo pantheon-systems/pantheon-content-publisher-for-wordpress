@@ -1,6 +1,6 @@
 <?php
 
-namespace PCC;
+namespace Pantheon\ContentPublisher;
 
 use WP_Error;
 use WP_HTTP_Requests_Response;
@@ -24,7 +24,7 @@ class PccSiteManager
 		$args = [
 			'method' => 'PATCH',
 			'headers' => $this->getHeaders(),
-			'body' => json_encode([
+			'body' => wp_json_encode([
 				'webhookConfig' => [
 					'webhookUrl' => $this->getWebhookEndpoint(),
 					'webhookSecret' => $webhookSecret,
@@ -91,7 +91,7 @@ class PccSiteManager
 		}
 		$args = [
 			'headers' => $this->getHeaders(),
-			'body' => json_encode([
+			'body' => wp_json_encode([
 				'url' => $siteURL,
 				'name' => get_bloginfo('name') ?: $siteURL,
 			]),
@@ -133,7 +133,7 @@ class PccSiteManager
 	{
 		$args = [
 			'headers' => $this->getHeaders(),
-			'body' => json_encode([
+			'body' => wp_json_encode([
 				'siteId' => get_option(PCC_SITE_ID_OPTION_KEY),
 				'isManagementKey' => false,
 			]),
