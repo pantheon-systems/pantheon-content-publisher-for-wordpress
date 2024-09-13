@@ -1,6 +1,6 @@
 <?php
 
-namespace PCC;
+namespace Pantheon\ContentPublisher;
 
 use WP_Post;
 

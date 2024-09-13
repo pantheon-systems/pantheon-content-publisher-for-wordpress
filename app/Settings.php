@@ -3,10 +3,9 @@
 /**
  * Configure Admin Dashboard Settings UI, logic and assets.
  *
- * @package PCC
  */
 
-namespace PCC;
+namespace Pantheon\ContentPublisher;
 
 use Exception;
 use PccPhpSdk\api\Query\Enums\PublishingLevel;
@@ -27,7 +26,6 @@ use const PCC_PLUGIN_DIR_URL;
 /**
  * Class Settings
  *
- * @package PCC
  */
 class Settings
 {

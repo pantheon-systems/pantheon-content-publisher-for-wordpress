@@ -4,7 +4,7 @@
  * REST controller class exposing endpoints for OAuth2 authorization and credentials saving.
  */
 
-namespace PCC;
+namespace Pantheon\ContentPublisher;
 
 use WP_REST_Request;
 use WP_REST_Response;

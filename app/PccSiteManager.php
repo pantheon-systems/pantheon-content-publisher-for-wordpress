@@ -1,6 +1,6 @@
 <?php
 
-namespace PCC;
+namespace Pantheon\ContentPublisher;
 
 use WP_Error;
 use WP_HTTP_Requests_Response;

@@ -13,7 +13,7 @@
  * @package pantheon\pantheon-content-publisher-for-wordpress
  */
 
-namespace PCC;
+namespace Pantheon\ContentPublisher;
 
 // Exit if accessed directly.
 if (!defined('ABSPATH')) {

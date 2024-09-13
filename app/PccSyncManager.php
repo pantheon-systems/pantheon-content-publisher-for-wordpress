@@ -1,6 +1,6 @@
 <?php
 
-namespace PCC;
+namespace Pantheon\ContentPublisher;
 
 use PccPhpSdk\api\ArticlesApi;
 use PccPhpSdk\api\Query\Enums\ContentType;
