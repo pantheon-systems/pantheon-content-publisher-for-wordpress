@@ -1,3 +1,9 @@
+<?php
+// Exit if accessed directly.
+if (!\defined('ABSPATH')) {
+	exit;
+}
+?>
 <div class="footer pb-2.5">
 	<div class="divider-border"></div>
 	<div class="pt-[0.4rem]">
