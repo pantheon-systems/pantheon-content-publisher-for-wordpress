@@ -93,17 +93,15 @@ class PccSyncManager
 	 */
 	public function findExistingConnectedPost($value)
 	{
-		global $wpdb;
-
-		$post_id = $wpdb->get_var(
-			$wpdb->prepare(
-				"SELECT post_id FROM $wpdb->postmeta WHERE meta_key = %s AND meta_value = %s LIMIT 1",
-				PCC_CONTENT_META_KEY,
-				$value
-			)
-		);
-
-		return $post_id ? (int)$post_id : null;
+		$args = [
+			'post_type'   => 'any',
+			'meta_key'    => PCC_CONTENT_META_KEY,
+			'meta_value'  => $value,
+			'fields'      => 'ids',
+			'numberposts' => 1,
+		];
+		$posts = get_posts($args);
+		return !empty($posts) ? (int) $posts[0] : null;
 	}
 
 	/**
@@ -245,19 +243,17 @@ class PccSyncManager
 	 */
 	private function getImageIdByUrl($imageUrl)
 	{
-		global $wpdb;
+		$args = [
+			'post_type'  => 'attachment', // Ensure we're looking for attachments.
+			'meta_key'   => 'pcc_feature_image_url',
+			'meta_value' => $imageUrl,
+			'fields'     => 'ids', // Return only the IDs.
+			'numberposts' => 1,    // Limit to 1 post.
+		];
 
-		// Query to find the image ID by meta value.
-		$query = $wpdb->prepare(
-			"SELECT post_id FROM $wpdb->postmeta WHERE meta_key = %s AND meta_value = %s LIMIT 1",
-			'pcc_feature_image_url',
-			$imageUrl
-		);
+		$image_ids = get_posts($args);
 
-		// Retrieve the image ID.
-		$imageId = $wpdb->get_var($query);
-
-		return $imageId ? intval($imageId) : false;
+		return !empty($image_ids) ? (int) $image_ids[0] : false;
 	}
 
 
@@ -397,14 +393,8 @@ class PccSyncManager
 	 */
 	private function removeMetaDataFromPosts()
 	{
-		global $wpdb;
 		// Delete all post meta entries with the key 'terminate'
-		$wpdb->query(
-			$wpdb->prepare(
-				"DELETE FROM {$wpdb->postmeta} WHERE meta_key = %s",
-				PCC_CONTENT_META_KEY
-			)
-		);
+		delete_post_meta_by_key(PCC_CONTENT_META_KEY);
 	}
 
 	/**

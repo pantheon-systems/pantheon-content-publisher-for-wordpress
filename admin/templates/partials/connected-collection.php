@@ -35,17 +35,36 @@ if (!\defined('ABSPATH')) {
 						<?php esc_html_e('Publish your document as:', 'pantheon-content-publisher-for-wordpress') ?>
 					</p>
 					<div class="inputs-container">
-						<?php foreach (['post', 'page'] as $postType) : ?>
-							<div class="input-wrapper">
-								<input class="radio-input" name="post_type" type="radio"
-									   value="<?php echo esc_attr($postType)?>"
-									   id="radio-<?php echo esc_attr($postType)?>"
-									<?php checked(get_option(PCC_INTEGRATION_POST_TYPE_OPTION_KEY), $postType); ?> >
-								<label class="text-base" for="radio-<?php echo esc_attr($postType)?>">
-									<?php esc_html_e(ucfirst($postType), 'pantheon-content-publisher-for-wordpress') ?>
-								</label>
-							</div>
-						<?php endforeach; ?>
+                        <div class='input-wrapper'>
+                            <input class='radio-input' name='post_type' type='radio'
+                                   value='post'
+                                   id='radio-post'
+								<?php
+								checked(get_option(PCC_INTEGRATION_POST_TYPE_OPTION_KEY), 'post');
+								?>
+                            >
+                            <label class="text-base" for="radio-post">
+								<?php
+								$labels = get_post_type_labels(get_post_type_object('post'));
+								echo esc_html($labels->singular_name);
+								?>
+                            </label>
+                        </div>
+                        <div class='input-wrapper'>
+                            <input class='radio-input' name='post_type' type='radio'
+                                   value='page'
+                                   id='radio-page'
+								<?php
+								checked(get_option(PCC_INTEGRATION_POST_TYPE_OPTION_KEY), 'page');
+								?>
+                            >
+                            <label class="text-base" for="radio-page">
+								<?php
+								$labels = get_post_type_labels(get_post_type_object('page'));
+								echo esc_html($labels->singular_name);
+								?>
+                            </label>
+                        </div>
 					</div>
 					<a class="primary-button" id="pcc-update-collection" href="#">
 						<?php esc_html_e('Save configuration', 'pantheon-content-publisher-for-wordpress') ?>

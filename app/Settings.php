@@ -197,7 +197,7 @@ class Settings
 				$PCCManager->isPCCConfigured()
 			) {
 				$parts = explode('/', $wp->request);
-				$documentId = end($parts);
+				$documentId = sanitize_text_field(wp_unslash(end($parts)));
 				$pcc = new PccSyncManager();
 				$postId = $pcc->fetchAndStoreDocument($documentId, PublishingLevel::PRODUCTION);
 
@@ -207,14 +207,12 @@ class Settings
 
 			// Preview document
 			if (
-
 				isset($_GET['pccGrant']) && isset($_GET['publishingLevel']) &&
-
 				PublishingLevel::REALTIME->value === $_GET['publishingLevel'] &&
 				$PCCManager->isPCCConfigured()
 			) {
 				$parts = explode('/', $wp->request);
-				$documentId = end($parts);
+				$documentId = sanitize_text_field(wp_unslash(end($parts)));
 				$pcc = new PccSyncManager();
 
 				if (!$pcc->findExistingConnectedPost($documentId)) {
@@ -427,31 +425,37 @@ class Settings
 	 */
 	public function enqueueFrontAssets(): void
 	{
-		if (
-			isset($_GET['preview']) && $_GET['preview'] === 'google_document' && isset($_GET['document_id']) &&
-			$_GET['document_id'] && isset($_GET['publishing_level']) &&
-			$_GET['publishing_level'] === PublishingLevel::REALTIME->value &&
-			(new PccSyncManager())->isPCCConfigured()
-		) {
-			wp_enqueue_script(
-				'pantheon-content-publisher-for-wordpress',
-				PCC_PLUGIN_DIR_URL . 'dist/pcc-front.js',
-				[],
-				filemtime(PCC_PLUGIN_DIR . 'dist/pcc-front.js'),
-				true
-			);
-
-			wp_localize_script(
-				'pantheon-content-publisher-for-wordpress',
-				'PCCFront',
-				[
-					// phpcs:ignore
-					'preview_document_id' => sanitize_text_field($_GET['document_id']),
-					'site_id' => sanitize_text_field($this->getSiteId()),
-					'token' => get_option(PCC_API_KEY_OPTION_KEY),
-				]
-			);
+		if (!(new PccSyncManager())->isPCCConfigured()) {
+			return;
 		}
+		if (!isset($_GET['document_id'])) {
+			return;
+		}
+		if (!isset($_GET['publishing_level']) || PublishingLevel::REALTIME->value !== $_GET['publishing_level']) {
+			return;
+		}
+		if (!isset($_GET['preview']) || 'google_document' !== $_GET['preview']) {
+			return;
+		}
+
+		wp_enqueue_script(
+			'pantheon-content-publisher-for-wordpress',
+			PCC_PLUGIN_DIR_URL . 'dist/pcc-front.js',
+			[],
+			filemtime(PCC_PLUGIN_DIR . 'dist/pcc-front.js'),
+			true
+		);
+
+		wp_localize_script(
+			'pantheon-content-publisher-for-wordpress',
+			'PCCFront',
+			[
+				// phpcs:ignore
+				'preview_document_id' => sanitize_text_field(wp_unslash($_GET['document_id'])),
+				'site_id' => sanitize_text_field(wp_unslash($this->getSiteId())),
+				'token' => get_option(PCC_API_KEY_OPTION_KEY),
+			]
+		);
 	}
 
 	/**
@@ -460,7 +464,7 @@ class Settings
 	public function pluginAdminNotice()
 	{
 		global $pagenow;
-		if ($pagenow !== 'plugins.php') {
+		if ('plugins.php' !== $pagenow) {
 			return;
 		}
 
