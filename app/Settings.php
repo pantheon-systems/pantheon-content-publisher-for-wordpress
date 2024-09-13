@@ -18,7 +18,6 @@ use function wp_enqueue_script;
 use function wp_strip_all_tags;
 
 use const PCC_CONTENT_META_KEY;
-use const 'pantheon-content-publisher-for-wordpress';
 use const PCC_INTEGRATION_POST_TYPE_OPTION_KEY;
 use const PCC_PLUGIN_DIR;
 use const PCC_PLUGIN_DIR_URL;

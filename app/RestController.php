@@ -12,7 +12,6 @@ use WP_REST_Response;
 use function esc_html__;
 
 use const PCC_ACCESS_TOKEN_OPTION_KEY;
-use const 'pantheon-content-publisher-for-wordpress';
 
 /**
  * REST controller class.
