@@ -8,11 +8,8 @@ metadata:
   description: A PCC publisher module for publishing wordpress content
   annotations:
     pantheon.io/service-catalog/subdir: /
-    github.com/project-slug: @pantheon-systems/pantheon-content-publisher-for-wordpress
-    github.com/team-slug: @pantheon-systems/pcc
-tags:
-    - laravel
-      php
+    github.com/project-slug: pantheon-systems/pantheon-content-publisher-for-wordpress
+    github.com/team-slug: pantheon-systems/pcc
 spec:
   type: library
   lifecycle: Introduction
